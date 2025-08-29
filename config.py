@@ -1,5 +1,11 @@
+# app.py または config.py の先頭で
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:csri2025@localhost/seminar_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
