@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>セミナー管理画面</title>
+    <style>
+        table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 6px; }
+        form { margin-top: 10px; }
+        h2 { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>セミナー管理画面</h1>
+
+    <h2>参加者一覧</h2>
+    <table>
+        <tr>
+            <th>ID</th><th>名前</th><th>メール</th><th>所属</th><th>電話</th><th>操作</th>
+        </tr>
+        {% for r in recipients %}
+        <tr>
+            <td>{{ r.id }}</td><td>{{ r.name }}</td><td>{{ r.email }}</td><td>{{ r.affiliation }}</td><td>{{ r.phone }}</td>
+            <td>
+                <form action="/edit_recipient/{{ r.id }}" method="get" style="display:inline;">
+                    <button type="submit">編集</button>
+                </form>
+                <form action="/delete_recipient/{{ r.id }}" method="post" style="display:inline;">
+                    <button type="submit">削除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>参加者の新規登録</h3>
+    <form action="/add_recipient" method="post">
+        名前: <input type="text" name="name">
+        メール: <input type="email" name="email">
+        所属: <input type="text" name="affiliation">
+        電話: <input type="text" name="phone">
+        <button type="submit">登録</button>
+    </form>
+
+    <h2>セミナー一覧</h2>
+    <table>
+        <tr>
+            <th>ID</th><th>タイトル</th><th>日時</th><th>会場</th><th>講師</th><th>トピック</th><th>連絡先</th><th>操作</th>
+        </tr>
+        {% for s in seminars %}
+        <tr>
+            <td>{{ s.id }}</td><td>{{ s.title }}</td><td>{{ s.date }}</td><td>{{ s.venue }}</td><td>{{ s.speaker }}</td><td>{{ s.topic }}</td><td>{{ s.contact }}</td>
+            <td>
+                <form action="/edit_seminar/{{ s.id }}" method="get" style="display:inline;">
+                    <button type="submit">編集</button>
+                </form>
+                <form action="/delete_seminar/{{ s.id }}" method="post" style="display:inline;">
+                    <button type="submit">削除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>セミナーの新規登録</h3>
+    <form action="/add_seminar" method="post">
+        タイトル: <input type="text" name="title">
+        日時: <input type="datetime-local" name="date">
+        会場: <input type="text" name="venue">
+        講師: <input type="text" name="speaker">
+        トピック: <input type="text" name="topic">
+        連絡先: <input type="text" name="contact">
+        <button type="submit">登録</button>
+    </form>
+
+    <h2>出欠情報</h2>
+    <table>
+        <tr>
+            <th>ID</th><th>セミナーID</th><th>参加者ID</th><th>ステータス</th><th>コメント</th>
+        </tr>
+        {% for a in attendances %}
+        <tr>
+            <td>{{ a.id }}</td><td>{{ a.seminar_id }}</td><td>{{ a.recipient_id }}</td><td>{{ a.status }}</td><td>{{ a.comment }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

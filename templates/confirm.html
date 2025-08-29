@@ -1,0 +1,18 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>出欠確認</title>
+</head>
+<body>
+    <h2>出欠状況を更新しました。</h2>
+    <form action="/submit_comment" method="POST">
+        <input type="hidden" name="seminar_id" value="{{ seminar_id }}">
+        <input type="hidden" name="recipient_id" value="{{ recipient_id }}">
+        <label for="comment">途中退出予定等の連絡事項があればご記入ください：</label><br>
+        <textarea name="comment" rows="4" cols="50"></textarea><br>
+        <button type="submit">コメントを送信</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>{{ recipient.name }} 様</p>
+<p>{{ seminar.title }} のご案内です。</p>
+<p>日時: {{ seminar.date }}<br>
+会場: {{ seminar.venue }}<br>
+講師: {{ seminar.speaker }}<br>
+演題: {{ seminar.topic }}<br>
+連絡先: {{ seminar.contact }}</p>
+<p>以下のボタンから出欠をご回答ください。</p>
+<a href="http://localhost:5000/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend">出席</a><br>
+<a href="http://localhost:5000/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent">欠席</a><br>
+<a href="http://localhost:5000/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending">保留</a><br>
+</body>
+</html>

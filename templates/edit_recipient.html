@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>参加者編集</title>
+</head>
+<body>
+    <h2>参加者情報の編集</h2>
+    <form method="POST" action="/edit_recipient/{{ recipient.id }}">
+        <label>名前:</label><br>
+        <input type="text" name="name" value="{{ recipient.name }}"><br><br>
+        <label>メール:</label><br>
+        <input type="email" name="email" value="{{ recipient.email }}"><br><br>
+        <label>所属:</label><br>
+        <input type="text" name="affiliation" value="{{ recipient.affiliation }}"><br><br>
+        <label>電話:</label><br>
+        <input type="text" name="phone" value="{{ recipient.phone }}"><br><br>
+        <input type="submit" value="更新">
+    </form>
+    <br>
+    <a href="/admin">管理画面に戻る</a>
+</body>
+</html>

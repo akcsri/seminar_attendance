@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>セミナー編集</title>
+</head>
+<body>
+    <h2>セミナー情報の編集</h2>
+    <form method="POST" action="/edit_seminar/{{ seminar.id }}">
+        <label>タイトル:</label><br>
+        <input type="text" name="title" value="{{ seminar.title }}"><br><br>
+        <label>日時:</label><br>
+        <input type="text" name="date" value="{{ seminar.date }}"><br><br>
+        <label>会場:</label><br>
+        <input type="text" name="venue" value="{{ seminar.venue }}"><br><br>
+        <label>講師:</label><br>
+        <input type="text" name="speaker" value="{{ seminar.speaker }}"><br><br>
+        <label>トピック:</label><br>
+        <input type="text" name="topic" value="{{ seminar.topic }}"><br><br>
+        <label>連絡先:</label><br>
+        <input type="text" name="contact" value="{{ seminar.contact }}"><br><br>
+        <input type="submit" value="更新">
+    </form>
+    <br>
+    <a href="/admin">管理画面に戻る</a>
+</body>
+</html>
