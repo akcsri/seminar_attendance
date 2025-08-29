@@ -15,5 +15,5 @@ def send_confirmation_email(recipient, seminar):
                   sender = current_app.config['MAIL_USERNAME'],
                   recipients=[recipient.email])
     msg.body = "会場に到着されたら「確認」ボタンをクリックしてください。"
-    msg.html = f'<a href="http://localhost:5000/confirm?seminar_id={seminar.id}&recipient_id={recipient.id}">確認</a>'
+    msg.html = f'<a href="https://seminar-attendance.onrender.com/confirm?seminar_id={seminar.id}&recipient_id={recipient.id}">確認</a>'
     mail.send(msg)

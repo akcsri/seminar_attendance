@@ -9,8 +9,8 @@
 演題: {{ seminar.topic }}<br>
 連絡先: {{ seminar.contact }}</p>
 <p>以下のボタンから出欠をご回答ください。</p>
-<a href="http://localhost:5000/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend">出席</a><br>
-<a href="http://localhost:5000/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent">欠席</a><br>
-<a href="http://localhost:5000/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending">保留</a><br>
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend">出席</a><br>
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent">欠席</a><br>
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending">保留</a><br>
 </body>
 </html>

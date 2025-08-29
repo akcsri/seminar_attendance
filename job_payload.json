@@ -1,0 +1,3 @@
+{
+  "startCommand": "python /opt/render/project/src/test_email_db.py"
+}
