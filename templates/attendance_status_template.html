@@ -17,7 +17,7 @@
 <label for="seminar_id">セミナーを選択：</label>
 <select id="seminar_id" name="seminar_id">
             {% for seminar in seminars %}
-                <option %}="" %}selected{%="" endif="" if="" seminar.id="latest_seminar_id" value="{{ seminar.id }}" {%="">
+                <option %}="" %}selected{%="" endif="" if="" seminar.id="latest_seminar_id" value="{{ seminar.id }}" {%="">{% if seminar.id == latest_seminar_id %}selected{% endif %} 
                     {{ seminar.title }}
                 </option>
             {% endfor %}
