@@ -12,24 +12,20 @@
     </style>
 <meta content="width=device-width, initial-scale=1" name="viewport"/><style>
     body {
-        font-size: 16px;
-        padding: 10px;
-        margin: 0;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        overflow-x: auto;
-        display: block;
-    }
-    th, td {
-        padding: 8px;
-        text-align: left;
-        font-size: 14px;
+        font-family: Arial, sans-serif;
+        margin: 10px;
+        padding: 0;
     }
     @media screen and (max-width: 600px) {
+        table {
+            font-size: 14px;
+        }
         th, td {
-            font-size: 12px;
+            padding: 8px;
+        }
+        select, input, button {
+            width: 100%;
+            margin-top: 5px;
         }
     }
     </style></head>
@@ -52,7 +48,7 @@
 <label><input class="status-checkbox" type="checkbox" value="pending"/> 保留 (<span id="count-pending">0</span>)</label>
 <label><input class="status-checkbox" type="checkbox" value="absent"/> 欠席 (<span id="count-absent">0</span>)</label>
 </div>
-<table id="attendance-table">
+<div style="overflow-x:auto;"><table id="attendance-table">
 <thead>
 <tr>
 <th>氏名</th>
@@ -69,7 +65,7 @@
 </tr>
             {% endfor %}
         </tbody>
-</table>
+</table></div>
 <script>
         function updateCountsAndVisibility() {
             const checkboxes = document.querySelectorAll('.status-checkbox');
