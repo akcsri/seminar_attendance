@@ -10,25 +10,7 @@
         .status-filter { margin-bottom: 10px; }
         table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 5px; }
     </style>
-<meta content="width=device-width, initial-scale=1" name="viewport"/><style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 10px;
-        padding: 0;
-    }
-    @media screen and (max-width: 600px) {
-        table {
-            font-size: 14px;
-        }
-        th, td {
-            padding: 8px;
-        }
-        select, input, button {
-            width: 100%;
-            margin-top: 5px;
-        }
-    }
-    </style></head>
+</head>
 <body>
 <h2>セミナー出欠状況</h2>
 <form action="/attendance_status" method="GET">
@@ -48,7 +30,7 @@
 <label><input class="status-checkbox" type="checkbox" value="pending"/> 保留 (<span id="count-pending">0</span>)</label>
 <label><input class="status-checkbox" type="checkbox" value="absent"/> 欠席 (<span id="count-absent">0</span>)</label>
 </div>
-<div style="overflow-x:auto;"><table id="attendance-table">
+<table id="attendance-table">
 <thead>
 <tr>
 <th>氏名</th>
@@ -65,7 +47,7 @@
 </tr>
             {% endfor %}
         </tbody>
-</table></div>
+</table>
 <script>
         function updateCountsAndVisibility() {
             const checkboxes = document.querySelectorAll('.status-checkbox');
