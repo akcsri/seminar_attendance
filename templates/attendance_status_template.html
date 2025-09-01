@@ -9,6 +9,91 @@
         .status-count { margin-left: 10px; font-weight: bold; }
         .status-filter { margin-bottom: 10px; }
         table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 5px; }
+        
+        /* Responsive design improvements */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            padding: 0;
+        }
+        
+        /* Table responsive container */
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            min-width: 600px; /* Minimum width to prevent squashing */
+        }
+        
+        /* Media queries for mobile devices */
+        @media screen and (max-width: 768px) {
+            body {
+                margin: 5px;
+                font-size: 14px;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+            
+            .status-filter {
+                margin-bottom: 15px;
+            }
+            
+            .status-filter label {
+                display: block;
+                margin: 8px 0;
+                font-size: 14px;
+            }
+            
+            select, button {
+                width: 100%;
+                padding: 10px;
+                margin: 5px 0;
+                font-size: 16px;
+                border-radius: 4px;
+            }
+            
+            table, th, td {
+                font-size: 12px;
+                padding: 8px 4px;
+            }
+            
+            th {
+                background-color: #f8f9fa;
+                font-weight: bold;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            body {
+                margin: 2px;
+                font-size: 12px;
+            }
+            
+            h2 {
+                font-size: 1.3em;
+            }
+            
+            .status-filter label {
+                font-size: 12px;
+                margin: 5px 0;
+            }
+            
+            table, th, td {
+                font-size: 11px;
+                padding: 6px 2px;
+            }
+            
+            select, button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -26,10 +111,12 @@
 </form>
 <div class="status-filter">
 <label><input checked="" class="status-checkbox" type="checkbox" value="attend"/> 出席 (<span id="count-attend">0</span>)</label>
+<label><input checked="" class="status-checkbox" type="checkbox" value="confirmation_sent"/> 確認メール送信済 (<span id="count-confirmation_sent">0</span>)</label>
 <label><input checked="" class="status-checkbox" type="checkbox" value="confirmed"/> 到着確認済 (<span id="count-confirmed">0</span>)</label>
 <label><input class="status-checkbox" type="checkbox" value="pending"/> 保留 (<span id="count-pending">0</span>)</label>
 <label><input class="status-checkbox" type="checkbox" value="absent"/> 欠席 (<span id="count-absent">0</span>)</label>
 </div>
+<div class="table-responsive">
 <table id="attendance-table">
 <thead>
 <tr>
@@ -48,6 +135,7 @@
             {% endfor %}
         </tbody>
 </table>
+</div>
 <script>
         function updateCountsAndVisibility() {
             const checkboxes = document.querySelectorAll('.status-checkbox');
@@ -68,7 +156,7 @@
                 }
             });
 
-            ['attend', 'confirmed', 'pending', 'absent'].forEach(status => {
+            ['attend', 'confirmation_sent', 'confirmed', 'pending', 'absent'].forEach(status => {
                 document.getElementById('count-' + status).textContent = counts[status] || 0;
             });
         }
