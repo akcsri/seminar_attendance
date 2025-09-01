@@ -1,0 +1,55 @@
+name: Database Policy Validation
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  validate-db-policy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Validate Database Policy
+      run: |
+        echo "🔍 Validating database policy compliance..."
+        python validate_db_policy.py
+        if [ $? -eq 0 ]; then
+          echo "✅ Database policy validation passed"
+        else
+          echo "❌ Database policy validation failed"
+          echo "🚫 This PR violates the database change restriction policy"
+          echo "📋 Please see DATABASE_POLICY.md for details"
+          exit 1
+        fi
+    
+    - name: Check for forbidden patterns in models.py
+      run: |
+        echo "🔍 Checking models.py for forbidden modifications..."
+        if git diff --name-only ${{ github.event.before }}..${{ github.sha }} | grep -q "models.py"; then
+          echo "❌ CRITICAL: models.py has been modified!"
+          echo "🚫 Database structure changes are strictly prohibited"
+          echo "📋 See DATABASE_POLICY.md and CONTRIBUTING.md for policy details"
+          echo "🔧 Please revert changes to models.py"
+          exit 1
+        else
+          echo "✅ models.py has not been modified"
+        fi
+    
+    - name: Syntax check
+      run: |
+        echo "🔍 Running Python syntax validation..."
+        python -m py_compile *.py
+        echo "✅ All Python files compile successfully"

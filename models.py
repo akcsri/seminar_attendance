@@ -1,3 +1,18 @@
+"""
+🚫 データベース変更制限について / Database Change Restrictions
+
+このファイルの変更は一切許可されていません。
+Changes to this file are strictly prohibited.
+
+理由 / Reasons:
+- 既存の運用・連携システムとの整合性維持
+- データ移行やマイグレーションによるリスク回避  
+- 今後の機能追加は既存のDB構造を前提に行う方針
+
+詳細は CONTRIBUTING.md をご確認ください。
+For details, please see CONTRIBUTING.md.
+"""
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()

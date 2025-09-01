@@ -27,6 +27,7 @@ The seminar attendance management system is a Python Flask web application that 
 
 ### Testing and Validation
 - Syntax check: `python3 -m py_compile *.py` -- takes 1-2 seconds
+- **Database Policy Validation**: `python3 validate_db_policy.py` -- takes 1-2 seconds. MUST PASS before any PR.
 - **MANUAL VALIDATION REQUIRED**: After making changes, ALWAYS test these scenarios:
   1. Access admin dashboard: `curl http://127.0.0.1:5000/admin` (should return HTML with Japanese characters)
   2. Test attendance response: `curl "http://127.0.0.1:5000/respond?seminar_id=1&recipient_id=1&status=attend"` (should return HTML)
@@ -41,7 +42,7 @@ The seminar attendance management system is a Python Flask web application that 
 ### Repository Root Files
 ```
 ├── app.py                    # Main Flask application entry point
-├── models.py                 # SQLAlchemy database models  
+├── models.py                 # SQLAlchemy database models (🚫 DO NOT MODIFY)
 ├── routes.py                 # Flask routes and request handlers
 ├── config.py                 # Application configuration
 ├── requirements.txt          # Python dependencies
@@ -49,10 +50,14 @@ The seminar attendance management system is a Python Flask web application that 
 ├── .gitignore               # Git ignore patterns
 ├── init_db.py               # Database initialization script
 ├── seed_db.py               # Test data seeding script
+├── validate_db_policy.py    # Database policy validation script
 ├── scheduler.py             # APScheduler tasks
 ├── mail_utils.py            # Email utilities
 ├── mailer.py                # Alternative email implementation
 ├── test_*.py                # Test scripts
+├── README.md                # Project documentation with DB policy info
+├── CONTRIBUTING.md          # Development guidelines and DB restrictions
+├── DATABASE_POLICY.md       # Detailed database change policy
 └── templates/               # Jinja2 HTML templates
     ├── admin.html           # Admin dashboard
     ├── email_template.html  # Email invitation template
@@ -84,6 +89,7 @@ The seminar attendance management system is a Python Flask web application that 
 - `init_db.py` - Database initialization script
 - `seed_db.py` - Test data seeding script
 - `requirements.txt` - Python dependencies
+- `validate_db_policy.py` - Database policy validation script
 
 ### Test Files
 - `test_email.py` - Email functionality testing
@@ -111,7 +117,8 @@ The seminar attendance management system is a Python Flask web application that 
 ### Database Schema
 - **Recipient**: id, name, email (unique), affiliation, phone
 - **Seminar**: id, title, date, venue, speaker, topic, contact  
-- **Attendance**: id, recipient_id (FK), seminar_id (FK), status
+- **Attendance**: id, recipient_id (FK), seminar_id (FK), status, comment
+- **🚫 CRITICAL**: Database structure changes are STRICTLY PROHIBITED. See DATABASE_POLICY.md
 
 ## Critical Timing and Timeouts
 
