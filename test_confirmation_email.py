@@ -1,10 +1,8 @@
 from flask import Flask
 from models import Recipient, Seminar, Attendance, db
-from mail_utils import send_confirmation_email  # または mailer.py に合わせて変更
-from config import Config  # ← ここでConfigを読み込む
-from flask_mail import Mail
 from mailer import send_confirmation_email
-from models import db, Seminar, Attendance, Recipient
+from config import Config
+from flask_mail import Mail
 
 app = Flask(__name__)
 app.config.from_object(Config)

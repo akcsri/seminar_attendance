@@ -1,16 +1,89 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <meta charset="UTF-8">
+    <title>セミナーのご案内</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 8px 8px 8px 0;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-attend {
+            background-color: #007BFF;
+            color: white;
+        }
+        .btn-attend:hover {
+            background-color: #0056b3;
+        }
+        .btn-absent {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-absent:hover {
+            background-color: #c82333;
+        }
+        .btn-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .btn-pending:hover {
+            background-color: #e0a800;
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        @media screen and (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            .button {
+                display: block;
+                margin: 10px 0;
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+    </style>
+</head>
 <body>
-<p>{{ recipient.name }} 様</p>
-<p>{{ seminar.title }} のご案内です。</p>
-<p>日時: {{ seminar.date }}<br>
-会場: {{ seminar.venue }}<br>
-講師: {{ seminar.speaker }}<br>
-演題: {{ seminar.topic }}<br>
-連絡先: {{ seminar.contact }}</p>
-<p>以下のボタンから出欠をご回答ください。</p>
-<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend">出席</a><br>
-<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent">欠席</a><br>
-<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending">保留</a><br>
+    <div class="container">
+        <p>{{ recipient.name }} 様</p>
+        <p>{{ seminar.title }} のご案内です。</p>
+        <p>日時: {{ seminar.date }}<br>
+        会場: {{ seminar.venue }}<br>
+        講師: {{ seminar.speaker }}<br>
+        演題: {{ seminar.topic }}<br>
+        連絡先: {{ seminar.contact }}</p>
+        <p>以下のボタンから出欠をご回答ください。</p>
+        <div class="button-container">
+            <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" class="button btn-attend">出席</a>
+            <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" class="button btn-absent">欠席</a>
+            <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" class="button btn-pending">保留</a>
+        </div>
+    </div>
 </body>
 </html>
