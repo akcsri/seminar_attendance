@@ -21,10 +21,16 @@ def respond():
 
 @app.route('/confirm')
 def confirm():
+    """
+    Handle confirmation button clicks from confirmation emails.
+    This is the ONLY endpoint that should change attendance status to 'confirmed'.
+    Email sending functions should never modify attendance status.
+    """
     seminar_id = request.args.get('seminar_id')
     recipient_id = request.args.get('recipient_id')
     attendance = Attendance.query.filter_by(seminar_id=seminar_id, recipient_id=recipient_id).first()
     if attendance:
+        # Only change status when user explicitly confirms via button click
         attendance.status = "confirmed"
         db.session.commit()
     return "参加確認を受け付けました。"
