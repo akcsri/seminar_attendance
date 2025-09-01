@@ -1,54 +1,243 @@
 
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
-<meta charset="utf-8"/>
-<title>出欠状況確認</title>
-<style>
-        .status-count { margin-left: 10px; font-weight: bold; }
-        .status-filter { margin-bottom: 10px; }
-        table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 5px; }
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出欠状況確認</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        select, button {
+            padding: 8px 12px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .status-filter {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .status-filter label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background-color 0.3s ease;
+        }
+        .status-filter label:hover {
+            background-color: #e9ecef;
+        }
+        .status-checkbox {
+            margin-right: 8px;
+        }
+        .status-count {
+            margin-left: 5px;
+            font-weight: bold;
+            color: #007BFF;
+        }
+        .table-container {
+            overflow-x: auto;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:hover {
+            background-color: #e8f4f8;
+        }
+        .status {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 3px;
+            text-align: center;
+        }
+        tr[data-status="attend"] .status {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        tr[data-status="confirmed"] .status {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        tr[data-status="pending"] .status {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        tr[data-status="absent"] .status {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            .status-filter {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .status-filter label {
+                justify-content: space-between;
+                padding: 10px;
+                background-color: white;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            th, td {
+                padding: 8px;
+                font-size: 14px;
+            }
+            .form-group {
+                padding: 10px;
+            }
+            select {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 20px;
+            }
+            th, td {
+                padding: 6px;
+                font-size: 12px;
+            }
+            table {
+                min-width: 480px;
+            }
+        }
     </style>
 </head>
 <body>
-<h2>セミナー出欠状況</h2>
-<form action="/attendance_status" method="GET">
-<label for="seminar_id">セミナーを選択：</label>
-<select name="seminar_id">
-  {% for seminar in seminars %}
-    <option value="{{ seminar.id }}" {% if seminar.id == latest_seminar_id %}selected{% endif %}>
-      {{ seminar.title }}
-    </option>
-  {% endfor %}
-</select>
-<button type="submit">表示</button>
-</form>
-<div class="status-filter">
-<label><input checked="" class="status-checkbox" type="checkbox" value="attend"/> 出席 (<span id="count-attend">0</span>)</label>
-<label><input checked="" class="status-checkbox" type="checkbox" value="confirmed"/> 到着確認済 (<span id="count-confirmed">0</span>)</label>
-<label><input class="status-checkbox" type="checkbox" value="pending"/> 保留 (<span id="count-pending">0</span>)</label>
-<label><input class="status-checkbox" type="checkbox" value="absent"/> 欠席 (<span id="count-absent">0</span>)</label>
-</div>
-<table id="attendance-table">
-<thead>
-<tr>
-<th>氏名</th>
-<th>メール</th>
-<th>ステータス</th>
-</tr>
-</thead>
-<tbody>
-            {% for attendance in attendances %}
-                <tr data-status="{{ attendance.status }}">
-<td>{{ attendance.recipient.name }}</td>
-<td>{{ attendance.recipient.email }}</td>
-<td class="status">{{ attendance.status }}</td>
-</tr>
-            {% endfor %}
-        </tbody>
-</table>
-<script>
+    <div class="container">
+        <h2>セミナー出欠状況</h2>
+        
+        <div class="form-group">
+            <form action="/attendance_status" method="GET">
+                <label for="seminar_id">セミナーを選択：</label>
+                <select name="seminar_id" id="seminar_id">
+                    {% for seminar in seminars %}
+                        <option value="{{ seminar.id }}" {% if seminar.id == latest_seminar_id %}selected{% endif %}>
+                            {{ seminar.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">表示</button>
+            </form>
+        </div>
+        
+        <div class="status-filter">
+            <label>
+                <input checked="checked" class="status-checkbox" type="checkbox" value="attend"/>
+                出席 <span class="status-count" id="count-attend">0</span>
+            </label>
+            <label>
+                <input checked="checked" class="status-checkbox" type="checkbox" value="confirmed"/>
+                到着確認済 <span class="status-count" id="count-confirmed">0</span>
+            </label>
+            <label>
+                <input class="status-checkbox" type="checkbox" value="pending"/>
+                保留 <span class="status-count" id="count-pending">0</span>
+            </label>
+            <label>
+                <input class="status-checkbox" type="checkbox" value="absent"/>
+                欠席 <span class="status-count" id="count-absent">0</span>
+            </label>
+        </div>
+        
+        <div class="table-container">
+            <table id="attendance-table">
+                <thead>
+                    <tr>
+                        <th>氏名</th>
+                        <th>メール</th>
+                        <th>ステータス</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attendance in attendances %}
+                        <tr data-status="{{ attendance.status }}">
+                            <td>{{ attendance.recipient.name }}</td>
+                            <td>{{ attendance.recipient.email }}</td>
+                            <td class="status">{{ attendance.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
         function updateCountsAndVisibility() {
             const checkboxes = document.querySelectorAll('.status-checkbox');
             const activeStatuses = Array.from(checkboxes)
@@ -69,7 +258,10 @@
             });
 
             ['attend', 'confirmed', 'pending', 'absent'].forEach(status => {
-                document.getElementById('count-' + status).textContent = counts[status] || 0;
+                const element = document.getElementById('count-' + status);
+                if (element) {
+                    element.textContent = counts[status] || 0;
+                }
             });
         }
 

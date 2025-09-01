@@ -1,6 +1,6 @@
 from app import scheduler
 from models import Seminar, Attendance, Recipient
-from mail_utils import send_confirmation_email
+from mailer import send_confirmation_email
 from datetime import datetime, timedelta
 
 @scheduler.task('interval', id='send_confirmation_emails', minutes=1)
