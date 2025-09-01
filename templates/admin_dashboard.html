@@ -97,6 +97,13 @@
 
     <h2>登録者一覧</h2>
     
+    <!-- CSV Export/Import Section -->
+    <div class="csv-import">
+        <h3>📁 CSV操作</h3>
+        <a href="/export_recipients_csv" class="btn-primary" style="text-decoration: none; display: inline-block; margin-right: 10px;">📥 登録者CSV出力</a>
+        <br><br>
+    </div>
+    
     <!-- CSV Import Section -->
     <div class="csv-import">
         <h3>📁 CSVインポート</h3>
@@ -126,16 +133,38 @@
         </form>
     </div>
 
+    <!-- Confirmation Email Controls Section -->
+    <div class="email-controls">
+        <h3>✅ 確認メール送信</h3>
+        <form action="/send_confirmation_emails" method="post" id="confirmationEmailForm">
+            <label>
+                <input type="checkbox" id="selectAllConfirmation" checked> 全選択/全解除
+            </label>
+            <br><br>
+            <label for="confirmation_seminar_select">送信対象セミナー:</label>
+            <select name="seminar_id" id="confirmation_seminar_select" required>
+                {% for s in seminars %}
+                <option value="{{ s.id }}">{{ s.title }} ({{ s.date }})</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <button type="submit" class="btn-primary">選択した登録者に確認メールを送信</button>
+        </form>
+    </div>
+
     <!-- Recipients Table -->
     <form id="recipientsForm">
         <table>
             <tr>
-                <th>選択</th><th>ID</th><th>名前</th><th>メール</th><th>所属</th><th>電話</th><th>操作</th>
+                <th>選択</th><th>確認選択</th><th>ID</th><th>名前</th><th>メール</th><th>所属</th><th>電話</th><th>操作</th>
             </tr>
             {% for r in recipients %}
             <tr>
                 <td>
                     <input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="recipient-checkbox" checked form="emailForm">
+                </td>
+                <td>
+                    <input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="confirmation-checkbox" checked form="confirmationEmailForm">
                 </td>
                 <td>{{ r.id }}</td>
                 <td>{{ r.name }}</td>
@@ -167,7 +196,7 @@
     <h2>セミナー一覧</h2>
     <table>
         <tr>
-            <th>ID</th><th>タイトル</th><th>日時</th><th>会場</th><th>講師</th><th>トピック</th><th>連絡先</th><th>操作</th>
+            <th>ID</th><th>タイトル</th><th>日時</th><th>会場</th><th>講師</th><th>トピック</th><th>連絡先</th><th>操作</th><th>出欠CSV</th>
         </tr>
         {% for s in seminars %}
         <tr>
@@ -179,6 +208,9 @@
                 <form action="/delete_seminar/{{ s.id }}" method="post" style="display:inline;">
                     <button type="submit">削除</button>
                 </form>
+            </td>
+            <td>
+                <a href="/export_attendance_csv?seminar_id={{ s.id }}" class="btn-primary" style="text-decoration: none; font-size: 12px; padding: 5px 10px;">📥 出欠CSV</a>
             </td>
         </tr>
         {% endfor %}
@@ -208,7 +240,7 @@
     </table>
 
     <script>
-        // JavaScript for select all/none functionality
+        // JavaScript for select all/none functionality - Invitation emails
         document.getElementById('selectAll').addEventListener('change', function() {
             const checkboxes = document.querySelectorAll('.recipient-checkbox');
             checkboxes.forEach(checkbox => {
@@ -216,12 +248,39 @@
             });
         });
 
-        // Update select all checkbox based on individual checkboxes
+        // Update select all checkbox based on individual checkboxes - Invitation emails
         document.querySelectorAll('.recipient-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 const allCheckboxes = document.querySelectorAll('.recipient-checkbox');
                 const checkedCheckboxes = document.querySelectorAll('.recipient-checkbox:checked');
                 const selectAllCheckbox = document.getElementById('selectAll');
+                
+                if (checkedCheckboxes.length === 0) {
+                    selectAllCheckbox.indeterminate = false;
+                    selectAllCheckbox.checked = false;
+                } else if (checkedCheckboxes.length === allCheckboxes.length) {
+                    selectAllCheckbox.indeterminate = false;
+                    selectAllCheckbox.checked = true;
+                } else {
+                    selectAllCheckbox.indeterminate = true;
+                }
+            });
+        });
+
+        // JavaScript for select all/none functionality - Confirmation emails
+        document.getElementById('selectAllConfirmation').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.confirmation-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Update select all checkbox based on individual checkboxes - Confirmation emails
+        document.querySelectorAll('.confirmation-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const allCheckboxes = document.querySelectorAll('.confirmation-checkbox');
+                const checkedCheckboxes = document.querySelectorAll('.confirmation-checkbox:checked');
+                const selectAllCheckbox = document.getElementById('selectAllConfirmation');
                 
                 if (checkedCheckboxes.length === 0) {
                     selectAllCheckbox.indeterminate = false;
