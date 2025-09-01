@@ -11,9 +11,10 @@ def send_invitation_email(recipient, seminar):
     mail.send(msg)
 
 def send_confirmation_email(recipient, seminar):
+    """Send confirmation email to attendee - does not change attendance status"""
     msg = Message(subject=f"{seminar.title} 参加確認",
                   sender = current_app.config['MAIL_USERNAME'],
                   recipients=[recipient.email])
-    msg.body = "会場に到着されたら「確認」ボタンをクリックしてください。"
-    msg.html = f'<a href="https://seminar-attendance.onrender.com/confirm?seminar_id={seminar.id}&recipient_id={recipient.id}">確認</a>'
+    msg.html = render_template("confirmation_email_template.html", recipient=recipient, seminar=seminar)
     mail.send(msg)
+    # NOTE: Status remains 'attend' - only changes to 'confirmed' when user clicks confirmation button

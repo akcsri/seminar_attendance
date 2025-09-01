@@ -9,8 +9,11 @@
 演題: {{ seminar.topic }}<br>
 連絡先: {{ seminar.contact }}</p>
 <p>以下のボタンから出欠をご回答ください。</p>
-<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend">出席</a><br>
-<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent">欠席</a><br>
-<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending">保留</a><br>
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" 
+   style="display:inline-block;padding:10px 20px;background-color:#007BFF;color:#FFFFFF;text-decoration:none;border-radius:5px;margin:5px;">出席</a><br>
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" 
+   style="display:inline-block;padding:10px 20px;background-color:#007BFF;color:#FFFFFF;text-decoration:none;border-radius:5px;margin:5px;">欠席</a><br>
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" 
+   style="display:inline-block;padding:10px 20px;background-color:#007BFF;color:#FFFFFF;text-decoration:none;border-radius:5px;margin:5px;">保留</a><br>
 </body>
 </html>
