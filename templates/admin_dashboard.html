@@ -125,7 +125,7 @@
             <label for="seminar_select">送信対象セミナー:</label>
             <select name="seminar_id" id="seminar_select" required>
                 {% for s in seminars %}
-                <option value="{{ s.id }}">{{ s.title }} ({{ s.date }})</option>
+                <option value="{{ s.id }}" {% if s.id == latest_seminar_id %}selected{% endif %}>{{ s.title }} ({{ s.date }})</option>
                 {% endfor %}
             </select>
             <br><br>
@@ -144,7 +144,7 @@
             <label for="confirmation_seminar_select">送信対象セミナー:</label>
             <select name="seminar_id" id="confirmation_seminar_select" required>
                 {% for s in seminars %}
-                <option value="{{ s.id }}">{{ s.title }} ({{ s.date }})</option>
+                <option value="{{ s.id }}" {% if s.id == latest_seminar_id %}selected{% endif %}>{{ s.title }} ({{ s.date }})</option>
                 {% endfor %}
             </select>
             <br><br>

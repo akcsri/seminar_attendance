@@ -38,9 +38,10 @@ def confirm():
 @app.route('/admin')
 def admin_dashboard():
     recipients = Recipient.query.all()
-    seminars = Seminar.query.all()
+    seminars = Seminar.query.order_by(Seminar.id.desc()).all()
     attendances = Attendance.query.all()
-    return render_template('admin_dashboard.html', recipients=recipients, seminars=seminars, attendances=attendances)
+    latest_seminar_id = seminars[0].id if seminars else None
+    return render_template('admin_dashboard.html', recipients=recipients, seminars=seminars, attendances=attendances, latest_seminar_id=latest_seminar_id)
 
 @app.route('/add_recipient', methods=['POST'])
 def add_recipient():
@@ -352,8 +353,11 @@ def export_recipients_csv():
         
         output.seek(0)
         
-        response = make_response(output.getvalue())
-        response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+        # Add BOM for Excel compatibility with Japanese characters
+        csv_content = '\ufeff' + output.getvalue()
+        
+        response = make_response(csv_content)
+        response.headers['Content-Type'] = 'text/csv; charset=utf-8-sig'
         response.headers['Content-Disposition'] = 'attachment; filename=recipients.csv'
         
         return response
@@ -409,8 +413,11 @@ def export_attendance_csv():
         seminar_title = seminar.title if seminar else 'seminar'
         filename = f'attendance_{seminar_title}.csv'
         
-        response = make_response(output.getvalue())
-        response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+        # Add BOM for Excel compatibility with Japanese characters
+        csv_content = '\ufeff' + output.getvalue()
+        
+        response = make_response(csv_content)
+        response.headers['Content-Type'] = 'text/csv; charset=utf-8-sig'
         response.headers['Content-Disposition'] = f'attachment; filename={filename}'
         
         return response
