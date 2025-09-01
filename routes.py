@@ -1,7 +1,7 @@
-from flask import request, render_template, redirect, url_for, flash
+from flask import request, render_template, redirect, url_for, flash, make_response
 from app import app, db
 from models import Recipient, Seminar, Attendance
-from mailer import send_invitation_email
+from mailer import send_invitation_email, send_confirmation_email
 import csv
 import io
 
@@ -285,3 +285,136 @@ def import_csv():
         flash(f'CSVインポート中にエラーが発生しました: {str(e)}', 'error')
     
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/send_confirmation_emails', methods=['POST'])
+def send_confirmation_emails():
+    """Send confirmation emails to selected recipients for a specific seminar"""
+    try:
+        recipient_ids = request.form.getlist('recipient_ids')
+        seminar_id = request.form.get('seminar_id')
+        
+        if not recipient_ids:
+            flash('送信対象の登録者を選択してください。', 'warning')
+            return redirect(url_for('admin_dashboard'))
+            
+        if not seminar_id:
+            flash('送信対象のセミナーを選択してください。', 'warning')
+            return redirect(url_for('admin_dashboard'))
+        
+        seminar = Seminar.query.get(seminar_id)
+        if not seminar:
+            flash('指定されたセミナーが見つかりません。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        sent_count = 0
+        error_count = 0
+        
+        for recipient_id in recipient_ids:
+            recipient = Recipient.query.get(recipient_id)
+            if recipient:
+                try:
+                    send_confirmation_email(recipient, seminar)
+                    sent_count += 1
+                except Exception as e:
+                    error_count += 1
+                    print(f"Error sending confirmation email to {recipient.email}: {e}")
+        
+        if sent_count > 0:
+            flash(f'{sent_count}件の確認メールを送信しました。', 'success')
+        if error_count > 0:
+            flash(f'{error_count}件のメール送信でエラーが発生しました。', 'warning')
+            
+    except Exception as e:
+        flash(f'確認メール送信中にエラーが発生しました: {str(e)}', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/export_recipients_csv')
+def export_recipients_csv():
+    """Export recipients list as CSV"""
+    try:
+        recipients = Recipient.query.all()
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['name', 'email', 'affiliation', 'phone'])
+        
+        # Write data
+        for recipient in recipients:
+            writer.writerow([
+                recipient.name or '',
+                recipient.email or '',
+                recipient.affiliation or '',
+                recipient.phone or ''
+            ])
+        
+        output.seek(0)
+        
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+        response.headers['Content-Disposition'] = 'attachment; filename=recipients.csv'
+        
+        return response
+        
+    except Exception as e:
+        flash(f'CSVエクスポート中にエラーが発生しました: {str(e)}', 'error')
+        return redirect(url_for('admin_dashboard'))
+
+@app.route('/export_attendance_csv')
+def export_attendance_csv():
+    """Export attendance information as CSV for a specific seminar"""
+    try:
+        seminar_id = request.args.get('seminar_id')
+        
+        if not seminar_id:
+            flash('セミナーIDが指定されていません。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        # Join attendance data with recipient and seminar information
+        attendances = db.session.query(
+            Attendance, Recipient, Seminar
+        ).join(
+            Recipient, Attendance.recipient_id == Recipient.id
+        ).join(
+            Seminar, Attendance.seminar_id == Seminar.id
+        ).filter(
+            Attendance.seminar_id == seminar_id
+        ).all()
+        
+        if not attendances:
+            flash('指定されたセミナーの出欠データが見つかりません。', 'warning')
+            return redirect(url_for('admin_dashboard'))
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow(['seminar_title', 'recipient_name', 'status', 'comment'])
+        
+        # Write data
+        for attendance, recipient, seminar in attendances:
+            writer.writerow([
+                seminar.title or '',
+                recipient.name or '',
+                attendance.status or '',
+                attendance.comment or ''
+            ])
+        
+        output.seek(0)
+        
+        # Get seminar title for filename
+        seminar = Seminar.query.get(seminar_id)
+        seminar_title = seminar.title if seminar else 'seminar'
+        filename = f'attendance_{seminar_title}.csv'
+        
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+        response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+        
+        return response
+        
+    except Exception as e:
+        flash(f'出欠CSVエクスポート中にエラーが発生しました: {str(e)}', 'error')
+        return redirect(url_for('admin_dashboard'))
