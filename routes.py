@@ -1,7 +1,9 @@
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for, flash
 from app import app, db
 from models import Recipient, Seminar, Attendance
 from mailer import send_invitation_email
+import csv
+import io
 
 @app.route('/respond')
 def respond():
@@ -32,7 +34,7 @@ def admin_dashboard():
     recipients = Recipient.query.all()
     seminars = Seminar.query.all()
     attendances = Attendance.query.all()
-    return render_template('admin.html', recipients=recipients, seminars=seminars, attendances=attendances)
+    return render_template('admin_dashboard.html', recipients=recipients, seminars=seminars, attendances=attendances)
 
 @app.route('/add_recipient', methods=['POST'])
 def add_recipient():
@@ -144,3 +146,136 @@ def attendance_status():
         selected_seminar=selected_seminar,
         attendances=attendances
     )
+
+@app.route('/send_invitation_emails', methods=['POST'])
+def send_invitation_emails():
+    """Send invitation emails to selected recipients for a specific seminar"""
+    try:
+        seminar_id = request.form.get('seminar_id')
+        recipient_ids = request.form.getlist('recipient_ids')
+        
+        if not seminar_id:
+            flash('セミナーを選択してください。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        if not recipient_ids:
+            flash('送信対象の登録者を選択してください。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        seminar = Seminar.query.get(seminar_id)
+        if not seminar:
+            flash('指定されたセミナーが見つかりません。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        sent_count = 0
+        error_count = 0
+        
+        for recipient_id in recipient_ids:
+            recipient = Recipient.query.get(recipient_id)
+            if recipient:
+                try:
+                    send_invitation_email(recipient, seminar)
+                    sent_count += 1
+                except Exception as e:
+                    error_count += 1
+                    print(f"Error sending email to {recipient.email}: {e}")
+        
+        if sent_count > 0:
+            flash(f'{sent_count}件の案内メールを送信しました。', 'success')
+        if error_count > 0:
+            flash(f'{error_count}件のメール送信でエラーが発生しました。', 'warning')
+            
+    except Exception as e:
+        flash(f'メール送信中にエラーが発生しました: {str(e)}', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/import_csv', methods=['POST'])
+def import_csv():
+    """Import recipients from CSV file"""
+    try:
+        if 'csv_file' not in request.files:
+            flash('CSVファイルが選択されていません。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        file = request.files['csv_file']
+        if file.filename == '':
+            flash('CSVファイルが選択されていません。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        if not file.filename.lower().endswith('.csv'):
+            flash('CSVファイルを選択してください。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        # Read and process CSV file
+        stream = io.StringIO(file.stream.read().decode("utf-8"), newline=None)
+        csv_reader = csv.reader(stream)
+        
+        # Skip header row if it exists
+        first_row = next(csv_reader, None)
+        if not first_row:
+            flash('CSVファイルが空です。', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        # Check if first row is header (contains 'name', 'email', etc.)
+        if not any(col.lower() in ['name', 'email', 'affiliation', 'phone'] for col in first_row):
+            # First row is data, process it
+            stream.seek(0)
+            csv_reader = csv.reader(stream)
+        
+        added_count = 0
+        error_count = 0
+        errors = []
+        
+        for row_num, row in enumerate(csv_reader, start=1):
+            if len(row) < 2:  # At least name and email are required
+                errors.append(f'行{row_num}: 必要な列が不足しています')
+                error_count += 1
+                continue
+            
+            name = row[0].strip() if len(row) > 0 else ''
+            email = row[1].strip() if len(row) > 1 else ''
+            affiliation = row[2].strip() if len(row) > 2 else ''
+            phone = row[3].strip() if len(row) > 3 else ''
+            
+            if not name or not email:
+                errors.append(f'行{row_num}: 名前とメールアドレスは必須です')
+                error_count += 1
+                continue
+            
+            # Check if email already exists
+            existing_recipient = Recipient.query.filter_by(email=email).first()
+            if existing_recipient:
+                errors.append(f'行{row_num}: メールアドレス {email} は既に登録されています')
+                error_count += 1
+                continue
+            
+            try:
+                recipient = Recipient(
+                    name=name,
+                    email=email,
+                    affiliation=affiliation,
+                    phone=phone
+                )
+                db.session.add(recipient)
+                added_count += 1
+            except Exception as e:
+                errors.append(f'行{row_num}: データベースエラー - {str(e)}')
+                error_count += 1
+        
+        if added_count > 0:
+            db.session.commit()
+            flash(f'{added_count}件の登録者を追加しました。', 'success')
+        
+        if error_count > 0:
+            flash(f'{error_count}件のエラーがありました。', 'warning')
+            for error in errors[:5]:  # Show first 5 errors
+                flash(error, 'error')
+            if len(errors) > 5:
+                flash(f'他に{len(errors) - 5}件のエラーがあります。', 'error')
+                
+    except Exception as e:
+        db.session.rollback()
+        flash(f'CSVインポート中にエラーが発生しました: {str(e)}', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
