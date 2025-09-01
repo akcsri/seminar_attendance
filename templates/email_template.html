@@ -91,12 +91,39 @@
         <p>以下のボタンから出欠をご回答ください。</p>
         
         <div class="button-container">
-            <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" 
-               class="btn btn-primary">✓ 出席</a>
-            <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" 
-               class="btn btn-danger">✗ 欠席</a>
-            <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" 
-               class="btn btn-warning">? 保留</a>
+            <!-- Outlook-compatible table-based buttons with inline styles -->
+            <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; margin-bottom: 10px;">
+                <tr>
+                    <td style="border-radius: 5px; background-color: #007BFF; text-align: center;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" 
+                           style="display: inline-block; padding: 12px 24px; color: white; text-decoration: none; font-weight: bold; border-radius: 5px; font-family: Arial, sans-serif;">
+                           ✓ 出席
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            
+            <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; margin-bottom: 10px;">
+                <tr>
+                    <td style="border-radius: 5px; background-color: #dc3545; text-align: center;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" 
+                           style="display: inline-block; padding: 12px 24px; color: white; text-decoration: none; font-weight: bold; border-radius: 5px; font-family: Arial, sans-serif;">
+                           ✗ 欠席
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            
+            <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; margin-bottom: 10px;">
+                <tr>
+                    <td style="border-radius: 5px; background-color: #ffc107; text-align: center;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" 
+                           style="display: inline-block; padding: 12px 24px; color: #212529; text-decoration: none; font-weight: bold; border-radius: 5px; font-family: Arial, sans-serif;">
+                           ? 保留
+                        </a>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 </body>
