@@ -1,27 +1,239 @@
 <!DOCTYPE html>
-
-<html>
-<head><title>管理者ダッシュボード</title><meta content="width=device-width, initial-scale=1" name="viewport"/><style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 10px;
-        padding: 0;
-    }
-    @media screen and (max-width: 600px) {
-        table {
-            font-size: 14px;
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者ダッシュボード</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            padding: 0;
         }
-        th, td {
-            padding: 8px;
+        table, th, td { 
+            border: 1px solid #ccc; 
+            border-collapse: collapse; 
+            padding: 6px; 
         }
-        select, input, button {
-            width: 100%;
-            margin-top: 5px;
+        form { 
+            margin-top: 10px; 
         }
-    }
-    </style></head>
+        h2 { 
+            margin-top: 30px; 
+        }
+        .email-controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .csv-import {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .flash-messages {
+            margin: 20px 0;
+        }
+        .flash-message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .flash-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .flash-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .flash-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        @media screen and (max-width: 600px) {
+            table {
+                font-size: 14px;
+            }
+            th, td {
+                padding: 8px;
+            }
+            select, input, button {
+                width: 100%;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
 <body>
-<h1>セミナー出欠管理</h1>
-<!-- 管理者用のUIはここに構築 -->
+    <h1>セミナー出欠管理 - 管理者ダッシュボード</h1>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <h2>登録者一覧</h2>
+    
+    <!-- CSV Import Section -->
+    <div class="csv-import">
+        <h3>📁 CSVインポート</h3>
+        <form action="/import_csv" method="post" enctype="multipart/form-data">
+            <p>CSVフォーマット: name,email,affiliation,phone</p>
+            <input type="file" name="csv_file" accept=".csv" required>
+            <button type="submit" class="btn-primary">CSVファイルをインポート</button>
+        </form>
+    </div>
+
+    <!-- Email Controls Section -->
+    <div class="email-controls">
+        <h3>📧 案内メール送信</h3>
+        <form action="/send_invitation_emails" method="post" id="emailForm">
+            <label>
+                <input type="checkbox" id="selectAll" checked> 全選択/全解除
+            </label>
+            <br><br>
+            <label for="seminar_select">送信対象セミナー:</label>
+            <select name="seminar_id" id="seminar_select" required>
+                {% for s in seminars %}
+                <option value="{{ s.id }}">{{ s.title }} ({{ s.date }})</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <button type="submit" class="btn-primary">選択した登録者に案内メールを送信</button>
+        </form>
+    </div>
+
+    <!-- Recipients Table -->
+    <form id="recipientsForm">
+        <table>
+            <tr>
+                <th>選択</th><th>ID</th><th>名前</th><th>メール</th><th>所属</th><th>電話</th><th>操作</th>
+            </tr>
+            {% for r in recipients %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="recipient-checkbox" checked form="emailForm">
+                </td>
+                <td>{{ r.id }}</td>
+                <td>{{ r.name }}</td>
+                <td>{{ r.email }}</td>
+                <td>{{ r.affiliation }}</td>
+                <td>{{ r.phone }}</td>
+                <td>
+                    <form action="/edit_recipient/{{ r.id }}" method="get" style="display:inline;">
+                        <button type="submit">編集</button>
+                    </form>
+                    <form action="/delete_recipient/{{ r.id }}" method="post" style="display:inline;">
+                        <button type="submit">削除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+
+    <h3>登録者の新規登録</h3>
+    <form action="/add_recipient" method="post">
+        名前: <input type="text" name="name" required>
+        メール: <input type="email" name="email" required>
+        所属: <input type="text" name="affiliation">
+        電話: <input type="text" name="phone">
+        <button type="submit">登録</button>
+    </form>
+
+    <h2>セミナー一覧</h2>
+    <table>
+        <tr>
+            <th>ID</th><th>タイトル</th><th>日時</th><th>会場</th><th>講師</th><th>トピック</th><th>連絡先</th><th>操作</th>
+        </tr>
+        {% for s in seminars %}
+        <tr>
+            <td>{{ s.id }}</td><td>{{ s.title }}</td><td>{{ s.date }}</td><td>{{ s.venue }}</td><td>{{ s.speaker }}</td><td>{{ s.topic }}</td><td>{{ s.contact }}</td>
+            <td>
+                <form action="/edit_seminar/{{ s.id }}" method="get" style="display:inline;">
+                    <button type="submit">編集</button>
+                </form>
+                <form action="/delete_seminar/{{ s.id }}" method="post" style="display:inline;">
+                    <button type="submit">削除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>セミナーの新規登録</h3>
+    <form action="/add_seminar" method="post">
+        タイトル: <input type="text" name="title" required>
+        日時: <input type="datetime-local" name="date" required>
+        会場: <input type="text" name="venue">
+        講師: <input type="text" name="speaker">
+        トピック: <input type="text" name="topic">
+        連絡先: <input type="text" name="contact">
+        <button type="submit">登録</button>
+    </form>
+
+    <h2>出欠情報</h2>
+    <table>
+        <tr>
+            <th>ID</th><th>セミナーID</th><th>参加者ID</th><th>ステータス</th><th>コメント</th>
+        </tr>
+        {% for a in attendances %}
+        <tr>
+            <td>{{ a.id }}</td><td>{{ a.seminar_id }}</td><td>{{ a.recipient_id }}</td><td>{{ a.status }}</td><td>{{ a.comment }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        // JavaScript for select all/none functionality
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.recipient-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Update select all checkbox based on individual checkboxes
+        document.querySelectorAll('.recipient-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const allCheckboxes = document.querySelectorAll('.recipient-checkbox');
+                const checkedCheckboxes = document.querySelectorAll('.recipient-checkbox:checked');
+                const selectAllCheckbox = document.getElementById('selectAll');
+                
+                if (checkedCheckboxes.length === 0) {
+                    selectAllCheckbox.indeterminate = false;
+                    selectAllCheckbox.checked = false;
+                } else if (checkedCheckboxes.length === allCheckboxes.length) {
+                    selectAllCheckbox.indeterminate = false;
+                    selectAllCheckbox.checked = true;
+                } else {
+                    selectAllCheckbox.indeterminate = true;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

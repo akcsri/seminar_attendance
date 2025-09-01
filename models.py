@@ -26,6 +26,7 @@ class Attendance(db.Model):
     recipient_id = db.Column(db.Integer, db.ForeignKey('recipient.id'))
     seminar_id = db.Column(db.Integer, db.ForeignKey('seminar.id'))
     status = db.Column(db.String(20))
+    comment = db.Column(db.String(500))  # コメント欄を追加
     
     # 🔽 追加するリレーション
     recipient = relationship("Recipient", backref="attendances")
