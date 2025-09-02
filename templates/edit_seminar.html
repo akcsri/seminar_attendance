@@ -104,8 +104,33 @@
             <small style="color: #666;">※ 肩書きや所属も併記可能です。</small><br><br>
             
             <label>セミナー詳細情報:</label><br>
-            <textarea name="topic" rows="6" placeholder="【概要】&#10;最新のAI技術動向について&#10;&#10;【講師経歴】&#10;田中博士は機械学習分野の第一人者として、数々の研究成果を挙げています。東京大学大学院情報理工学系研究科教授。&#10;&#10;【時間】&#10;開場: 18:00 | 開始: 18:30 | 終了: 20:00" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; resize: vertical;">{{ seminar.topic }}</textarea><br>
-            <small style="color: #666;">※ セミナーの概要、講師の詳細経歴、開場・開始・終了時刻を構造化して記載してください。メール送信時にそのまま使用されます。</small><br><br>
+            <div style="margin-bottom: 10px; padding: 15px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;">
+                <h4 style="margin: 0 0 15px 0; color: #333;">構造化入力フォーム</h4>
+                
+                <label style="margin-bottom: 5px;">概要:</label><br>
+                <textarea id="description_input" rows="3" placeholder="セミナーの概要をご記入ください" style="width: 100%; margin-bottom: 15px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                    <div style="flex: 1;">
+                        <label style="margin-bottom: 5px;">開場時刻:</label><br>
+                        <input type="time" id="open_time_input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="margin-bottom: 5px;">終了時刻:</label><br>
+                        <input type="time" id="end_time_input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                </div>
+                
+                <label style="margin-bottom: 5px;">講師経歴:</label><br>
+                <textarea id="speaker_bio_input" rows="4" placeholder="講師の詳細経歴をご記入ください（HTML形式可）" style="width: 100%; margin-bottom: 15px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea>
+                
+                <button type="button" onclick="updateTopicField()" style="background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-right: 10px;">構造化データに更新</button>
+                <button type="button" onclick="loadFromTopic()" style="background-color: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">現在の詳細情報から読込</button>
+            </div>
+            
+            <label>詳細情報（直接編集）:</label><br>
+            <textarea name="topic" id="topic_field" rows="8" placeholder="【概要】&#10;最新のAI技術動向について&#10;&#10;【講師経歴】&#10;田中博士は機械学習分野の第一人者として、数々の研究成果を挙げています。東京大学大学院情報理工学系研究科教授。&#10;&#10;【時間】&#10;開場: 18:00 | 開始: 18:30 | 終了: 20:00" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 13px; line-height: 1.5; resize: vertical;">{{ seminar.topic }}</textarea><br>
+            <small style="color: #666;">※ 上記の構造化入力フォームを使用するか、直接編集してください。メール送信時にそのまま使用されます。</small><br><br>
             
             <label>連絡先:</label><br>
             <input type="text" name="contact" value="{{ seminar.contact }}" placeholder="例: seminar@example.com / 03-1234-5678"><br>
@@ -116,5 +141,118 @@
         <br>
         <a href="/admin">管理画面に戻る</a>
     </div>
+    
+    <script>
+        // Parse structured topic data
+        function parseTopicData(topicText) {
+            if (!topicText) return { description: '', open_time: '', end_time: '', speaker_bio: '' };
+            
+            // Try JSON format first
+            try {
+                const parsed = JSON.parse(topicText);
+                if (typeof parsed === 'object') {
+                    return {
+                        description: parsed.description || '',
+                        open_time: parsed.open_time || '',
+                        end_time: parsed.end_time || '',
+                        speaker_bio: parsed.speaker_bio || ''
+                    };
+                }
+            } catch (e) {
+                // Not JSON, try structured text
+            }
+            
+            // Parse structured text format
+            const result = { description: '', open_time: '', end_time: '', speaker_bio: '' };
+            
+            // Extract description
+            const descMatch = topicText.match(/【概要】\s*\n?(.*?)(?:\n【|$)/s);
+            if (descMatch) result.description = descMatch[1].trim();
+            
+            // Extract speaker bio
+            const bioMatch = topicText.match(/【講師経歴】\s*\n?(.*?)(?:\n【|$)/s);
+            if (bioMatch) result.speaker_bio = bioMatch[1].trim();
+            
+            // Extract times
+            const timeMatch = topicText.match(/【時間】\s*\n?(.*?)(?:\n【|$)/s);
+            if (timeMatch) {
+                const timeSection = timeMatch[1];
+                
+                const openMatch = timeSection.match(/開場:\s*(\d{1,2}:\d{2})/);
+                if (openMatch) result.open_time = openMatch[1];
+                
+                const endMatch = timeSection.match(/終了:\s*(\d{1,2}:\d{2})/);
+                if (endMatch) result.end_time = endMatch[1];
+            }
+            
+            // If no structured sections found, use entire topic as description
+            if (!result.description && !result.speaker_bio && !result.open_time && !result.end_time) {
+                result.description = topicText.trim();
+            }
+            
+            return result;
+        }
+        
+        // Create structured topic text
+        function createStructuredTopic(description, open_time, end_time, speaker_bio) {
+            const parts = [];
+            
+            if (description) {
+                parts.push(`【概要】\n${description}`);
+            }
+            
+            if (speaker_bio) {
+                parts.push(`【講師経歴】\n${speaker_bio}`);
+            }
+            
+            if (open_time || end_time) {
+                const timeParts = [];
+                if (open_time) timeParts.push(`開場: ${open_time}`);
+                if (end_time) timeParts.push(`終了: ${end_time}`);
+                
+                if (timeParts.length > 0) {
+                    parts.push(`【時間】\n${timeParts.join(' | ')}`);
+                }
+            }
+            
+            return parts.join('\n\n');
+        }
+        
+        // Update topic field from structured inputs
+        function updateTopicField() {
+            const description = document.getElementById('description_input').value;
+            const open_time = document.getElementById('open_time_input').value;
+            const end_time = document.getElementById('end_time_input').value;
+            const speaker_bio = document.getElementById('speaker_bio_input').value;
+            
+            const structuredTopic = createStructuredTopic(description, open_time, end_time, speaker_bio);
+            document.getElementById('topic_field').value = structuredTopic;
+        }
+        
+        // Load structured inputs from topic field
+        function loadFromTopic() {
+            const topicText = document.getElementById('topic_field').value;
+            const parsed = parseTopicData(topicText);
+            
+            document.getElementById('description_input').value = parsed.description;
+            document.getElementById('open_time_input').value = parsed.open_time;
+            document.getElementById('end_time_input').value = parsed.end_time;
+            document.getElementById('speaker_bio_input').value = parsed.speaker_bio;
+        }
+        
+        // Load existing data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromTopic();
+        });
+        
+        // Add responsive design for mobile
+        if (window.innerWidth <= 768) {
+            const flexDiv = document.querySelector('div[style*="display: flex"]');
+            if (flexDiv) {
+                flexDiv.style.flexDirection = 'column';
+                flexDiv.style.gap = '10px';
+            }
+        }
+    </script>
 </body>
 </html>
