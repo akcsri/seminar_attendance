@@ -77,15 +77,32 @@
 <body>
     <div class="container">
         <p>{{ recipient.name }} 様</p>
-        <p>{{ seminar.title }} のご案内です。</p>
+        
+        <h2 style="color: #333; margin: 20px 0; font-size: 20px;">{{ seminar.title }}</h2>
         
         <div class="seminar-details">
-            <strong>セミナー詳細</strong><br>
-            日時: {{ seminar.date }}<br>
-            会場: {{ seminar.venue }}<br>
-            講師: {{ seminar.speaker }}<br>
-            演題: {{ seminar.topic }}<br>
-            連絡先: {{ seminar.contact }}
+            <strong style="font-size: 16px; color: #333;">日時:</strong><br>
+            {{ seminar.date.strftime('%m月%d日(%a)') if seminar.date else '日時未定' }}<br>
+            <!-- Note: 開場・開始・終了時刻は現在のDBでは単一のdateフィールドのため、時刻部分を表示 -->
+            {{ seminar.date.strftime('%H:%M') if seminar.date else '' }}開始<br><br>
+            
+            <strong style="font-size: 16px; color: #333;">場所:</strong><br>
+            {{ seminar.venue | replace('\n', '<br>') | safe if seminar.venue else '会場未定' }}<br><br>
+            
+            {% if seminar.speaker %}
+            <strong style="font-size: 16px; color: #333;">ゲストスピーカー:</strong><br>
+            {{ seminar.speaker }}<br><br>
+            {% endif %}
+            
+            {% if seminar.topic %}
+            <strong style="font-size: 16px; color: #333;">演題:</strong><br>
+            {{ seminar.topic }}<br><br>
+            {% endif %}
+        </div>
+        
+        <div style="margin: 20px 0; padding: 15px; background-color: #f0f8ff; border-left: 4px solid #333; border-radius: 4px;">
+            <p style="margin: 0; font-weight: bold;">**当日は軽食をご用意しています。</p>
+            <p style="margin: 10px 0 0 0;">講演後に質疑応答/ディスカッションを予定していますので、発言される際はお名前と現在の所属/役職もお願いします。</p>
         </div>
         
         <p>以下のボタンから出欠をご回答ください。</p>
