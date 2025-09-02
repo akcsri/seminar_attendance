@@ -217,7 +217,8 @@
             <td>{{ s.date.strftime('%Y-%m-%d %H:%M') if s.date else '' }}</td>
             <td><span style="color: #007bff; font-weight: bold;">{{ f.open_time if f.open_time else '-' }}</span></td>
             <td><span style="color: #dc3545; font-weight: bold;">{{ f.end_time if f.end_time else '-' }}</span></td>
-            <td>{{ s.venue }}</td>
+            <td>{{ s.venue | replace('
+', '<br>') | safe }}</td>
             <td>
                 {{ s.speaker }}
                 {% if f.speaker_bio %}

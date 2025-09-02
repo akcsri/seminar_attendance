@@ -96,7 +96,7 @@
             <small style="color: #666;">※ 開始時刻を設定してください。開場時刻や終了時刻は「トピック」欄に記載可能です。</small><br><br>
             
             <label>会場:</label><br>
-            <input type="text" name="venue" value="{{ seminar.venue }}" placeholder="例: 東京国際フォーラム ホールA"><br>
+            <textarea name="venue" rows="4" cols="60">{{ seminar.venue or '' }}</textarea><br>
             <small style="color: #666;">※ 詳細な住所や交通アクセスも記載可能です。</small><br><br>
             
             <label>講師:</label><br>

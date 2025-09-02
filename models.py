@@ -28,7 +28,7 @@ class Seminar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
     date = db.Column(db.DateTime)
-    venue = db.Column(db.String(200))
+    venue = db.Column(db.Text)
     speaker = db.Column(db.String(100))
     topic = db.Column(db.String(200))
     contact = db.Column(db.String(100))
