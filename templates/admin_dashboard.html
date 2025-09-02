@@ -237,7 +237,7 @@
         <h3>📧 案内メール送信</h3>
         <form action="/send_invitation_emails" method="post" id="emailForm">
             <label>
-                <input type="checkbox" id="selectAll" checked> 全選択/全解除
+                <input type="checkbox" id="selectAll"> 全選択/全解除
             </label>
             <br><br>
             <label for="seminar_select">送信対象セミナー:</label>
@@ -256,7 +256,7 @@
         <h3>✅ 確認メール送信</h3>
         <form action="/send_confirmation_emails" method="post" id="confirmationEmailForm">
             <label>
-                <input type="checkbox" id="selectAllConfirmation" checked> 全選択/全解除
+                <input type="checkbox" id="selectAllConfirmation"> 全選択/全解除
             </label>
             <br><br>
             <label for="confirmation_seminar_select">送信対象セミナー:</label>
@@ -279,10 +279,10 @@
             {% for r in recipients %}
             <tr>
                 <td>
-                    <input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="recipient-checkbox" checked form="emailForm">
+                    <input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="recipient-checkbox" form="emailForm">
                 </td>
                 <td>
-                    <input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="confirmation-checkbox" checked form="confirmationEmailForm">
+                    <input type="checkbox" name="recipient_ids" value="{{ r.id }}" class="confirmation-checkbox" form="confirmationEmailForm">
                 </td>
                 <td>{{ r.id }}</td>
                 <td>{{ r.name }}</td>
