@@ -11,6 +11,11 @@ def respond():
     seminar_id = request.args.get('seminar_id')
     recipient_id = request.args.get('recipient_id')
     status = request.args.get('status')
+    
+    # Get seminar and recipient information for context
+    seminar = Seminar.query.get(seminar_id)
+    recipient = Recipient.query.get(recipient_id)
+    
     attendance = Attendance.query.filter_by(seminar_id=seminar_id, recipient_id=recipient_id).first()
     if attendance:
         attendance.status = status
@@ -18,7 +23,17 @@ def respond():
         attendance = Attendance(seminar_id=seminar_id, recipient_id=recipient_id, status=status)
         db.session.add(attendance)
     db.session.commit()
-    return render_template('confirm.html', seminar_id=seminar_id, recipient_id=recipient_id)
+    
+    # Get formatted seminar info including structured data
+    formatted_seminar = get_formatted_seminar_info(seminar) if seminar else {}
+    
+    return render_template('confirm.html', 
+                         seminar_id=seminar_id, 
+                         recipient_id=recipient_id,
+                         seminar=seminar,
+                         recipient=recipient,
+                         formatted_seminar=formatted_seminar,
+                         status=status)
 
 @app.route('/confirm')
 def confirm():

@@ -185,10 +185,127 @@
                 min-height: 120px;
             }
         }
+
+        /* Enhanced focus states for better accessibility */
+        textarea:focus {
+            border-color: #333;
+            outline: none;
+            box-shadow: 0 0 8px rgba(51,51,51,0.3);
+        }
+
+        button:focus {
+            outline: 2px solid #333;
+            outline-offset: 2px;
+        }
+
+        /* Improved animation for button press */
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* Better spacing for very small screens */
+        @media screen and (max-width: 320px) {
+            body {
+                margin: 2px;
+                font-size: 13px;
+            }
+            .container {
+                padding: 12px;
+            }
+            h2 {
+                font-size: 1.1em;
+                margin-bottom: 15px;
+            }
+            label {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+            textarea {
+                min-height: 90px;
+                padding: 10px;
+                font-size: 16px;
+            }
+            button {
+                padding: 14px 16px;
+                font-size: 15px;
+                margin-top: 14px;
+            }
+        }
+
+        /* Dark mode support for better accessibility */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a;
+                color: #e0e0e0;
+            }
+            .container {
+                background-color: #2d2d2d;
+                border: 1px solid #404040;
+            }
+            h2 {
+                color: #f0f0f0;
+            }
+            label {
+                color: #d0d0d0;
+            }
+            textarea {
+                background-color: #404040;
+                border-color: #606060;
+                color: #e0e0e0;
+            }
+            textarea:focus {
+                border-color: #80a0ff;
+                box-shadow: 0 0 8px rgba(128, 160, 255, 0.3);
+            }
+            button {
+                background-color: #4a4a4a;
+                color: #f0f0f0;
+            }
+            button:hover {
+                background-color: #5a5a5a;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        {% if seminar %}
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #333;">
+            <h3 style="margin: 0 0 10px 0; color: #333; font-size: 1.1em;">📅 {{ seminar.title }}</h3>
+            <div style="font-size: 0.9em; color: #666; line-height: 1.4;">
+                <p style="margin: 5px 0;"><strong>日時:</strong> {{ seminar.date.strftime('%Y年%m月%d日 %H:%M') if seminar.date else '未定' }}</p>
+                {% if formatted_seminar.open_time or formatted_seminar.end_time %}
+                <p style="margin: 5px 0;">
+                    <strong>時間:</strong>
+                    {% if formatted_seminar.open_time %}<span style="color: #007bff;">開場 {{ formatted_seminar.open_time }}</span>{% endif %}
+                    {% if formatted_seminar.open_time and formatted_seminar.end_time %} | {% endif %}
+                    {% if formatted_seminar.end_time %}<span style="color: #dc3545;">終了 {{ formatted_seminar.end_time }}</span>{% endif %}
+                </p>
+                {% endif %}
+                {% if seminar.venue %}
+                <p style="margin: 5px 0;"><strong>会場:</strong> {{ seminar.venue }}</p>
+                {% endif %}
+                {% if seminar.speaker %}
+                <p style="margin: 5px 0;"><strong>講師:</strong> {{ seminar.speaker }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if status %}
+        <div style="background-color: #e8f5e8; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+            <h3 style="margin: 0; color: #155724; font-size: 1.1em;">
+                ✅ 
+                {% if status == 'attend' %}参加
+                {% elif status == 'absent' %}欠席
+                {% elif status == 'pending' %}保留
+                {% else %}{{ status }}{% endif %}
+                として登録されました
+            </h3>
+        </div>
+        {% endif %}
+        
         <h2>出欠状況を更新しました。</h2>
         <form action="/submit_comment" method="POST">
             <input type="hidden" name="seminar_id" value="{{ seminar_id }}">
