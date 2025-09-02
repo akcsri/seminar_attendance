@@ -83,7 +83,6 @@
         <div class="seminar-details">
             <strong style="font-size: 16px; color: #333;">日時:</strong><br>
             {{ seminar.date.strftime('%m月%d日(%a)') if seminar.date else '日時未定' }}<br>
-            <!-- Note: 開場・開始・終了時刻は現在のDBでは単一のdateフィールドのため、時刻部分を表示 -->
             {{ seminar.date.strftime('%H:%M') if seminar.date else '' }}開始<br><br>
             
             <strong style="font-size: 16px; color: #333;">場所:</strong><br>
@@ -91,12 +90,17 @@
             
             {% if seminar.speaker %}
             <strong style="font-size: 16px; color: #333;">ゲストスピーカー:</strong><br>
-            {{ seminar.speaker }}<br><br>
+            {{ seminar.speaker | replace('\n', '<br>') | safe }}<br><br>
             {% endif %}
             
             {% if seminar.topic %}
-            <strong style="font-size: 16px; color: #333;">演題:</strong><br>
-            {{ seminar.topic }}<br><br>
+            <strong style="font-size: 16px; color: #333;">詳細:</strong><br>
+            {{ seminar.topic | replace('\n', '<br>') | safe }}<br><br>
+            {% endif %}
+            
+            {% if seminar.contact %}
+            <strong style="font-size: 16px; color: #333;">お問い合わせ:</strong><br>
+            {{ seminar.contact | replace('\n', '<br>') | safe }}<br><br>
             {% endif %}
         </div>
         
