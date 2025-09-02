@@ -5,70 +5,228 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>セミナーのご案内</title>
     <style>
+        /* Import premium fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600&family=Source+Sans+Pro:wght@400;600&display=swap');
+        
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+            font-family: 'Noto Serif JP', 'Source Sans Pro', Georgia, serif;
+            line-height: 1.7;
             margin: 0;
             padding: 20px;
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
         }
         .container {
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
-            background-color: white;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border-top: 4px solid #1a365d;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .recipient-name {
+            font-size: 18px;
+            color: #1a365d;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .seminar-title {
+            color: #1a365d;
+            margin: 25px 0;
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.4;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .seminar-details {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             padding: 30px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid #d4af37;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .detail-label {
+            font-size: 17px;
+            color: #1a365d;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .date-time {
+            font-weight: 700;
+            color: #1a365d;
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .start-time {
+            font-weight: 700;
+            color: #d4af37;
+            font-size: 16px;
+        }
+        .venue-info {
+            background-color: #ffffff;
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 10px 0;
+            border: 1px solid #e2e8f0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .speaker-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+        }
+        .speaker-bio {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 6px;
+            border-left: 3px solid #4a5568;
+            font-style: italic;
+        }
+        .info-notice {
+            margin: 25px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%);
+            border-left: 5px solid #1a365d;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .notice-text {
+            margin: 0;
+            font-weight: 600;
+            color: #1a365d;
+            font-size: 16px;
+        }
+        .notice-detail {
+            margin: 12px 0 0 0;
+            color: #4a5568;
+            font-size: 15px;
         }
         .btn {
             display: inline-block;
-            padding: 12px 24px;
-            margin: 8px 8px 8px 0;
+            padding: 15px 28px;
+            margin: 10px 8px 10px 0;
             text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-weight: 600;
             text-align: center;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .btn-primary {
-            background-color: #333333;
+            background: linear-gradient(135deg, #1a365d 0%, #2d4a7a 100%);
             color: white;
+            border: 2px solid #1a365d;
         }
         .btn-primary:hover {
-            background-color: #222222;
+            background: linear-gradient(135deg, #0f2a44 0%, #1a365d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         .btn-danger {
-            background-color: #666666;
+            background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
             color: white;
+            border: 2px solid #718096;
         }
         .btn-danger:hover {
-            background-color: #555555;
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         .btn-warning {
-            background-color: #cccccc;
-            color: #333333;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941a 100%);
+            color: #1a365d;
+            border: 2px solid #d4af37;
+            font-weight: 600;
         }
         .btn-warning:hover {
-            background-color: #bbbbbb;
-        }
-        .seminar-details {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin: 20px 0;
+            background: linear-gradient(135deg, #b8941a 0%, #9c7c0f 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
         }
         .button-container {
             text-align: center;
-            margin-top: 30px;
+            margin: 35px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .button-instruction {
+            margin-bottom: 20px;
+            font-size: 17px;
+            color: #1a365d;
+            font-weight: 500;
+        }
+        .fallback-links {
+            margin-top: 35px;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .fallback-text {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .fallback-links ul {
+            font-size: 13px;
+            color: #718096;
+            margin: 0;
+            padding-left: 20px;
+        }
+        .fallback-links li {
+            margin-bottom: 8px;
+        }
+        .fallback-links a {
+            color: #4a5568;
+            word-break: break-all;
+            text-decoration: underline;
         }
         @media (max-width: 600px) {
             .container {
-                padding: 20px;
+                padding: 25px 20px;
                 margin: 10px;
+                border-radius: 8px;
+            }
+            .seminar-title {
+                font-size: 20px;
+                padding: 10px;
+            }
+            .seminar-details {
+                padding: 20px;
             }
             .btn {
                 display: block;
-                margin: 10px 0;
+                margin: 12px 0;
+                padding: 18px;
+                font-size: 16px;
+            }
+            .button-container {
+                padding: 20px 15px;
+            }
+            .venue-info, .speaker-section {
                 padding: 15px;
             }
         }
@@ -76,75 +234,83 @@
 </head>
 <body>
     <div class="container">
-        <p>{{ recipient.name }} 様</p>
+        <div class="header">
+            <p class="recipient-name">{{ recipient.name }} 様</p>
+        </div>
         
-        <h2 style="color: #333; margin: 20px 0; font-size: 20px;">{{ seminar.title }}</h2>
+        <h2 class="seminar-title">{{ seminar.title }}</h2>
         
         <div class="seminar-details">
-            <strong style="font-size: 16px; color: #333;">日時:</strong><br>
-            {{ seminar.date.strftime('%m月%d日(%a)') if seminar.date else '日時未定' }}<br>
+            <strong class="detail-label">📅 日時:</strong><br>
+            <div class="date-time">{{ seminar.date | japanese_date if seminar.date else '日時未定' }}</div>
             {% if formatted_seminar.open_time or formatted_seminar.end_time %}
-            {% if formatted_seminar.open_time %}開場: {{ formatted_seminar.open_time }}<br>{% endif %}
+            {% if formatted_seminar.open_time %}<div style="margin: 8px 0; color: #4a5568; font-weight: 500;">開場: {{ formatted_seminar.open_time }}</div>{% endif %}
             {% endif %}
-            {{ seminar.date.strftime('%H:%M') if seminar.date else '' }}開始<br>
-            {% if formatted_seminar.end_time %}終了: {{ formatted_seminar.end_time }}<br>{% endif %}
+            <div class="start-time">{{ seminar.date | japanese_time if seminar.date else '' }}開始</div>
+            {% if formatted_seminar.end_time %}<div style="margin: 8px 0; color: #4a5568; font-weight: 500;">終了: {{ formatted_seminar.end_time }}</div>{% endif %}
             <br>
             
-            <strong style="font-size: 16px; color: #333;">場所:</strong><br>
-            {{ seminar.venue | replace('\n', '<br>') | safe if seminar.venue else '会場未定' }}<br><br>
+            <strong class="detail-label">📍 場所:</strong><br>
+            <div class="venue-info">
+                {{ seminar.venue | replace('\n', '<br>') | safe if seminar.venue else '会場未定' }}
+            </div>
             
             {% if seminar.speaker or formatted_seminar.speaker_bio %}
-            <strong style="font-size: 16px; color: #333;">ゲストスピーカー:</strong><br>
-            {{ seminar.speaker | replace('\n', '<br>') | safe }}<br>
-            {% if formatted_seminar.speaker_bio %}
-            <div style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-radius: 4px;">
-            {{ formatted_seminar.speaker_bio | replace('\n', '<br>') | safe }}
+            <strong class="detail-label">🎤 ゲストスピーカー:</strong><br>
+            <div class="speaker-section">
+                {{ seminar.speaker | replace('\n', '<br>') | safe }}
+                {% if formatted_seminar.speaker_bio %}
+                <div class="speaker-bio">
+                    {{ formatted_seminar.speaker_bio | replace('\n', '<br>') | safe }}
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
-            <br>
             {% endif %}
             
             {% if formatted_seminar.description or seminar.topic %}
-            <strong style="font-size: 16px; color: #333;">詳細情報:</strong><br>
-            {% if formatted_seminar.description %}
-            {{ formatted_seminar.description | replace('\n', '<br>') | safe }}<br>
-            {% else %}
-            {{ seminar.topic | replace('\n', '<br>') | safe }}<br>
-            {% endif %}
-            <br>
+            <strong class="detail-label">📋 詳細情報:</strong><br>
+            <div class="venue-info">
+                {% if formatted_seminar.description %}
+                {{ formatted_seminar.description | replace('\n', '<br>') | safe }}
+                {% else %}
+                {{ seminar.topic | replace('\n', '<br>') | safe }}
+                {% endif %}
+            </div>
             {% endif %}
             
             {% if seminar.contact %}
-            <strong style="font-size: 16px; color: #333;">お問い合わせ:</strong><br>
-            {{ seminar.contact | replace('\n', '<br>') | safe }}<br><br>
+            <strong class="detail-label">📞 お問い合わせ:</strong><br>
+            <div class="venue-info">
+                {{ seminar.contact | replace('\n', '<br>') | safe }}
+            </div>
             {% endif %}
         </div>
         
-        <div style="margin: 20px 0; padding: 15px; background-color: #f0f8ff; border-left: 4px solid #333; border-radius: 4px;">
-            <p style="margin: 0; font-weight: bold;">**当日は軽食をご用意しています。</p>
-            <p style="margin: 10px 0 0 0;">講演後に質疑応答/ディスカッションを予定していますので、発言される際はお名前と現在の所属/役職もお願いします。</p>
+        <div class="info-notice">
+            <p class="notice-text">✨ 当日は軽食をご用意しています。</p>
+            <p class="notice-detail">講演後に質疑応答/ディスカッションを予定していますので、発言される際はお名前と現在の所属/役職もお願いします。</p>
         </div>
         
-        <p>以下のボタンから出欠をご回答ください。</p>
-        
         <div class="button-container">
+            <p class="button-instruction">以下のボタンから出欠をご回答ください。</p>
+            
             <!--[if mso]>
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                 <tr>
-                    <td style="border-radius: 5px; background: #333333; padding: 0;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="background: #333333; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
+                    <td style="border-radius: 8px; background: linear-gradient(135deg, #1a365d 0%, #2d4a7a 100%); padding: 0;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="background: linear-gradient(135deg, #1a365d 0%, #2d4a7a 100%); color: white; font-family: 'Noto Serif JP', Georgia, serif; font-size: 16px; font-weight: 600; text-decoration: none; padding: 15px 28px; border-radius: 8px; display: inline-block; mso-padding-alt: 0; text-align: center;">
                             <span style="mso-text-raise: 4px;">✓ 出席</span>
                         </a>
                     </td>
-                    <td width="10"></td>
-                    <td style="border-radius: 5px; background: #666666; padding: 0;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="background: #666666; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
+                    <td width="15"></td>
+                    <td style="border-radius: 8px; background: linear-gradient(135deg, #718096 0%, #4a5568 100%); padding: 0;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="background: linear-gradient(135deg, #718096 0%, #4a5568 100%); color: white; font-family: 'Noto Serif JP', Georgia, serif; font-size: 16px; font-weight: 600; text-decoration: none; padding: 15px 28px; border-radius: 8px; display: inline-block; mso-padding-alt: 0; text-align: center;">
                             <span style="mso-text-raise: 4px;">✗ 欠席</span>
                         </a>
                     </td>
-                    <td width="10"></td>
-                    <td style="border-radius: 5px; background: #cccccc; padding: 0;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="background: #cccccc; color: #333333; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
+                    <td width="15"></td>
+                    <td style="border-radius: 8px; background: linear-gradient(135deg, #d4af37 0%, #b8941a 100%); padding: 0;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="background: linear-gradient(135deg, #d4af37 0%, #b8941a 100%); color: #1a365d; font-family: 'Noto Serif JP', Georgia, serif; font-size: 16px; font-weight: 600; text-decoration: none; padding: 15px 28px; border-radius: 8px; display: inline-block; mso-padding-alt: 0; text-align: center;">
                             <span style="mso-text-raise: 4px;">? 保留</span>
                         </a>
                     </td>
@@ -154,34 +320,33 @@
             <!--[if !mso]><!-- -->
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                 <tr>
-                    <td style="border-radius: 5px; background: #333333; padding: 0; margin: 0 5px;">
+                    <td style="border-radius: 8px; background: linear-gradient(135deg, #1a365d 0%, #2d4a7a 100%); padding: 0; margin: 0 8px;">
                         <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" 
-                           class="btn btn-primary"
-                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #333333; color: white; font-family: Arial, sans-serif;">✓ 出席</a>
+                           class="btn btn-primary">✓ 出席</a>
                     </td>
-                    <td style="border-radius: 5px; background: #666666; padding: 0; margin: 0 5px;">
+                    <td style="border-radius: 8px; background: linear-gradient(135deg, #718096 0%, #4a5568 100%); padding: 0; margin: 0 8px;">
                         <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" 
-                           class="btn btn-danger"
-                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #666666; color: white; font-family: Arial, sans-serif;">✗ 欠席</a>
+                           class="btn btn-danger">✗ 欠席</a>
                     </td>
-                    <td style="border-radius: 5px; background: #cccccc; padding: 0; margin: 0 5px;">
+                    <td style="border-radius: 8px; background: linear-gradient(135deg, #d4af37 0%, #b8941a 100%); padding: 0; margin: 0 8px;">
                         <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" 
-                           class="btn btn-warning"
-                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #cccccc; color: #333333; font-family: Arial, sans-serif;">? 保留</a>
+                           class="btn btn-warning">? 保留</a>
                     </td>
                 </tr>
             </table>
             <!--<![endif]-->
         </div>
         
-        <p style="font-size: 12px; color: #666; margin-top: 30px;">
-            ※ ボタンが機能しない場合は、以下のリンクをコピーしてブラウザのアドレスバーに貼り付けてください：
-        </p>
-        <ul style="font-size: 12px; color: #666; margin-top: 10px; padding-left: 20px;">
-            <li style="margin-bottom: 5px;">出席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="color: #333333; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend</a></li>
-            <li style="margin-bottom: 5px;">欠席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="color: #666666; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent</a></li>
-            <li style="margin-bottom: 5px;">保留: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="color: #999999; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending</a></li>
-        </ul>
+        <div class="fallback-links">
+            <p class="fallback-text">
+                ※ ボタンが機能しない場合は、以下のリンクをコピーしてブラウザのアドレスバーに貼り付けてください：
+            </p>
+            <ul>
+                <li>出席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend</a></li>
+                <li>欠席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent</a></li>
+                <li>保留: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending</a></li>
+            </ul>
+        </div>
     </div>
 </body>
 </html>
