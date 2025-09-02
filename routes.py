@@ -445,3 +445,4 @@ def export_attendance_csv():
     except Exception as e:
         flash(f'出欠CSVエクスポート中にエラーが発生しました: {str(e)}', 'error')
         return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('admin_dashboard'))
