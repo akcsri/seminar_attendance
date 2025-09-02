@@ -29,5 +29,12 @@ Thumbs.db
 *.tmp
 *.temp
 
+# Confirmation email cache files
+confirmation_emails_sent.txt
+
+# Test files
+create_test_seminar.py
+test_duplicate_prevention.py
+
 # Logs
 *.log
