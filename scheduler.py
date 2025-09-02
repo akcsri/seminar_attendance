@@ -17,15 +17,42 @@ def send_confirmation_emails():
     with app.app_context():
         now = datetime.now()
         
-        # Target seminars starting in 14-16 minutes (2-minute window around 15 minutes)
-        start_window = now + timedelta(minutes=14)
-        end_window = now + timedelta(minutes=16)
+        # Target seminars starting in 13-17 minutes (4-minute window around 15 minutes)
+        # Expanded from 14-16 to handle second-level timing precision issues
+        start_window = now + timedelta(minutes=13)
+        end_window = now + timedelta(minutes=17)
+        
+        # Enhanced logging for debugging
+        print(f"🕐 Scheduler running at: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"🎯 Looking for seminars between: {start_window.strftime('%Y-%m-%d %H:%M:%S')} - {end_window.strftime('%Y-%m-%d %H:%M:%S')}")
         
         # Find seminars starting within the target window
         upcoming = Seminar.query.filter(
             Seminar.date >= start_window,
             Seminar.date <= end_window
         ).all()
+        
+        # Enhanced logging for seminar detection
+        all_seminars = Seminar.query.all()
+        print(f"📊 Total seminars in database: {len(all_seminars)}")
+        print(f"🔍 Seminars found in target window: {len(upcoming)}")
+        
+        if upcoming:
+            for seminar in upcoming:
+                time_until_start = seminar.date - now
+                minutes_until = time_until_start.total_seconds() / 60
+                print(f"📅 Found seminar: '{seminar.title}' starts at {seminar.date.strftime('%Y-%m-%d %H:%M:%S')} ({minutes_until:.1f} minutes from now)")
+        else:
+            # Show next upcoming seminars for debugging
+            future_seminars = Seminar.query.filter(Seminar.date > now).order_by(Seminar.date).limit(3).all()
+            if future_seminars:
+                print("🔮 Next upcoming seminars:")
+                for seminar in future_seminars:
+                    time_until_start = seminar.date - now
+                    minutes_until = time_until_start.total_seconds() / 60
+                    print(f"   '{seminar.title}' starts at {seminar.date.strftime('%Y-%m-%d %H:%M:%S')} ({minutes_until:.1f} minutes from now)")
+            else:
+                print("🚫 No future seminars found in database")
         
         total_sent = 0
         total_errors = 0
