@@ -8,20 +8,50 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f8f9fa;
+            line-height: 1.6;
         }
-        input[type="text"] {
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"], input[type="datetime-local"], textarea {
             border: 1px solid #ccc;
-            padding: 8px;
+            padding: 10px;
             border-radius: 4px;
-            width: 300px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        small {
+            display: block;
+            margin: 5px 0;
+            font-style: italic;
         }
         input[type="submit"] {
             background-color: #333333;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
         }
         input[type="submit"]:hover {
             background-color: #222222;
@@ -29,30 +59,62 @@
         a {
             color: #333333;
             text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
         }
         a:hover {
             text-decoration: underline;
         }
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+        
+        /* Mobile responsiveness */
+        @media screen and (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            input[type="text"], input[type="datetime-local"], textarea {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
     </style>
 </head>
 <body>
-    <h2>セミナー情報の編集</h2>
-    <form method="POST" action="/edit_seminar/{{ seminar.id }}">
-        <label>タイトル:</label><br>
-        <input type="text" name="title" value="{{ seminar.title }}"><br><br>
-        <label>日時:</label><br>
-        <input type="text" name="date" value="{{ seminar.date }}"><br><br>
-        <label>会場:</label><br>
-        <input type="text" name="venue" value="{{ seminar.venue }}"><br><br>
-        <label>講師:</label><br>
-        <input type="text" name="speaker" value="{{ seminar.speaker }}"><br><br>
-        <label>トピック:</label><br>
-        <input type="text" name="topic" value="{{ seminar.topic }}"><br><br>
-        <label>連絡先:</label><br>
-        <input type="text" name="contact" value="{{ seminar.contact }}"><br><br>
-        <input type="submit" value="更新">
-    </form>
-    <br>
-    <a href="/admin">管理画面に戻る</a>
+    <div class="container">
+        <h2>セミナー情報の編集</h2>
+        <form method="POST" action="/edit_seminar/{{ seminar.id }}">
+            <label>タイトル:</label><br>
+            <input type="text" name="title" value="{{ seminar.title }}" placeholder="例: 最新AI技術セミナー"><br><br>
+            
+            <label>日時:</label><br>
+            <input type="datetime-local" name="date" value="{{ seminar.date.strftime('%Y-%m-%dT%H:%M') if seminar.date else '' }}" title="開始時刻を設定してください"><br>
+            <small style="color: #666;">※ 開始時刻を設定してください。開場時刻や終了時刻は「トピック」欄に記載可能です。</small><br><br>
+            
+            <label>会場:</label><br>
+            <input type="text" name="venue" value="{{ seminar.venue }}" placeholder="例: 東京国際フォーラム ホールA"><br>
+            <small style="color: #666;">※ 詳細な住所や交通アクセスも記載可能です。</small><br><br>
+            
+            <label>講師:</label><br>
+            <input type="text" name="speaker" value="{{ seminar.speaker }}" placeholder="例: 田中博士 (東京大学)"><br>
+            <small style="color: #666;">※ 肩書きや所属も併記可能です。</small><br><br>
+            
+            <label>トピック:</label><br>
+            <textarea name="topic" rows="4" placeholder="例: 最新のAI技術動向について&#10;&#10;【講師プロフィール】&#10;田中博士は機械学習分野の第一人者として...&#10;&#10;【開場時刻】18:00 【終了予定】20:00">{{ seminar.topic }}</textarea><br>
+            <small style="color: #666;">※ 講師の経歴、開場・終了時刻なども併記可能です。改行で情報を整理してください。</small><br><br>
+            
+            <label>連絡先:</label><br>
+            <input type="text" name="contact" value="{{ seminar.contact }}" placeholder="例: seminar@example.com / 03-1234-5678"><br>
+            <small style="color: #666;">※ メールアドレスや電話番号を記載してください。</small><br><br>
+            
+            <input type="submit" value="更新">
+        </form>
+        <br>
+        <a href="/admin">管理画面に戻る</a>
+    </div>
 </body>
 </html>

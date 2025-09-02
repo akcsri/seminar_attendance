@@ -227,15 +227,46 @@
     </table>
 
     <h3>セミナーの新規登録</h3>
-    <form action="/add_seminar" method="post">
-        タイトル: <input type="text" name="title" required>
-        日時: <input type="datetime-local" name="date" required>
-        会場: <input type="text" name="venue">
-        講師: <input type="text" name="speaker">
-        トピック: <input type="text" name="topic">
-        連絡先: <input type="text" name="contact">
-        <button type="submit">登録</button>
-    </form>
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 15px 0;">
+        <form action="/add_seminar" method="post" style="display: grid; gap: 15px;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">タイトル <span style="color: red;">*</span>:</label>
+                <input type="text" name="title" required placeholder="例: 最新AI技術セミナー" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">日時 <span style="color: red;">*</span>:</label>
+                <input type="datetime-local" name="date" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <small style="color: #666; font-style: italic;">※ 開始時刻を設定してください。開場・終了時刻は「トピック」欄に記載できます。</small>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">会場:</label>
+                <input type="text" name="venue" placeholder="例: 東京国際フォーラム ホールA" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <small style="color: #666; font-style: italic;">※ 詳細な住所や交通アクセスも記載可能です。</small>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">講師:</label>
+                <input type="text" name="speaker" placeholder="例: 田中博士 (東京大学)" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <small style="color: #666; font-style: italic;">※ 肩書きや所属も併記可能です。</small>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">トピック:</label>
+                <textarea name="topic" rows="3" placeholder="例: 最新のAI技術動向について&#10;&#10;【講師プロフィール】&#10;田中博士は機械学習分野の第一人者として...&#10;&#10;【開場時刻】18:00 【終了予定】20:00" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; resize: vertical;"></textarea>
+                <small style="color: #666; font-style: italic;">※ 講師の経歴、開場・終了時刻なども併記可能です。改行で情報を整理してください。</small>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">連絡先:</label>
+                <input type="text" name="contact" placeholder="例: seminar@example.com / 03-1234-5678" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <small style="color: #666; font-style: italic;">※ メールアドレスや電話番号を記載してください。</small>
+            </div>
+            
+            <button type="submit" class="btn-primary" style="padding: 12px 25px; font-size: 16px;">登録</button>
+        </form>
+    </div>
 
     <h2>出欠情報</h2>
     <table>
