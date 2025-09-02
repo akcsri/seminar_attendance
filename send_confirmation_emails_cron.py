@@ -47,7 +47,7 @@ def load_sent_emails_cache():
     try:
         if os.path.exists(cache_file):
             # Only load entries from today to prevent old data accumulation
-            today = datetime.now().strftime('%Y-%m-%d')
+            today = datetime.utcnow() + timedelta(hours=9).strftime('%Y-%m-%d')
             with open(cache_file, 'r') as f:
                 for line in f:
                     line = line.strip()
@@ -63,7 +63,7 @@ def load_sent_emails_cache():
 def save_sent_email_to_cache(email_key):
     """Save sent email to cache file for cross-environment duplicate prevention."""
     cache_file = '/tmp/confirmation_emails_sent.txt'
-    today = datetime.now().strftime('%Y-%m-%d')
+    today = datetime.utcnow() + timedelta(hours=9).strftime('%Y-%m-%d')
     
     try:
         with open(cache_file, 'a') as f:
@@ -79,8 +79,8 @@ def cleanup_old_cache_entries():
         if not os.path.exists(cache_file):
             return
             
-        today = datetime.now().strftime('%Y-%m-%d')
-        yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        today = datetime.utcnow() + timedelta(hours=9).strftime('%Y-%m-%d')
+        yesterday = (datetime.utcnow() + timedelta(hours=9) - timedelta(days=1)).strftime('%Y-%m-%d')
         
         # Read all lines and keep only today's and yesterday's entries
         with open(cache_file, 'r') as f:
@@ -109,12 +109,12 @@ def send_confirmation_emails_cron():
     app = create_app()
     
     with app.app_context():
-        print(f"🕐 Starting confirmation email cron job at {datetime.now()}")
+        print(f"🕐 Starting confirmation email cron job at {datetime.utcnow() + timedelta(hours=9)}")
         
         # Load cross-environment duplicate prevention cache
         sent_emails_cache = load_sent_emails_cache()
         
-        now = datetime.now()
+        now = datetime.utcnow() + timedelta(hours=9)
         
         # Target seminars starting in 14-16 minutes (2-minute window around 15 minutes)
         start_window = now + timedelta(minutes=14)
