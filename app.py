@@ -5,26 +5,33 @@ from flask_apscheduler import APScheduler
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # ← ここを追加！
+load_dotenv()
 
-from models import db  # models.py で定義された db を使う
-from config import Config  # ← ここでConfigを読み込む
+from models import db
+from config import Config
 
 app = Flask(__name__)
-app.config.from_object(Config)  # ← 文字列ではなくクラスを直接渡す
+app.config.from_object(Config)
 
-# 正しい初期化順序
+# Initialize extensions
 db.init_app(app)
 mail = Mail(app)
 scheduler = APScheduler()
 scheduler.init_app(app)
-scheduler.start()
 
+# Import routes
 from routes import *
-# Import scheduler tasks to register them
-import scheduler
 
+# Start scheduler after everything is set up
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        # Import scheduler tasks after app context is available
+        import scheduler as scheduler_tasks
+        scheduler.start()
     app.run(debug=True)
+else:
+    # For production/testing, import scheduler tasks and start scheduler
+    with app.app_context():
+        import scheduler as scheduler_tasks
+        scheduler.start()
