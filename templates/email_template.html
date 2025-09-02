@@ -5,119 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>セミナーのご案内</title>
     <style>
-        /* Import premium fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600&family=Source+Sans+Pro:wght@400;600&display=swap');
-        
         body {
-            font-family: 'Noto Serif JP', 'Source Sans Pro', Georgia, serif;
+            font-family: Arial, sans-serif;
             line-height: 1.7;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #2c3e50;
+            background: #ffffff;
+            color: #000000;
         }
         .container {
             max-width: 650px;
             margin: 0 auto;
             background-color: #ffffff;
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            border-top: 4px solid #1a365d;
+            border: 1px solid #cccccc;
         }
         .header {
             text-align: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 1px solid #cccccc;
         }
         .recipient-name {
             font-size: 18px;
-            color: #1a365d;
+            color: #000000;
             margin-bottom: 10px;
             font-weight: 500;
         }
         .seminar-title {
-            color: #1a365d;
+            color: #000000;
             margin: 25px 0;
             font-size: 24px;
             font-weight: 600;
             text-align: center;
             line-height: 1.4;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .seminar-details {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: #ffffff;
             padding: 30px;
-            border-radius: 10px;
+            border: 1px solid #cccccc;
             margin: 25px 0;
-            border-left: 5px solid #d4af37;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         .detail-label {
             font-size: 17px;
-            color: #1a365d;
+            color: #000000;
             font-weight: 600;
             margin-bottom: 8px;
             display: inline-block;
         }
         .date-time {
             font-weight: 700;
-            color: #1a365d;
+            color: #000000;
             font-size: 18px;
             margin: 5px 0;
         }
         .start-time {
             font-weight: 700;
-            color: #d4af37;
+            color: #000000;
             font-size: 16px;
         }
         .venue-info {
             background-color: #ffffff;
             padding: 15px;
-            border-radius: 8px;
+            border: 1px solid #cccccc;
             margin: 10px 0;
-            border: 1px solid #e2e8f0;
             font-size: 16px;
             line-height: 1.6;
         }
         .speaker-section {
             background-color: #ffffff;
             padding: 20px;
-            border-radius: 8px;
+            border: 1px solid #cccccc;
             margin: 15px 0;
-            border: 1px solid #e2e8f0;
         }
         .speaker-bio {
             margin-top: 15px;
             padding: 15px;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            border-radius: 6px;
-            border-left: 3px solid #4a5568;
+            background: #ffffff;
+            border: 1px solid #cccccc;
             font-style: italic;
         }
         .info-notice {
             margin: 25px 0;
             padding: 20px;
-            background: linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%);
-            border-left: 5px solid #1a365d;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: #ffffff;
+            border: 1px solid #cccccc;
         }
         .notice-text {
             margin: 0;
             font-weight: 600;
-            color: #1a365d;
+            color: #000000;
             font-size: 16px;
         }
         .notice-detail {
             margin: 12px 0 0 0;
-            color: #4a5568;
+            color: #000000;
             font-size: 15px;
         }
         .btn {
@@ -125,74 +108,67 @@
             padding: 15px 28px;
             margin: 10px 8px 10px 0;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 4px;
             font-weight: 600;
             text-align: center;
-            transition: all 0.3s ease;
             font-size: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid #000000;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #1a365d 0%, #2d4a7a 100%);
+            background: #000000;
             color: white;
-            border: 2px solid #1a365d;
+            border: 1px solid #000000;
         }
         .btn-primary:hover {
-            background: linear-gradient(135deg, #0f2a44 0%, #1a365d 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: #666666;
+            border: 1px solid #666666;
         }
         .btn-danger {
-            background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            background: #000000;
             color: white;
-            border: 2px solid #718096;
+            border: 1px solid #000000;
         }
         .btn-danger:hover {
-            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: #666666;
+            border: 1px solid #666666;
         }
         .btn-warning {
-            background: linear-gradient(135deg, #d4af37 0%, #b8941a 100%);
-            color: #1a365d;
-            border: 2px solid #d4af37;
-            font-weight: 600;
+            background: #666666;
+            color: white;
+            border: 1px solid #666666;
         }
         .btn-warning:hover {
-            background: linear-gradient(135deg, #b8941a 0%, #9c7c0f 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+            background: #000000;
+            border: 1px solid #000000;
         }
         .button-container {
             text-align: center;
             margin: 35px 0;
             padding: 25px;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            border: 1px solid #cccccc;
         }
         .button-instruction {
             margin-bottom: 20px;
             font-size: 17px;
-            color: #1a365d;
+            color: #000000;
             font-weight: 500;
         }
         .fallback-links {
             margin-top: 35px;
             padding: 20px;
-            background-color: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
         }
         .fallback-text {
             font-size: 13px;
-            color: #718096;
+            color: #000000;
             margin-bottom: 15px;
             font-style: italic;
         }
         .fallback-links ul {
             font-size: 13px;
-            color: #718096;
+            color: #000000;
             margin: 0;
             padding-left: 20px;
         }
@@ -200,7 +176,7 @@
             margin-bottom: 8px;
         }
         .fallback-links a {
-            color: #4a5568;
+            color: #000000;
             word-break: break-all;
             text-decoration: underline;
         }

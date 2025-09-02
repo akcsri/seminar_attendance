@@ -19,7 +19,7 @@
         button:hover {
             background-color: #222222;
         }
-        input[type="text"], input[type="email"], input[type="datetime-local"] {
+        input[type="text"], input[type="email"], input[type="datetime-local"], textarea {
             border: 1px solid #ccc;
             padding: 5px;
             border-radius: 3px;
@@ -82,7 +82,7 @@
     <form action="/add_seminar" method="post">
         タイトル: <input type="text" name="title">
         日時: <input type="datetime-local" name="date">
-        会場: <input type="text" name="venue">
+        会場: <textarea name="venue" rows="3"></textarea>
         講師: <input type="text" name="speaker">
         詳細情報: <input type="text" name="topic" placeholder="概要、講師経歴、時間等" style="width: 300px;">
         連絡先: <input type="text" name="contact">
