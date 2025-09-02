@@ -132,6 +132,11 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+        tr[data-status="error"] .status {
+            background-color: #dc3545;
+            color: #ffffff;
+            font-weight: bold;
+        }
         
         @media (max-width: 768px) {
             body {
@@ -213,6 +218,10 @@
                 <input class="status-checkbox" type="checkbox" value="absent"/>
                 欠席 <span class="status-count" id="count-absent">0</span>
             </label>
+            <label>
+                <input class="status-checkbox" type="checkbox" value="error"/>
+                エラー <span class="status-count" id="count-error">0</span>
+            </label>
         </div>
         
         <div class="table-container">
@@ -257,7 +266,7 @@
                 }
             });
 
-            ['attend', 'confirmed', 'pending', 'absent'].forEach(status => {
+            ['attend', 'confirmed', 'pending', 'absent', 'error'].forEach(status => {
                 const element = document.getElementById('count-' + status);
                 if (element) {
                     element.textContent = counts[status] || 0;

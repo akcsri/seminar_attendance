@@ -186,6 +186,16 @@ def send_invitation_emails():
                 except Exception as e:
                     error_count += 1
                     print(f"Error sending email to {recipient.email}: {e}")
+                    
+                    # Update attendance status to 'error' when email sending fails
+                    attendance = Attendance.query.filter_by(seminar_id=seminar_id, recipient_id=recipient_id).first()
+                    if attendance:
+                        attendance.status = 'error'
+                    else:
+                        # Create new attendance record with error status
+                        attendance = Attendance(seminar_id=seminar_id, recipient_id=recipient_id, status='error')
+                        db.session.add(attendance)
+                    db.session.commit()
         
         if sent_count > 0:
             flash(f'{sent_count}件の案内メールを送信しました。', 'success')
@@ -319,6 +329,16 @@ def send_confirmation_emails():
                 except Exception as e:
                     error_count += 1
                     print(f"Error sending confirmation email to {recipient.email}: {e}")
+                    
+                    # Update attendance status to 'error' when email sending fails
+                    attendance = Attendance.query.filter_by(seminar_id=seminar_id, recipient_id=recipient_id).first()
+                    if attendance:
+                        attendance.status = 'error'
+                    else:
+                        # Create new attendance record with error status
+                        attendance = Attendance(seminar_id=seminar_id, recipient_id=recipient_id, status='error')
+                        db.session.add(attendance)
+                    db.session.commit()
         
         if sent_count > 0:
             flash(f'{sent_count}件の確認メールを送信しました。', 'success')
