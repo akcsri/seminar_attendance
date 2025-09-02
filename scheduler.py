@@ -2,9 +2,42 @@ from app import scheduler, db
 from models import Seminar, Attendance, Recipient
 from mailer import send_confirmation_email
 from datetime import datetime, timedelta
+import os
 
 # Global set to track emails already sent in this session to prevent duplicates
 _sent_confirmation_emails = set()
+
+def load_sent_emails_cache():
+    """Load sent emails cache from file to prevent cross-environment duplicates."""
+    cache_file = '/tmp/confirmation_emails_sent.txt'
+    sent_emails = set()
+    
+    try:
+        if os.path.exists(cache_file):
+            # Only load entries from today to prevent old data accumulation
+            today = datetime.now().strftime('%Y-%m-%d')
+            with open(cache_file, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line.startswith(today):
+                        # Format: YYYY-MM-DD:seminar_id_recipient_id
+                        email_key = line.split(':', 1)[1] if ':' in line else line
+                        sent_emails.add(email_key)
+    except Exception as e:
+        print(f"⚠️ Warning: Could not load sent emails cache: {e}")
+    
+    return sent_emails
+
+def save_sent_email_to_cache(email_key):
+    """Save sent email to cache file for cross-environment duplicate prevention."""
+    cache_file = '/tmp/confirmation_emails_sent.txt'
+    today = datetime.now().strftime('%Y-%m-%d')
+    
+    try:
+        with open(cache_file, 'a') as f:
+            f.write(f"{today}:{email_key}\n")
+    except Exception as e:
+        print(f"⚠️ Warning: Could not save to sent emails cache: {e}")
 
 @scheduler.task('interval', id='send_confirmation_emails', minutes=1)
 def send_confirmation_emails():
@@ -15,6 +48,9 @@ def send_confirmation_emails():
     """
     from app import app
     with app.app_context():
+        # Load cross-environment duplicate prevention cache
+        sent_emails_cache = load_sent_emails_cache()
+        
         now = datetime.now()
         
         # Target seminars starting in 14-16 minutes (2-minute window around 15 minutes)
@@ -41,13 +77,14 @@ def send_confirmation_emails():
             seminar_sent = 0
             
             for attendee in attendees:
-                recipient = Recipient.query.get(attendee.recipient_id)
+                recipient = db.session.get(Recipient, attendee.recipient_id)
                 if recipient:
                     # Create unique key to prevent duplicate emails in this session
                     email_key = f"{seminar.id}_{recipient.id}"
                     
-                    if email_key in _sent_confirmation_emails:
-                        continue  # Skip if already sent in this session
+                    # Check both session cache and cross-environment cache
+                    if email_key in _sent_confirmation_emails or email_key in sent_emails_cache:
+                        continue  # Skip if already sent in this session or cross-environment
                     
                     try:
                         # Send confirmation email but do NOT change status
@@ -56,6 +93,7 @@ def send_confirmation_emails():
                         
                         # Mark as sent to prevent duplicates ONLY after successful send
                         _sent_confirmation_emails.add(email_key)
+                        save_sent_email_to_cache(email_key)
                         
                         # Log successful email send without changing status
                         print(f"✅ Confirmation email sent to {recipient.email} for seminar '{seminar.title}' (starts: {seminar.date})")

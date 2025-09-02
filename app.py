@@ -29,7 +29,8 @@ if __name__ == '__main__':
         # Import scheduler tasks after app context is available
         import scheduler as scheduler_tasks
         scheduler.start()
-    app.run(debug=True)
+    # Set use_reloader=False to prevent duplicate APScheduler instances
+    app.run(debug=True, use_reloader=False)
 else:
     # For production/testing, import scheduler tasks and start scheduler
     with app.app_context():
