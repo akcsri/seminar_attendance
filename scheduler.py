@@ -54,7 +54,7 @@ def send_confirmation_emails():
                         # Status should only change when user clicks the confirmation button
                         send_confirmation_email(recipient, seminar)
                         
-                        # Mark as sent to prevent duplicates
+                        # Mark as sent to prevent duplicates ONLY after successful send
                         _sent_confirmation_emails.add(email_key)
                         
                         # Log successful email send without changing status
@@ -63,7 +63,7 @@ def send_confirmation_emails():
                         total_sent += 1
                         
                     except Exception as e:
-                        # Log error but don't change status
+                        # Log error but don't change status or mark as sent
                         print(f"❌ Failed to send confirmation email to {recipient.email}: {e}")
                         total_errors += 1
                         continue
