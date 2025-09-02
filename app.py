@@ -13,6 +13,10 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 
+from flask_migrate import Migrate
+
+migrate = Migrate(app, db)
+
 # Initialize extensions
 db.init_app(app)
 mail = Mail(app)
