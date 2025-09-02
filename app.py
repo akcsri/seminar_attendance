@@ -21,6 +21,8 @@ scheduler.init_app(app)
 scheduler.start()
 
 from routes import *
+# Import scheduler tasks to register them
+import scheduler
 
 if __name__ == '__main__':
     with app.app_context():
