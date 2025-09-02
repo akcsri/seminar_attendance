@@ -79,6 +79,16 @@
                 margin-top: 5px;
             }
         }
+        
+        /* Error status styling */
+        .status-error {
+            background-color: #dc3545;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -234,7 +244,7 @@
         </tr>
         {% for a in attendances %}
         <tr>
-            <td>{{ a.id }}</td><td>{{ a.seminar_id }}</td><td>{{ a.recipient_id }}</td><td>{{ a.status }}</td><td>{{ a.comment }}</td>
+            <td>{{ a.id }}</td><td>{{ a.seminar_id }}</td><td>{{ a.recipient_id }}</td><td>{% if a.status == 'error' %}<span class="status-error">{{ a.status }}</span>{% else %}{{ a.status }}{% endif %}</td><td>{{ a.comment }}</td>
         </tr>
         {% endfor %}
     </table>
