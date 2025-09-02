@@ -1,25 +1,37 @@
-from app import scheduler, db
-from models import Seminar, Attendance, Recipient
+from models import Seminar, Attendance, Recipient, db
 from mailer import send_confirmation_email
 from datetime import datetime, timedelta
 
 # Global set to track emails already sent in this session to prevent duplicates
 _sent_confirmation_emails = set()
 
-@scheduler.task('interval', id='send_confirmation_emails', minutes=1)
 def send_confirmation_emails():
     """
     Send confirmation emails to attendees 15 minutes before seminar start.
     Only sends emails to those with 'attend' status and prevents duplicate sends.
     Does NOT modify attendance status - status is only changed when user clicks confirm button.
     """
+    from flask import current_app
+    
+    # Get the Flask app and create application context
     from app import app
     with app.app_context():
         now = datetime.now()
         
+        # Debug logging
+        print(f"🔍 [SCHEDULER DEBUG] Current time: {now}")
+        
         # Target seminars starting in 14-16 minutes (2-minute window around 15 minutes)
         start_window = now + timedelta(minutes=14)
         end_window = now + timedelta(minutes=16)
+        
+        print(f"🔍 [SCHEDULER DEBUG] Looking for seminars between {start_window} and {end_window}")
+        
+        # Find all seminars for debugging
+        all_seminars = Seminar.query.all()
+        print(f"🔍 [SCHEDULER DEBUG] Total seminars in database: {len(all_seminars)}")
+        for seminar in all_seminars:
+            print(f"   - ID {seminar.id}: '{seminar.title}' at {seminar.date}")
         
         # Find seminars starting within the target window
         upcoming = Seminar.query.filter(
@@ -27,16 +39,22 @@ def send_confirmation_emails():
             Seminar.date <= end_window
         ).all()
         
+        print(f"🔍 [SCHEDULER DEBUG] Found {len(upcoming)} seminars in target window")
+        
         total_sent = 0
         total_errors = 0
         
         for seminar in upcoming:
+            print(f"🎯 [SCHEDULER DEBUG] Processing seminar '{seminar.title}' starting at {seminar.date}")
+            
             # Only send to 'attend' status to prevent duplicates (not 'pending' which might be uncertain)
             # And explicitly exclude 'confirmed' to prevent re-sending
             attendees = Attendance.query.filter_by(
                 seminar_id=seminar.id, 
                 status='attend'
             ).all()
+            
+            print(f"📊 [SCHEDULER DEBUG] Found {len(attendees)} attendees with 'attend' status")
             
             seminar_sent = 0
             
@@ -73,6 +91,8 @@ def send_confirmation_emails():
         
         if total_sent > 0 or total_errors > 0:
             print(f"📊 Confirmation email summary: {total_sent} sent, {total_errors} errors")
+        else:
+            print(f"🔍 [SCHEDULER DEBUG] No confirmation emails sent this cycle at {now}")
         
         # Clean up old entries from the tracking set (remove entries older than 2 hours)
         # This prevents memory buildup while still preventing duplicates for recent sends

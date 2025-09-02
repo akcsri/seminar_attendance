@@ -21,8 +21,17 @@ scheduler.init_app(app)
 scheduler.start()
 
 from routes import *
-# Import scheduler tasks to register them
-import scheduler
+# Import and register scheduler tasks
+from scheduler import send_confirmation_emails
+
+# Register the scheduler task manually  
+scheduler.add_job(
+    func=send_confirmation_emails,
+    trigger='interval',
+    minutes=1,
+    id='send_confirmation_emails',
+    replace_existing=True
+)
 
 if __name__ == '__main__':
     with app.app_context():
