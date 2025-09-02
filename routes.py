@@ -214,6 +214,9 @@ def edit_seminar(id):
 def delete_seminar(id):
     seminar = Seminar.query.get(id)
     if seminar:
+        # Delete related attendance records first to avoid foreign key constraint violation
+        Attendance.query.filter_by(seminar_id=id).delete()
+        # Then delete the seminar
         db.session.delete(seminar)
         db.session.commit()
     return redirect(url_for('admin_dashboard'))
