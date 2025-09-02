@@ -10,7 +10,7 @@
             line-height: 1.6;
             margin: 0;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
         }
         .container {
             max-width: 600px;
@@ -31,25 +31,25 @@
             transition: background-color 0.3s ease;
         }
         .btn-primary {
-            background-color: #007BFF;
+            background-color: #333333;
             color: white;
         }
         .btn-primary:hover {
-            background-color: #0056b3;
+            background-color: #222222;
         }
         .btn-danger {
-            background-color: #dc3545;
+            background-color: #666666;
             color: white;
         }
         .btn-danger:hover {
-            background-color: #c82333;
+            background-color: #555555;
         }
         .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
+            background-color: #cccccc;
+            color: #333333;
         }
         .btn-warning:hover {
-            background-color: #e0a800;
+            background-color: #bbbbbb;
         }
         .seminar-details {
             background-color: #f8f9fa;
@@ -94,20 +94,20 @@
             <!--[if mso]>
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                 <tr>
-                    <td style="border-radius: 5px; background: #007BFF; padding: 0;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="background: #007BFF; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
+                    <td style="border-radius: 5px; background: #333333; padding: 0;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="background: #333333; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
                             <span style="mso-text-raise: 4px;">✓ 出席</span>
                         </a>
                     </td>
                     <td width="10"></td>
-                    <td style="border-radius: 5px; background: #dc3545; padding: 0;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="background: #dc3545; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
+                    <td style="border-radius: 5px; background: #666666; padding: 0;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="background: #666666; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
                             <span style="mso-text-raise: 4px;">✗ 欠席</span>
                         </a>
                     </td>
                     <td width="10"></td>
-                    <td style="border-radius: 5px; background: #ffc107; padding: 0;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="background: #ffc107; color: #212529; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
+                    <td style="border-radius: 5px; background: #cccccc; padding: 0;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="background: #cccccc; color: #333333; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 5px; display: inline-block; mso-padding-alt: 0; text-align: center;">
                             <span style="mso-text-raise: 4px;">? 保留</span>
                         </a>
                     </td>
@@ -117,20 +117,20 @@
             <!--[if !mso]><!-- -->
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                 <tr>
-                    <td style="border-radius: 5px; background: #007BFF; padding: 0; margin: 0 5px;">
+                    <td style="border-radius: 5px; background: #333333; padding: 0; margin: 0 5px;">
                         <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" 
                            class="btn btn-primary"
-                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #007BFF; color: white; font-family: Arial, sans-serif;">✓ 出席</a>
+                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #333333; color: white; font-family: Arial, sans-serif;">✓ 出席</a>
                     </td>
-                    <td style="border-radius: 5px; background: #dc3545; padding: 0; margin: 0 5px;">
+                    <td style="border-radius: 5px; background: #666666; padding: 0; margin: 0 5px;">
                         <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" 
                            class="btn btn-danger"
-                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #dc3545; color: white; font-family: Arial, sans-serif;">✗ 欠席</a>
+                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #666666; color: white; font-family: Arial, sans-serif;">✗ 欠席</a>
                     </td>
-                    <td style="border-radius: 5px; background: #ffc107; padding: 0; margin: 0 5px;">
+                    <td style="border-radius: 5px; background: #cccccc; padding: 0; margin: 0 5px;">
                         <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" 
                            class="btn btn-warning"
-                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #ffc107; color: #212529; font-family: Arial, sans-serif;">? 保留</a>
+                           style="display: inline-block; padding: 12px 24px; margin: 8px 8px 8px 0; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center; background-color: #cccccc; color: #333333; font-family: Arial, sans-serif;">? 保留</a>
                     </td>
                 </tr>
             </table>
@@ -141,9 +141,9 @@
             ※ ボタンが機能しない場合は、以下のリンクをコピーしてブラウザのアドレスバーに貼り付けてください：
         </p>
         <ul style="font-size: 12px; color: #666; margin-top: 10px; padding-left: 20px;">
-            <li style="margin-bottom: 5px;">出席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="color: #007BFF; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend</a></li>
-            <li style="margin-bottom: 5px;">欠席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="color: #dc3545; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent</a></li>
-            <li style="margin-bottom: 5px;">保留: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="color: #ffc107; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending</a></li>
+            <li style="margin-bottom: 5px;">出席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="color: #333333; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend</a></li>
+            <li style="margin-bottom: 5px;">欠席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="color: #666666; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent</a></li>
+            <li style="margin-bottom: 5px;">保留: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="color: #999999; word-break: break-all;">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending</a></li>
         </ul>
     </div>
 </body>
