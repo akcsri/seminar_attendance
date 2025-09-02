@@ -70,29 +70,80 @@
             .container {
                 padding: 20px;
                 margin: 0;
+                border-radius: 6px;
             }
             h2 {
                 font-size: 1.3em;
                 text-align: center;
+                margin-bottom: 24px;
             }
             button {
                 padding: 18px 20px;
                 font-size: 18px;
+                border-radius: 6px;
             }
             textarea {
                 font-size: 16px; /* Prevents zoom on iOS */
+                padding: 14px;
+                border-radius: 6px;
+                min-height: 120px;
+            }
+            label {
+                margin-bottom: 10px;
+                line-height: 1.4;
             }
         }
         
         @media screen and (max-width: 480px) {
+            body {
+                margin: 5px;
+            }
             .container {
                 padding: 15px;
+                border-radius: 4px;
             }
             h2 {
                 font-size: 1.2em;
+                margin-bottom: 20px;
             }
             label {
                 font-size: 14px;
+                margin-bottom: 8px;
+            }
+            textarea {
+                min-height: 100px;
+                padding: 12px;
+            }
+            button {
+                padding: 16px 18px;
+                font-size: 17px;
+                margin-top: 18px;
+            }
+        }
+
+        /* Very small screens and landscape phones */
+        @media screen and (max-width: 360px) {
+            body {
+                margin: 2px;
+            }
+            .container {
+                padding: 12px;
+            }
+            h2 {
+                font-size: 1.1em;
+                margin-bottom: 16px;
+            }
+            label {
+                font-size: 13px;
+                line-height: 1.3;
+            }
+            textarea {
+                min-height: 90px;
+                padding: 10px;
+            }
+            button {
+                padding: 14px 16px;
+                font-size: 16px;
             }
         }
     </style>

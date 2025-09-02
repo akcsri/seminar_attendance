@@ -103,9 +103,9 @@
             <input type="text" name="speaker" value="{{ seminar.speaker }}" placeholder="例: 田中博士 (東京大学)"><br>
             <small style="color: #666;">※ 肩書きや所属も併記可能です。</small><br><br>
             
-            <label>トピック:</label><br>
-            <textarea name="topic" rows="4" placeholder="例: 最新のAI技術動向について&#10;&#10;【講師プロフィール】&#10;田中博士は機械学習分野の第一人者として...&#10;&#10;【開場時刻】18:00 【終了予定】20:00">{{ seminar.topic }}</textarea><br>
-            <small style="color: #666;">※ 講師の経歴、開場・終了時刻なども併記可能です。改行で情報を整理してください。</small><br><br>
+            <label>セミナー詳細情報:</label><br>
+            <textarea name="topic" rows="6" placeholder="【概要】&#10;最新のAI技術動向について&#10;&#10;【講師経歴】&#10;田中博士は機械学習分野の第一人者として、数々の研究成果を挙げています。東京大学大学院情報理工学系研究科教授。&#10;&#10;【時間】&#10;開場: 18:00 | 開始: 18:30 | 終了: 20:00" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; resize: vertical;">{{ seminar.topic }}</textarea><br>
+            <small style="color: #666;">※ セミナーの概要、講師の詳細経歴、開場・開始・終了時刻を構造化して記載してください。メール送信時にそのまま使用されます。</small><br><br>
             
             <label>連絡先:</label><br>
             <input type="text" name="contact" value="{{ seminar.contact }}" placeholder="例: seminar@example.com / 03-1234-5678"><br>
