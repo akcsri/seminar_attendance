@@ -1,5 +1,6 @@
 from flask import render_template, current_app
 from flask_mail import Message
+from seminar_utils import get_formatted_seminar_info
 
 def send_invitation_email(recipient, seminar):
     """Send seminar invitation email to recipient. Does not modify database status."""
@@ -9,7 +10,12 @@ def send_invitation_email(recipient, seminar):
         sender=current_app.config['MAIL_USERNAME'],
         recipients=[recipient.email]
     )
-    msg.html = render_template("email_template.html", recipient=recipient, seminar=seminar)
+    # Get formatted seminar info with structured data
+    formatted_seminar = get_formatted_seminar_info(seminar)
+    msg.html = render_template("email_template.html", 
+                              recipient=recipient, 
+                              seminar=seminar, 
+                              formatted_seminar=formatted_seminar)
     mail.send(msg)
 
 def send_confirmation_email(recipient, seminar):
@@ -26,6 +32,11 @@ def send_confirmation_email(recipient, seminar):
         sender=current_app.config['MAIL_USERNAME'],
         recipients=[recipient.email]
     )
-    msg.html = render_template("confirmation_email_template.html", recipient=recipient, seminar=seminar)
+    # Get formatted seminar info with structured data
+    formatted_seminar = get_formatted_seminar_info(seminar)
+    msg.html = render_template("confirmation_email_template.html", 
+                              recipient=recipient, 
+                              seminar=seminar, 
+                              formatted_seminar=formatted_seminar)
     mail.send(msg)
     # NOTE: No database modifications should happen here

@@ -2,6 +2,7 @@ from flask import request, render_template, redirect, url_for, flash, make_respo
 from app import app, db
 from models import Recipient, Seminar, Attendance
 from mailer import send_invitation_email, send_confirmation_email
+from seminar_utils import get_formatted_seminar_info, create_structured_topic, validate_time_format
 import csv
 import io
 
@@ -41,7 +42,22 @@ def admin_dashboard():
     seminars = Seminar.query.order_by(Seminar.id.desc()).all()
     attendances = Attendance.query.all()
     latest_seminar_id = seminars[0].id if seminars else None
-    return render_template('admin_dashboard.html', recipients=recipients, seminars=seminars, attendances=attendances, latest_seminar_id=latest_seminar_id)
+    
+    # Format seminar information using structured data approach
+    formatted_seminars = []
+    for seminar in seminars:
+        formatted_seminar_info = get_formatted_seminar_info(seminar)
+        formatted_seminars.append({
+            'seminar': seminar,
+            'formatted': formatted_seminar_info
+        })
+    
+    return render_template('admin_dashboard.html', 
+                         recipients=recipients, 
+                         seminars=seminars,
+                         formatted_seminars=formatted_seminars,
+                         attendances=attendances, 
+                         latest_seminar_id=latest_seminar_id)
 
 @app.route('/add_recipient', methods=['POST'])
 def add_recipient():
@@ -84,9 +100,27 @@ def add_seminar():
     speaker = request.form['speaker']
     topic = request.form['topic']
     contact = request.form['contact']
+    
+    # Validate structured data if it contains time fields
+    try:
+        from seminar_utils import parse_seminar_topic
+        parsed_topic = parse_seminar_topic(topic)
+        if parsed_topic.get('open_time'):
+            if not validate_time_format(parsed_topic['open_time']):
+                flash('開場時刻の形式が正しくありません (HH:MM)', 'error')
+                return redirect(url_for('admin_dashboard'))
+        if parsed_topic.get('end_time'):
+            if not validate_time_format(parsed_topic['end_time']):
+                flash('終了時刻の形式が正しくありません (HH:MM)', 'error')
+                return redirect(url_for('admin_dashboard'))
+    except Exception as e:
+        # If validation fails, continue with the original topic
+        pass
+    
     seminar = Seminar(title=title, date=date, venue=venue, speaker=speaker, topic=topic, contact=contact)
     db.session.add(seminar)
     db.session.commit()
+    flash('セミナーが正常に追加されました', 'success')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/edit_seminar/<int:id>', methods=['POST'])
@@ -100,9 +134,28 @@ def edit_seminar(id):
         seminar.date = datetime.fromisoformat(date_str) if date_str else None
         seminar.venue = request.form['venue']
         seminar.speaker = request.form['speaker']
-        seminar.topic = request.form['topic']
+        topic = request.form['topic']
         seminar.contact = request.form['contact']
+        
+        # Validate structured data if it contains time fields
+        try:
+            from seminar_utils import parse_seminar_topic
+            parsed_topic = parse_seminar_topic(topic)
+            if parsed_topic.get('open_time'):
+                if not validate_time_format(parsed_topic['open_time']):
+                    flash('開場時刻の形式が正しくありません (HH:MM)', 'error')
+                    return redirect(url_for('admin_dashboard'))
+            if parsed_topic.get('end_time'):
+                if not validate_time_format(parsed_topic['end_time']):
+                    flash('終了時刻の形式が正しくありません (HH:MM)', 'error')
+                    return redirect(url_for('admin_dashboard'))
+        except Exception as e:
+            # If validation fails, continue with the original topic
+            pass
+        
+        seminar.topic = topic
         db.session.commit()
+        flash('セミナー情報が正常に更新されました', 'success')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/delete_seminar/<int:id>', methods=['POST'])
