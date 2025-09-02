@@ -83,19 +83,35 @@
         <div class="seminar-details">
             <strong style="font-size: 16px; color: #333;">日時:</strong><br>
             {{ seminar.date.strftime('%m月%d日(%a)') if seminar.date else '日時未定' }}<br>
-            {{ seminar.date.strftime('%H:%M') if seminar.date else '' }}開始<br><br>
+            {% if formatted_seminar.open_time or formatted_seminar.end_time %}
+            {% if formatted_seminar.open_time %}開場: {{ formatted_seminar.open_time }}<br>{% endif %}
+            {% endif %}
+            {{ seminar.date.strftime('%H:%M') if seminar.date else '' }}開始<br>
+            {% if formatted_seminar.end_time %}終了: {{ formatted_seminar.end_time }}<br>{% endif %}
+            <br>
             
             <strong style="font-size: 16px; color: #333;">場所:</strong><br>
             {{ seminar.venue | replace('\n', '<br>') | safe if seminar.venue else '会場未定' }}<br><br>
             
-            {% if seminar.speaker %}
+            {% if seminar.speaker or formatted_seminar.speaker_bio %}
             <strong style="font-size: 16px; color: #333;">ゲストスピーカー:</strong><br>
-            {{ seminar.speaker | replace('\n', '<br>') | safe }}<br><br>
+            {{ seminar.speaker | replace('\n', '<br>') | safe }}<br>
+            {% if formatted_seminar.speaker_bio %}
+            <div style="margin-top: 10px; padding: 10px; background-color: #f0f0f0; border-radius: 4px;">
+            {{ formatted_seminar.speaker_bio | replace('\n', '<br>') | safe }}
+            </div>
+            {% endif %}
+            <br>
             {% endif %}
             
-            {% if seminar.topic %}
+            {% if formatted_seminar.description or seminar.topic %}
             <strong style="font-size: 16px; color: #333;">詳細情報:</strong><br>
-            {{ seminar.topic | replace('\n', '<br>') | safe }}<br><br>
+            {% if formatted_seminar.description %}
+            {{ formatted_seminar.description | replace('\n', '<br>') | safe }}<br>
+            {% else %}
+            {{ seminar.topic | replace('\n', '<br>') | safe }}<br>
+            {% endif %}
+            <br>
             {% endif %}
             
             {% if seminar.contact %}
