@@ -246,7 +246,9 @@
             {% if formatted_seminar.open_time or formatted_seminar.end_time %}
             {% if formatted_seminar.open_time %}<div style="margin: 8px 0; color: #4a5568; font-weight: 500;">開場: {{ formatted_seminar.open_time }}</div>{% endif %}
             {% endif %}
-            <div class="start-time">{{ seminar.date | japanese_time if seminar.date else '' }}開始</div>
+            {% if seminar.date %}
+            <div class="start-time">{{ seminar.date | japanese_time }}開始</div>
+            {% endif %}
             {% if formatted_seminar.end_time %}<div style="margin: 8px 0; color: #4a5568; font-weight: 500;">終了: {{ formatted_seminar.end_time }}</div>{% endif %}
             <br>
             
@@ -258,7 +260,9 @@
             {% if seminar.speaker or formatted_seminar.speaker_bio %}
             <strong class="detail-label">🎤 ゲストスピーカー:</strong><br>
             <div class="speaker-section">
+                {% if seminar.speaker %}
                 {{ seminar.speaker | replace('\n', '<br>') | safe }}
+                {% endif %}
                 {% if formatted_seminar.speaker_bio %}
                 <div class="speaker-bio">
                     {{ formatted_seminar.speaker_bio | replace('\n', '<br>') | safe }}

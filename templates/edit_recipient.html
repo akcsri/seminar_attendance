@@ -1,54 +1,60 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <title> 登録者編集</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登録者編集</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f8f9fa;
+        /* Additional specific styles for edit recipient page */
+        .form-group {
+            margin-bottom: 25px;
         }
-        input[type="text"], input[type="email"] {
-            border: 1px solid #ccc;
-            padding: 8px;
-            border-radius: 4px;
-            width: 300px;
-        }
-        input[type="submit"] {
-            background-color: #333333;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #222222;
-        }
-        a {
-            color: #333333;
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: var(--primary-color);
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
-        a:hover {
+        
+        .back-link:hover {
+            color: var(--accent-color);
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h2>登録者情報の編集</h2>
-    <form method="POST" action="/edit_recipient/{{ recipient.id }}">
-        <label>名前:</label><br>
-        <input type="text" name="name" value="{{ recipient.name }}"><br><br>
-        <label>メール:</label><br>
-        <input type="email" name="email" value="{{ recipient.email }}"><br><br>
-        <label>所属:</label><br>
-        <input type="text" name="affiliation" value="{{ recipient.affiliation }}"><br><br>
-        <label>電話:</label><br>
-        <input type="text" name="phone" value="{{ recipient.phone }}"><br><br>
-        <input type="submit" value="更新">
-    </form>
-    <br>
-    <a href="/admin">管理画面に戻る</a>
+    <div class="container">
+        <h1>登録者情報の編集</h1>
+        <form method="POST" action="/edit_recipient/{{ recipient.id }}">
+            <div class="form-group">
+                <label for="name">名前:</label>
+                <input type="text" id="name" name="name" value="{{ recipient.name }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">メール:</label>
+                <input type="email" id="email" name="email" value="{{ recipient.email }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="affiliation">所属:</label>
+                <input type="text" id="affiliation" name="affiliation" value="{{ recipient.affiliation }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">電話:</label>
+                <input type="tel" id="phone" name="phone" value="{{ recipient.phone }}">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">更新</button>
+        </form>
+        
+        <a href="/admin" class="back-link">← 管理画面に戻る</a>
+    </div>
 </body>
 </html>

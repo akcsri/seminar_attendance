@@ -4,106 +4,214 @@
     <meta charset="UTF-8">
     <title>管理者ダッシュボード</title>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 10px;
-            padding: 0;
-        }
-        table, th, td { 
-            border: 1px solid #ccc; 
-            border-collapse: collapse; 
-            padding: 6px; 
-        }
-        form { 
-            margin-top: 10px; 
-        }
-        h2 { 
-            margin-top: 30px; 
-        }
-        .email-controls {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        .csv-import {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-        .btn-primary {
-            background-color: #333333;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-primary:hover {
-            background-color: #222222;
-        }
-        .flash-messages {
-            margin: 20px 0;
-        }
-        .flash-message {
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 4px;
-        }
-        .flash-success {
-            background-color: #e8e8e8;
-            border: 1px solid #cccccc;
-            color: #333333;
-        }
-        .flash-error {
-            background-color: #f0f0f0;
-            border: 1px solid #bbbbbb;
-            color: #444444;
-        }
-        .flash-warning {
-            background-color: #f8f8f8;
-            border: 1px solid #dddddd;
-            color: #555555;
-        }
-        @media screen and (max-width: 600px) {
-            table {
-                font-size: 14px;
-            }
-            th, td {
-                padding: 8px;
-            }
-            select, input, button {
-                width: 100%;
-                margin-top: 5px;
-            }
+        /* Admin dashboard specific styles */
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
         
-        /* Error status styling */
-        .status-error {
-            background-color: #666666;
+        .admin-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border-left: 5px solid var(--accent-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .admin-section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            background: none;
+            -webkit-text-fill-color: var(--primary-color);
+            text-align: left;
+            font-size: 1.3em;
+            padding: 0;
+        }
+        
+        .controls-section {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .controls-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
+        
+        .form-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .form-inline label {
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+        
+        .form-inline select,
+        .form-inline input[type="file"] {
+            width: auto;
+            min-width: 200px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        /* Table responsive design */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            min-width: 600px;
+        }
+        
+        /* Status indicators */
+        .status-attend {
+            background-color: var(--success-color);
             color: white;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-weight: bold;
-            font-size: 0.9em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-confirmed {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background-color: var(--warning-color);
+            color: var(--primary-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-absent {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-error {
+            background-color: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        /* Action buttons in tables */
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 2px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--light-gray);
+        }
+        
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 10px;
+            }
+            
+            .form-inline {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .form-inline select,
+            .form-inline input[type="file"] {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .checkbox-group {
+                flex-direction: column;
+            }
+            
+            table {
+                min-width: auto;
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+            }
+            
+            .action-btn {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>セミナー出欠管理 - 管理者ダッシュボード</h1>
+    <div class="admin-container">
+        <h1>セミナー出欠管理 - 管理者ダッシュボード</h1>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-messages">
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
     <h2>登録者一覧</h2>
     

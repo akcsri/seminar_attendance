@@ -1,0 +1,381 @@
+/* 
+  Base CSS extracted from email_template.html for design unification
+  Premium fonts, color scheme, and responsive design patterns
+*/
+
+/* Import premium fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600&family=Source+Sans+Pro:wght@400;600&display=swap');
+
+/* === COLOR SCHEME === */
+:root {
+    --primary-color: #1a365d;
+    --accent-color: #d4af37;
+    --text-color: #2c3e50;
+    --light-gray: #4a5568;
+    --border-color: #e2e8f0;
+    --background-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --card-background: #ffffff;
+    --success-color: #28a745;
+    --warning-color: #d4af37;
+    --danger-color: #718096;
+}
+
+/* === BASE STYLES === */
+body {
+    font-family: 'Noto Serif JP', 'Source Sans Pro', Georgia, serif;
+    line-height: 1.7;
+    margin: 0;
+    padding: 20px;
+    background: var(--background-gradient);
+    color: var(--text-color);
+}
+
+/* === CONTAINER STYLES === */
+.container {
+    max-width: 650px;
+    margin: 0 auto;
+    background-color: var(--card-background);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    border-top: 4px solid var(--primary-color);
+}
+
+.container-wide {
+    max-width: 800px;
+}
+
+/* === TYPOGRAPHY === */
+h1, h2, h3 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 20px;
+    margin: 25px 0;
+    text-align: center;
+    line-height: 1.4;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* === FORM ELEMENTS === */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--light-gray);
+    font-size: 16px;
+}
+
+input[type="text"], 
+input[type="email"],
+input[type="tel"],
+input[type="datetime-local"],
+input[type="time"],
+select,
+textarea {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 14px;
+    background-color: var(--card-background);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(26, 54, 93, 0.3);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+}
+
+/* === BUTTON STYLES === */
+.btn {
+    display: inline-block;
+    padding: 15px 28px;
+    margin: 10px 8px 10px 0;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2d4a7a 100%);
+    color: white;
+    border: 2px solid var(--primary-color);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0f2a44 0%, var(--primary-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color) 0%, var(--light-gray) 100%);
+    color: white;
+    border: 2px solid var(--danger-color);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, var(--light-gray) 0%, #2d3748 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #b8941a 100%);
+    color: var(--primary-color);
+    border: 2px solid var(--accent-color);
+    font-weight: 600;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #b8941a 0%, #9c7c0f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+}
+
+.btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* === CARD STYLES === */
+.detail-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 30px;
+    border-radius: 10px;
+    margin: 25px 0;
+    border-left: 5px solid var(--accent-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.info-box {
+    background-color: var(--card-background);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.notice-box {
+    margin: 25px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%);
+    border-left: 5px solid var(--primary-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* === TABLE STYLES === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: var(--card-background);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+th, td {
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* === UTILITY CLASSES === */
+.text-center {
+    text-align: center;
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-accent {
+    color: var(--accent-color);
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.p-20 {
+    padding: 20px;
+}
+
+/* === FLASH MESSAGES === */
+.flash-messages {
+    margin: 20px 0;
+}
+
+.flash-message {
+    padding: 15px;
+    margin: 5px 0;
+    border-radius: 8px;
+    border-left: 4px solid;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.flash-success {
+    background-color: #e8f5e8;
+    border-left-color: var(--success-color);
+    color: #155724;
+}
+
+.flash-error {
+    background-color: #f8d7da;
+    border-left-color: #dc3545;
+    color: #721c24;
+}
+
+.flash-warning {
+    background-color: #fff3cd;
+    border-left-color: var(--warning-color);
+    color: #856404;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container, .container-wide {
+        padding: 20px;
+        margin: 0;
+        border-radius: 8px;
+    }
+    
+    h1 {
+        font-size: 20px;
+    }
+    
+    h2 {
+        font-size: 18px;
+        padding: 10px;
+    }
+    
+    .btn {
+        display: block;
+        margin: 12px 0;
+        padding: 18px;
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    input, select, textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .detail-section {
+        padding: 20px;
+    }
+    
+    .info-box {
+        padding: 15px;
+    }
+    
+    th, td {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+        font-size: 15px;
+    }
+    
+    .container, .container-wide {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 18px;
+    }
+    
+    h2 {
+        font-size: 16px;
+    }
+    
+    .btn {
+        padding: 16px;
+        font-size: 15px;
+    }
+    
+    th, td {
+        padding: 6px;
+        font-size: 12px;
+    }
+}
+
+/* === TOUCH OPTIMIZATION === */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 48px; /* iOS/Android recommended touch target */
+        touch-action: manipulation; /* Disable double-tap zoom */
+    }
+    
+    input, select, textarea {
+        min-height: 44px;
+    }
+}
