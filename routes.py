@@ -2,7 +2,6 @@ from flask import request, render_template, redirect, url_for, flash, make_respo
 from app import app, db
 from models import Recipient, Seminar, Attendance
 from mailer import send_invitation_email, send_confirmation_email
-from seminar_utils import get_formatted_seminar_info, create_structured_topic, validate_time_format
 import csv
 import io
 
@@ -24,8 +23,15 @@ def respond():
         db.session.add(attendance)
     db.session.commit()
     
-    # Get formatted seminar info including structured data
-    formatted_seminar = get_formatted_seminar_info(seminar) if seminar else {}
+    # Get formatted seminar info directly from new columns
+    formatted_seminar = {}
+    if seminar:
+        formatted_seminar = {
+            'open_time': seminar.open_time.strftime('%H:%M') if seminar.open_time else '',
+            'end_time': seminar.end_time.strftime('%H:%M') if seminar.end_time else '',
+            'speaker_bio': seminar.speaker_bio or '',
+            'description': seminar.topic or ''
+        }
     
     return render_template('confirm.html', 
                          seminar_id=seminar_id, 
@@ -58,13 +64,18 @@ def admin_dashboard():
     attendances = Attendance.query.all()
     latest_seminar_id = seminars[0].id if seminars else None
     
-    # Format seminar information using structured data approach
+    # Format seminar information directly from new columns
     formatted_seminars = []
     for seminar in seminars:
-        formatted_seminar_info = get_formatted_seminar_info(seminar)
+        formatted_info = {
+            'open_time': seminar.open_time.strftime('%H:%M') if seminar.open_time else '',
+            'end_time': seminar.end_time.strftime('%H:%M') if seminar.end_time else '',
+            'speaker_bio': seminar.speaker_bio or '',
+            'description': seminar.topic or ''
+        }
         formatted_seminars.append({
             'seminar': seminar,
-            'formatted': formatted_seminar_info
+            'formatted': formatted_info
         })
     
     return render_template('admin_dashboard.html', 
@@ -106,7 +117,7 @@ def delete_recipient(id):
 
 @app.route('/add_seminar', methods=['POST'])
 def add_seminar():
-    from datetime import datetime
+    from datetime import datetime, time
     title = request.form['title']
     date_str = request.form['date']
     # Parse datetime string to datetime object
@@ -116,23 +127,40 @@ def add_seminar():
     topic = request.form['topic']
     contact = request.form['contact']
     
-    # Validate structured data if it contains time fields
-    try:
-        from seminar_utils import parse_seminar_topic
-        parsed_topic = parse_seminar_topic(topic)
-        if parsed_topic.get('open_time'):
-            if not validate_time_format(parsed_topic['open_time']):
-                flash('開場時刻の形式が正しくありません (HH:MM)', 'error')
-                return redirect(url_for('admin_dashboard'))
-        if parsed_topic.get('end_time'):
-            if not validate_time_format(parsed_topic['end_time']):
-                flash('終了時刻の形式が正しくありません (HH:MM)', 'error')
-                return redirect(url_for('admin_dashboard'))
-    except Exception as e:
-        # If validation fails, continue with the original topic
-        pass
+    # Get new fields
+    open_time_str = request.form.get('open_time', '').strip()
+    end_time_str = request.form.get('end_time', '').strip()
+    speaker_bio = request.form.get('speaker_bio', '').strip()
     
-    seminar = Seminar(title=title, date=date, venue=venue, speaker=speaker, topic=topic, contact=contact)
+    # Parse time fields
+    open_time = None
+    end_time = None
+    
+    if open_time_str:
+        try:
+            open_time = datetime.strptime(open_time_str, '%H:%M').time()
+        except ValueError:
+            flash('開場時刻の形式が正しくありません (HH:MM)', 'error')
+            return redirect(url_for('admin_dashboard'))
+    
+    if end_time_str:
+        try:
+            end_time = datetime.strptime(end_time_str, '%H:%M').time()
+        except ValueError:
+            flash('終了時刻の形式が正しくありません (HH:MM)', 'error')
+            return redirect(url_for('admin_dashboard'))
+    
+    seminar = Seminar(
+        title=title, 
+        date=date, 
+        venue=venue, 
+        speaker=speaker, 
+        topic=topic, 
+        contact=contact,
+        open_time=open_time,
+        end_time=end_time,
+        speaker_bio=speaker_bio
+    )
     db.session.add(seminar)
     db.session.commit()
     flash('セミナーが正常に追加されました', 'success')
@@ -152,22 +180,31 @@ def edit_seminar(id):
         topic = request.form['topic']
         seminar.contact = request.form['contact']
         
-        # Validate structured data if it contains time fields
-        try:
-            from seminar_utils import parse_seminar_topic
-            parsed_topic = parse_seminar_topic(topic)
-            if parsed_topic.get('open_time'):
-                if not validate_time_format(parsed_topic['open_time']):
-                    flash('開場時刻の形式が正しくありません (HH:MM)', 'error')
-                    return redirect(url_for('admin_dashboard'))
-            if parsed_topic.get('end_time'):
-                if not validate_time_format(parsed_topic['end_time']):
-                    flash('終了時刻の形式が正しくありません (HH:MM)', 'error')
-                    return redirect(url_for('admin_dashboard'))
-        except Exception as e:
-            # If validation fails, continue with the original topic
-            pass
+        # Get new fields
+        open_time_str = request.form.get('open_time', '').strip()
+        end_time_str = request.form.get('end_time', '').strip()
+        speaker_bio = request.form.get('speaker_bio', '').strip()
         
+        # Parse time fields
+        if open_time_str:
+            try:
+                seminar.open_time = datetime.strptime(open_time_str, '%H:%M').time()
+            except ValueError:
+                flash('開場時刻の形式が正しくありません (HH:MM)', 'error')
+                return redirect(url_for('admin_dashboard'))
+        else:
+            seminar.open_time = None
+        
+        if end_time_str:
+            try:
+                seminar.end_time = datetime.strptime(end_time_str, '%H:%M').time()
+            except ValueError:
+                flash('終了時刻の形式が正しくありません (HH:MM)', 'error')
+                return redirect(url_for('admin_dashboard'))
+        else:
+            seminar.end_time = None
+        
+        seminar.speaker_bio = speaker_bio if speaker_bio else None
         seminar.topic = topic
         db.session.commit()
         flash('セミナー情報が正常に更新されました', 'success')
