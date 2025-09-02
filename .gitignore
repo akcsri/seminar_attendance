@@ -31,3 +31,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Test files for debugging
+test_scheduler_future.py
+test_precise_timing.py
+.env.testing
+.env.backup
+.env.prod
