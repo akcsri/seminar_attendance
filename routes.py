@@ -75,8 +75,11 @@ def delete_recipient(id):
 
 @app.route('/add_seminar', methods=['POST'])
 def add_seminar():
+    from datetime import datetime
     title = request.form['title']
-    date = request.form['date']
+    date_str = request.form['date']
+    # Parse datetime string to datetime object
+    date = datetime.fromisoformat(date_str) if date_str else None
     venue = request.form['venue']
     speaker = request.form['speaker']
     topic = request.form['topic']
@@ -88,10 +91,13 @@ def add_seminar():
 
 @app.route('/edit_seminar/<int:id>', methods=['POST'])
 def edit_seminar(id):
+    from datetime import datetime
     seminar = Seminar.query.get(id)
     if seminar:
         seminar.title = request.form['title']
-        seminar.date = request.form['date']
+        date_str = request.form['date']
+        # Parse datetime string to datetime object
+        seminar.date = datetime.fromisoformat(date_str) if date_str else None
         seminar.venue = request.form['venue']
         seminar.speaker = request.form['speaker']
         seminar.topic = request.form['topic']
