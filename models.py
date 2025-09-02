@@ -32,6 +32,9 @@ class Seminar(db.Model):
     speaker = db.Column(db.String(100))
     topic = db.Column(db.String(200))
     contact = db.Column(db.String(100))
+    open_time = db.Column(db.Time)
+    end_time = db.Column(db.Time)
+    speaker_bio = db.Column(db.Text)
 
 from sqlalchemy.orm import relationship
 

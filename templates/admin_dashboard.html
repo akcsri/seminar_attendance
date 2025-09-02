@@ -273,32 +273,29 @@
                 <small style="color: #666; font-style: italic;">※ 肩書きや所属も併記可能です。</small>
             </div>
             
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">開場時刻:</label>
+                    <input type="time" name="open_time" placeholder="例: 18:00" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <small style="color: #666; font-style: italic;">※ 任意: セミナー開場時刻</small>
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">終了時刻:</label>
+                    <input type="time" name="end_time" placeholder="例: 20:00" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <small style="color: #666; font-style: italic;">※ 任意: セミナー終了時刻</small>
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">講師経歴:</label>
+                <textarea name="speaker_bio" rows="3" placeholder="講師の詳細経歴をご記入ください（HTML形式可）" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea>
+                <small style="color: #666; font-style: italic;">※ 任意: 講師の詳細な経歴情報。HTML形式で記述可能です。</small>
+            </div>
+            
             <div>
                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">セミナー詳細情報:</label>
-                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px solid #e9ecef; margin-bottom: 10px;">
-                    <h4 style="margin: 0 0 15px 0; color: #333;">構造化入力フォーム</h4>
-                    
-                    <label style="margin-bottom: 5px;">概要:</label><br>
-                    <textarea id="add_description_input" rows="3" placeholder="セミナーの概要をご記入ください" style="width: 100%; margin-bottom: 15px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea>
-                    
-                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-                        <div style="flex: 1;">
-                            <label style="margin-bottom: 5px;">開場時刻:</label><br>
-                            <input type="time" id="add_open_time_input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        </div>
-                        <div style="flex: 1;">
-                            <label style="margin-bottom: 5px;">終了時刻:</label><br>
-                            <input type="time" id="add_end_time_input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        </div>
-                    </div>
-                    
-                    <label style="margin-bottom: 5px;">講師経歴:</label><br>
-                    <textarea id="add_speaker_bio_input" rows="3" placeholder="講師の詳細経歴をご記入ください（HTML形式可）" style="width: 100%; margin-bottom: 15px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea>
-                    
-                    <button type="button" onclick="updateAddTopicField()" style="background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">構造化データに更新</button>
-                </div>
-                <textarea name="topic" id="add_topic_field" rows="4" placeholder="【概要】&#10;最新のAI技術動向について&#10;&#10;【講師経歴】&#10;田中博士は機械学習分野の第一人者として、数々の研究成果を挙げています。東京大学大学院情報理工学系研究科教授。&#10;&#10;【時間】&#10;開場: 18:00 | 開始: 18:30 | 終了: 20:00" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; resize: vertical;"></textarea>
-                <small style="color: #666; font-style: italic;">※ 上記の構造化入力フォームを使用するか、直接編集してください。メール送信時にそのまま使用されます。</small>
+                <textarea name="topic" rows="4" placeholder="セミナーの詳細内容、概要、注意事項等をご記入ください" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; resize: vertical;"></textarea>
+                <small style="color: #666; font-style: italic;">※ セミナーの詳細内容や概要。メール送信時にそのまま使用されます。</small>
             </div>
             
             <div>
@@ -378,41 +375,8 @@
             });
         });
 
-        // Functions for structured topic creation in add seminar form
-        function createStructuredTopic(description, open_time, end_time, speaker_bio) {
-            const parts = [];
-            
-            if (description) {
-                parts.push(`【概要】\n${description}`);
-            }
-            
-            if (speaker_bio) {
-                parts.push(`【講師経歴】\n${speaker_bio}`);
-            }
-            
-            if (open_time || end_time) {
-                const timeParts = [];
-                if (open_time) timeParts.push(`開場: ${open_time}`);
-                if (end_time) timeParts.push(`終了: ${end_time}`);
-                
-                if (timeParts.length > 0) {
-                    parts.push(`【時間】\n${timeParts.join(' | ')}`);
-                }
-            }
-            
-            return parts.join('\n\n');
-        }
-        
-        // Update topic field from structured inputs for add seminar form
-        function updateAddTopicField() {
-            const description = document.getElementById('add_description_input').value;
-            const open_time = document.getElementById('add_open_time_input').value;
-            const end_time = document.getElementById('add_end_time_input').value;
-            const speaker_bio = document.getElementById('add_speaker_bio_input').value;
-            
-            const structuredTopic = createStructuredTopic(description, open_time, end_time, speaker_bio);
-            document.getElementById('add_topic_field').value = structuredTopic;
-        }
+        // Functions for structured topic creation in add seminar form (removed)
+        // Direct input approach is now used instead of structured data
     </script>
 </body>
 </html>
