@@ -125,7 +125,7 @@
                         <tr>
                             <td>{{ order.orderer_name }}</td>
                             <td class="item-list">
-                                {% for item in order.items %}
+                                {% for item in order.ordered_items %}
                                 <span class="item">
                                     {{ item.name }}
                                     <span class="item-price">(¥{{ "%.0f"|format(item.price) }})</span>

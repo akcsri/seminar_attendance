@@ -869,7 +869,7 @@ def lunch_order_status():
     
     # Get all menu items
     menus = Seminar.query.filter_by(topic='MENU_ITEM').all()
-    menu_dict = {menu.id: {'name': menu.title, 'price': float(menu.contact or 0)} for menu in menus}
+    menu_dict = {str(menu.id): {'name': menu.title, 'price': float(menu.contact or 0)} for menu in menus}
     
     # Get orders for all sessions
     all_orders = []
@@ -898,7 +898,7 @@ def lunch_order_status():
                     
                     all_orders.append({
                         'orderer_name': recipient.name,
-                        'items': item_details,
+                        'ordered_items': item_details,
                         'total_price': total_price,
                         'session': session.title
                     })
@@ -919,12 +919,13 @@ def lunch_order_status():
 @app.route('/send_lunch_order_email', methods=['POST'])
 def send_lunch_order_email():
     """ランチ等注文メール送信"""
+    from datetime import datetime
+    
     try:
         session_title = request.form['session_title']
         deadline = request.form['deadline']
         
         # Create lunch session entry
-        from datetime import datetime
         deadline_dt = datetime.fromisoformat(deadline)
         
         lunch_session = Seminar(
@@ -972,6 +973,7 @@ def send_lunch_order_email():
 def lunch_order_response():
     """ランチ注文レスポンス処理"""
     import json
+    from datetime import datetime
     
     session_id = request.args.get('session_id')
     recipient_id = request.args.get('recipient_id')
