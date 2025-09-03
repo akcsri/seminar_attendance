@@ -425,21 +425,26 @@
 講演後に質疑応答/ディスカッションを予定していますので、発言される際はお名前と現在の所属/役職もお願いします。  
 以下のボタンから出欠をご回答ください。
 
-<table>
-  <tr>
-    <td>
-      <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend">出席</a>
-    </td>
-    <td>
-      <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent">欠席</a>
-    </td>
-    <td>
-      <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending">保留</a>
-    </td>
-  </tr>
-</table>
 
-<p>※ ボタンが機能しない場合は、以下のリンクをコピーしてブラウザのアドレスバーに貼り付けてください：</p>
+<div style="text-align: center; margin-top: 20px;">
+<div style="margin: 10px;">
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&amp;recipient_id={{ recipient.id }}&amp;status=attend" style="display: inline-block; background-color: black; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+       出席
+    </a>
+</div>
+<div style="margin: 10px;">
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&amp;recipient_id={{ recipient.id }}&amp;status=absent" style="display: inline-block; background-color: gray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+       欠席
+    </a>
+</div>
+<div style="margin: 10px;">
+<a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&amp;recipient_id={{ recipient.id }}&amp;status=pending" style="display: inline-block; background-color: gray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+       保留
+    </a>
+</div>
+</div>
+
+<p>※ ボタンが機能しない場合は、以下のリンクをクリックするか、コピーしてブラウザのアドレスバーに貼り付けてください：</p>
 <ul>
 <li>出席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&amp;recipient_id={{ recipient.id }}&amp;status=attend">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&amp;recipient_id={{ recipient.id }}&amp;status=attend</a></li>
 <li>欠席: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&amp;recipient_id={{ recipient.id }}&amp;status=absent">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&amp;recipient_id={{ recipient.id }}&amp;status=absent</a></li>
@@ -451,7 +456,7 @@
             </tr>
         </table>
         <![endif]-->
-</div>
+
 <!--[if mso]>
             </td>
         </tr>
