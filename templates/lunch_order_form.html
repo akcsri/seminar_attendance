@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ランチ注文フォーム</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--card-background);
+            border-radius: 8px;
+            margin-top: 50px;
+        }
+        
+        .menu-item {
+            background: var(--secondary-background);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .menu-item label {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+        
+        .menu-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .menu-price {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .session-info {
+            background: #e8f4ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ランチ注文フォーム</h1>
+        
+        <div class="session-info">
+            <h3>{{ session.title }}</h3>
+            <p><strong>注文期限:</strong> {{ session.contact }}</p>
+            <p><strong>注文者:</strong> {{ recipient.name }} 様</p>
+        </div>
+        
+        <form action="/lunch_order_response" method="GET">
+            <input type="hidden" name="session_id" value="{{ session.id }}">
+            <input type="hidden" name="recipient_id" value="{{ recipient.id }}">
+            
+            <h3>メニュー選択（複数選択可）</h3>
+            
+            {% for menu in menus %}
+            <div class="menu-item">
+                <label>
+                    <input type="checkbox" name="items" value="{{ menu.id }}">
+                    <span>{{ menu.title }}</span>
+                    <span class="menu-price">¥{{ menu.contact }}</span>
+                </label>
+            </div>
+            {% endfor %}
+            
+            <div class="submit-section">
+                <button type="submit" class="btn">注文を確定する</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
