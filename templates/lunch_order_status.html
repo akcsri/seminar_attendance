@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ランチ等注文状況</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-section {
+            background: var(--card-background);
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--secondary-background);
+            font-weight: 600;
+        }
+        
+        .item-list {
+            max-width: 300px;
+            word-wrap: break-word;
+        }
+        
+        .item {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .item-price {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .total-price {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .summary-table {
+            margin-top: 30px;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .summary-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .nav-links {
+            margin-bottom: 20px;
+        }
+        
+        .nav-links a {
+            margin-right: 15px;
+            padding: 8px 16px;
+            background-color: var(--secondary-background);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        .nav-links a:hover {
+            background-color: var(--border-color);
+        }
+        
+        .no-orders {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>ランチ等注文状況</h1>
+        
+        <div class="nav-links">
+            <a href="{{ url_for('lunch_admin') }}">注文管理に戻る</a>
+            <a href="{{ url_for('admin_dashboard') }}">セミナー管理に戻る</a>
+        </div>
+
+        <div class="admin-section">
+            <h2>📊 注文状況一覧</h2>
+            
+            {% if orders %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>注文者氏名</th>
+                            <th>品名①〜⑤</th>
+                            <th>合計税抜き価格</th>
+                            <th>セッション</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order.orderer_name }}</td>
+                            <td class="item-list">
+                                {% for item in order.ordered_items %}
+                                <span class="item">
+                                    {{ item.name }}
+                                    <span class="item-price">(¥{{ "%.0f"|format(item.price) }})</span>
+                                </span>
+                                {% endfor %}
+                            </td>
+                            <td class="total-price">¥{{ "%.0f"|format(order.total_price) }}</td>
+                            <td>{{ order.session }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 合計金額サマリー -->
+            <div class="table-container">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">金額サマリー</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>税抜き価格総計</strong></td>
+                            <td class="total-price">¥{{ "%.0f"|format(total_before_tax) }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>消費税額 (10%)</strong></td>
+                            <td class="total-price">¥{{ "%.0f"|format(tax_amount) }}</td>
+                        </tr>
+                        <tr style="border-top: 2px solid var(--primary-color);">
+                            <td><strong>税込み価格総計</strong></td>
+                            <td class="total-price" style="font-size: 1.2em;">¥{{ "%.0f"|format(total_with_tax) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            {% else %}
+            <div class="no-orders">
+                <p>まだ注文がありません。</p>
+                <p>注文メール送信機能を使って注文を受け付けてください。</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

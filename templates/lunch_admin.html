@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ランチ等注文管理</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-section {
+            background: var(--card-background);
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+        
+        .admin-section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 1.3em;
+        }
+        
+        .form-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .form-inline input,
+        .form-inline select {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--secondary-background);
+            font-weight: 600;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .flash-messages {
+            margin: 20px 0;
+        }
+        
+        .flash-message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .flash-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .nav-links {
+            margin-bottom: 20px;
+        }
+        
+        .nav-links a {
+            margin-right: 15px;
+            padding: 8px 16px;
+            background-color: var(--secondary-background);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        .nav-links a:hover {
+            background-color: var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>ランチ等注文管理</h1>
+        
+        <div class="nav-links">
+            <a href="{{ url_for('admin_dashboard') }}">セミナー管理に戻る</a>
+            <a href="{{ url_for('lunch_order_status') }}">注文状況表示</a>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- メニュー管理セクション -->
+        <div class="admin-section">
+            <h2>📋 メニュー管理</h2>
+            
+            <!-- メニュー項目追加フォーム -->
+            <h3>メニュー項目追加</h3>
+            <form action="/add_menu_item" method="post" class="form-inline">
+                <label for="menu_name">メニュー名:</label>
+                <input type="text" id="menu_name" name="menu_name" required>
+                
+                <label for="price">税抜き価格:</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+                
+                <button type="submit" class="btn">追加</button>
+            </form>
+            
+            <!-- メニューCSVインポート -->
+            <h3>メニューCSVインポート</h3>
+            <form action="/import_menu_csv" method="post" enctype="multipart/form-data" class="form-inline">
+                <label for="menu_csv_file">CSVファイル:</label>
+                <input type="file" id="menu_csv_file" name="menu_csv_file" accept=".csv" required>
+                <button type="submit" class="btn">インポート</button>
+            </form>
+            <small>CSVフォーマット: メニュー名, 税抜き価格</small>
+            
+            <!-- メニュー一覧 -->
+            <h3>メニュー一覧</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>メニュー名</th>
+                            <th>税抜き価格</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for menu in menus %}
+                        <tr>
+                            <td>{{ menu.id }}</td>
+                            <td>{{ menu.title }}</td>
+                            <td>¥{{ menu.contact }}</td>
+                            <td>
+                                <form action="/delete_menu_item/{{ menu.id }}" method="post" style="display:inline;" 
+                                      onsubmit="return confirm('このメニュー項目を削除しますか？')">
+                                    <button type="submit" class="btn btn-danger">削除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 注文者管理セクション -->
+        <div class="admin-section">
+            <h2>👥 注文者管理</h2>
+            
+            <!-- 注文者CSVインポート -->
+            <h3>注文者CSVインポート</h3>
+            <form action="/import_orderer_csv" method="post" enctype="multipart/form-data" class="form-inline">
+                <label for="orderer_csv_file">CSVファイル:</label>
+                <input type="file" id="orderer_csv_file" name="orderer_csv_file" accept=".csv" required>
+                <button type="submit" class="btn">インポート</button>
+            </form>
+            <small>CSVフォーマット: 氏名, メールアドレス</small>
+            
+            <!-- 注文者一覧 -->
+            <h3>注文者一覧</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>氏名</th>
+                            <th>メールアドレス</th>
+                            <th>所属</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orderer in orderers %}
+                        <tr>
+                            <td>{{ orderer.id }}</td>
+                            <td>{{ orderer.name }}</td>
+                            <td>{{ orderer.email }}</td>
+                            <td>{{ orderer.affiliation }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 注文メール送信セクション -->
+        <div class="admin-section">
+            <h2>📧 注文メール送信</h2>
+            
+            <form action="/send_lunch_order_email" method="post" class="form-inline">
+                <label for="session_title">セッション名:</label>
+                <input type="text" id="session_title" name="session_title" placeholder="例: 12月25日ランチ注文" required>
+                
+                <label for="deadline">注文期限:</label>
+                <input type="datetime-local" id="deadline" name="deadline" required>
+                
+                <button type="submit" class="btn">メール送信</button>
+            </form>
+        </div>
+
+        <!-- 注文状況セクション -->
+        <div class="admin-section">
+            <h2>📊 注文状況</h2>
+            
+            <a href="{{ url_for('lunch_order_status') }}" class="btn">詳細な注文状況を表示</a>
+            
+            <h3>概要</h3>
+            <p>登録メニュー数: {{ menus|length }} 件</p>
+            <p>登録注文者数: {{ orderers|length }} 件</p>
+            <p>注文データ数: {{ orders|length }} 件</p>
+        </div>
+    </div>
+</body>
+</html>
