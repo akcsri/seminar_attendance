@@ -15,10 +15,18 @@
         }
         .container {
             max-width: 650px;
+            width: 100%;
             margin: 0 auto;
             background-color: #ffffff;
             padding: 40px;
             border: 1px solid #cccccc;
+        }
+        /* Outlook-specific width constraints */
+        table.container-table {
+            width: 650px !important;
+            max-width: 650px !important;
+            table-layout: fixed;
+            margin: 0 auto;
         }
         .header {
             text-align: center;
@@ -164,6 +172,11 @@
             border: 2px solid #000000;
             border-radius: 8px;
         }
+        /* Outlook-specific button container */
+        .button-container table {
+            width: 100% !important;
+            margin: 0 auto !important;
+        }
         .button-instruction {
             margin-bottom: 25px;
             font-size: 18px;
@@ -201,6 +214,13 @@
                 padding: 25px 20px;
                 margin: 10px;
                 border-radius: 8px;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            /* Outlook mobile adjustments */
+            table.container-table {
+                width: 100% !important;
+                max-width: 100% !important;
             }
             .seminar-title {
                 font-size: 20px;
@@ -222,10 +242,26 @@
                 padding: 15px;
             }
         }
+        /* Outlook-specific fixes */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            .container {
+                max-width: 650px !important;
+            }
+        }
     </style>
 </head>
 <body>
+    <!--[if mso]>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="650" style="margin: 0 auto;">
+        <tr>
+            <td>
+    <![endif]-->
     <div class="container">
+        <!--[if mso]>
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+                <td style="padding: 40px;">
+        <![endif]-->
         <div class="header">
             <p class="recipient-name">{{ recipient.name }} 様</p>
         </div>
@@ -291,24 +327,30 @@
             <p class="button-instruction">以下のボタンから出欠をご回答ください。</p>
             
             <!--[if mso]>
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto; width: 100%;">
                 <tr>
-                    <td style="background-color: #000000; border-radius: 4px; padding: 0; width: 120px;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="background-color: #000000; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 15px 20px; border-radius: 4px; display: block; text-align: center; width: 80px; box-sizing: border-box;">
-                            出席
-                        </a>
-                    </td>
-                    <td width="15" style="font-size: 1px; line-height: 1px;">&nbsp;</td>
-                    <td style="background-color: #000000; border-radius: 4px; padding: 0; width: 120px;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="background-color: #000000; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 15px 20px; border-radius: 4px; display: block; text-align: center; width: 80px; box-sizing: border-box;">
-                            欠席
-                        </a>
-                    </td>
-                    <td width="15" style="font-size: 1px; line-height: 1px;">&nbsp;</td>
-                    <td style="background-color: #666666; border-radius: 4px; padding: 0; width: 120px;">
-                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="background-color: #666666; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 15px 20px; border-radius: 4px; display: block; text-align: center; width: 80px; box-sizing: border-box;">
-                            保留
-                        </a>
+                    <td align="center" style="padding: 0;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                            <tr>
+                                <td style="background-color: #000000; border-radius: 4px; padding: 0; width: 120px; text-align: center;">
+                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="background-color: #000000; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 15px 10px; border-radius: 4px; display: block; text-align: center; width: 100px; box-sizing: border-box;">
+                                        出席
+                                    </a>
+                                </td>
+                                <td width="20" style="font-size: 1px; line-height: 1px;">&nbsp;</td>
+                                <td style="background-color: #000000; border-radius: 4px; padding: 0; width: 120px; text-align: center;">
+                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="background-color: #000000; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 15px 10px; border-radius: 4px; display: block; text-align: center; width: 100px; box-sizing: border-box;">
+                                        欠席
+                                    </a>
+                                </td>
+                                <td width="20" style="font-size: 1px; line-height: 1px;">&nbsp;</td>
+                                <td style="background-color: #666666; border-radius: 4px; padding: 0; width: 120px; text-align: center;">
+                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="background-color: #666666; color: white; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; padding: 15px 10px; border-radius: 4px; display: block; text-align: center; width: 100px; box-sizing: border-box;">
+                                        保留
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>
@@ -343,6 +385,16 @@
                 <li>保留: <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending">https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending</a></li>
             </ul>
         </div>
+        <!--[if mso]>
+                </td>
+            </tr>
+        </table>
+        <![endif]-->
     </div>
+    <!--[if mso]>
+            </td>
+        </tr>
+    </table>
+    <![endif]-->
 </body>
 </html>
