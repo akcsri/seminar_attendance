@@ -415,6 +415,32 @@
         </form>
     </div>
 
+    <!-- Status Management Section -->
+    <div class="email-controls">
+        <h3>📝 出欠ステータス管理</h3>
+        <p>登録者の出欠ステータスを手動で「confirmed」に変更できます。</p>
+        <form action="/update_attendance_status" method="post" id="statusUpdateForm">
+            <label>
+                <input type="checkbox" id="selectAllStatus"> 全選択/全解除
+            </label>
+            <br><br>
+            <label for="status_seminar_select">対象セミナー:</label>
+            <select name="seminar_id" id="status_seminar_select" required onchange="loadAttendanceData()">
+                <option value="">セミナーを選択してください</option>
+                {% for s in seminars %}
+                <option value="{{ s.id }}" {% if s.id == latest_seminar_id %}selected{% endif %}>{{ s.title }} ({{ s.date }})</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            
+            <div id="attendanceList" style="margin: 20px 0; max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+                <p style="color: #666;">セミナーを選択すると、該当する出欠情報が表示されます。</p>
+            </div>
+            
+            <button type="submit" class="btn-primary" onclick="return confirmStatusUpdate()">選択した登録者のステータスを「confirmed」に変更</button>
+        </form>
+    </div>
+
     <h2>出欠情報</h2>
     <table>
         <tr>
@@ -480,6 +506,102 @@
                     selectAllCheckbox.indeterminate = true;
                 }
             });
+        });
+
+        // JavaScript for status management functionality
+        function loadAttendanceData() {
+            const seminarSelect = document.getElementById('status_seminar_select');
+            const attendanceList = document.getElementById('attendanceList');
+            const seminarId = seminarSelect.value;
+            
+            if (!seminarId) {
+                attendanceList.innerHTML = '<p style="color: #666;">セミナーを選択すると、該当する出欠情報が表示されます。</p>';
+                return;
+            }
+            
+            // Make AJAX request to get attendance data for the selected seminar
+            fetch(`/get_attendance_data?seminar_id=${seminarId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        attendanceList.innerHTML = '<p style="color: #666;">このセミナーには出欠データがありません。</p>';
+                        return;
+                    }
+                    
+                    let html = '<table style="width: 100%; border-collapse: collapse;">';
+                    html += '<tr style="background-color: #f5f5f5;"><th style="padding: 8px; border: 1px solid #ddd;">選択</th><th style="padding: 8px; border: 1px solid #ddd;">名前</th><th style="padding: 8px; border: 1px solid #ddd;">メール</th><th style="padding: 8px; border: 1px solid #ddd;">現在のステータス</th></tr>';
+                    
+                    data.forEach(attendance => {
+                        const statusClass = attendance.status === 'confirmed' ? 'style="background-color: #e8f5e8;"' : '';
+                        html += `<tr ${statusClass}>`;
+                        html += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><input type="checkbox" name="attendance_ids" value="${attendance.id}" class="status-checkbox" ${attendance.status === 'confirmed' ? 'disabled title="既に確認済みです"' : ''}></td>`;
+                        html += `<td style="padding: 8px; border: 1px solid #ddd;">${attendance.recipient_name}</td>`;
+                        html += `<td style="padding: 8px; border: 1px solid #ddd;">${attendance.recipient_email}</td>`;
+                        html += `<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">${attendance.status}</td>`;
+                        html += '</tr>';
+                    });
+                    
+                    html += '</table>';
+                    attendanceList.innerHTML = html;
+                    
+                    // Setup select all functionality for status checkboxes
+                    setupStatusSelectAll();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    attendanceList.innerHTML = '<p style="color: #red;">データの読み込みに失敗しました。</p>';
+                });
+        }
+        
+        function setupStatusSelectAll() {
+            // JavaScript for select all/none functionality - Status management
+            const selectAllStatus = document.getElementById('selectAllStatus');
+            if (selectAllStatus) {
+                selectAllStatus.addEventListener('change', function() {
+                    const checkboxes = document.querySelectorAll('.status-checkbox:not(:disabled)');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                });
+            }
+            
+            // Update select all checkbox based on individual checkboxes - Status management
+            document.querySelectorAll('.status-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allCheckboxes = document.querySelectorAll('.status-checkbox:not(:disabled)');
+                    const checkedCheckboxes = document.querySelectorAll('.status-checkbox:not(:disabled):checked');
+                    const selectAllCheckbox = document.getElementById('selectAllStatus');
+                    
+                    if (checkedCheckboxes.length === 0) {
+                        selectAllCheckbox.indeterminate = false;
+                        selectAllCheckbox.checked = false;
+                    } else if (checkedCheckboxes.length === allCheckboxes.length) {
+                        selectAllCheckbox.indeterminate = false;
+                        selectAllCheckbox.checked = true;
+                    } else {
+                        selectAllCheckbox.indeterminate = true;
+                    }
+                });
+            });
+        }
+        
+        function confirmStatusUpdate() {
+            const checkedBoxes = document.querySelectorAll('.status-checkbox:checked');
+            if (checkedBoxes.length === 0) {
+                alert('更新する登録者を選択してください。');
+                return false;
+            }
+            
+            const count = checkedBoxes.length;
+            return confirm(`選択した${count}件の登録者のステータスを「confirmed」に変更してもよろしいですか？`);
+        }
+        
+        // Load attendance data on page load if a seminar is pre-selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const seminarSelect = document.getElementById('status_seminar_select');
+            if (seminarSelect && seminarSelect.value) {
+                loadAttendanceData();
+            }
         });
 
         // Functions for structured topic creation in add seminar form (removed)
