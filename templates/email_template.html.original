@@ -190,60 +190,65 @@
             background: #000000;
             border: 1px solid #000000;
         }
-        /* Simplified button container - no borders or backgrounds for Outlook compatibility */
         .button-container {
             text-align: center;
             margin: 40px 0;
-            padding: 20px 0;
-            background: transparent;
-            border: none;
-        }
-        /* Inline-block button approach for better Outlook compatibility */
-        .button-container .button-wrapper {
-            display: inline-block;
-            margin: 0 8px;
-            text-align: center;
-            /* Outlook-specific properties */
+            padding: 25px 15px;
+            background: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 8px;
+            /* Enhanced Outlook-specific properties */
             mso-table-lspace: 0pt !important;
             mso-table-rspace: 0pt !important;
         }
-        /* Direct button styling without container boxes */
-        .button-container a {
-            display: inline-block !important;
-            text-decoration: none !important;
-            font-family: Arial, sans-serif !important;
-            font-size: 14px !important;
-            font-weight: bold !important;
-            padding: 12px 20px !important;
-            margin: 0 !important;
-            color: #ffffff !important;
-            background-color: #000000 !important;
-            border: 1px solid #000000 !important;
-            text-align: center !important;
-            border-radius: 0 !important;
-            /* Outlook-specific properties */
-            mso-hide: none !important;
-            mso-padding-alt: 12px 20px 12px 20px !important;
-            mso-border-alt: solid 1px #000000 !important;
+        /* Simplified button container table - reduced width for better Outlook compatibility */
+        .button-container table {
+            width: 300px !important;
+            max-width: 300px !important;
+            margin: 0 auto !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+            mso-table-wrap: none !important;
+            border: 0 !important;
         }
-        /* Pending button styling */
-        .button-container a.pending {
-            background-color: #666666 !important;
-            border: 1px solid #666666 !important;
-            mso-border-alt: solid 1px #666666 !important;
+        /* Enhanced button cell styling for Outlook compatibility - smaller cells */
+        .button-container td {
+            width: 100px !important;
+            max-width: 100px !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            padding: 3px !important;
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+            border: 0 !important;
+        }
+        /* Improved Outlook button link styling - smaller buttons */
+        .button-container a {
+            display: block !important;
+            text-decoration: none !important;
+            mso-hide: none !important;
+            font-size: 12px !important;
+            padding: 8px 4px !important;
+            mso-padding-alt: 8px 4px 8px 4px !important;
+            width: 92px !important;
+            max-width: 92px !important;
+            margin: 0 auto !important;
+            box-sizing: border-box !important;
+            mso-border-alt: none !important;
         }
         .button-instruction {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 18px;
             color: #000000;
             font-weight: 600;
         }
-        /* Simplified fallback links section */
         .fallback-links {
-            margin-top: 40px;
-            padding: 20px 0;
-            background-color: transparent;
-            border: none;
+            margin-top: 35px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
         }
         .fallback-text {
             font-size: 13px;
@@ -292,18 +297,7 @@
                 font-size: 16px;
             }
             .button-container {
-                padding: 15px 0;
-            }
-            .button-container .button-wrapper {
-                display: block;
-                margin: 8px 0;
-            }
-            .button-container a {
-                display: block !important;
-                width: 200px !important;
-                margin: 0 auto !important;
-                padding: 15px 20px !important;
-                mso-padding-alt: 15px 20px 15px 20px !important;
+                padding: 20px 15px;
             }
             .venue-info, .speaker-section {
                 padding: 15px;
@@ -328,16 +322,22 @@
                 max-width: 100% !important;
                 padding: 20px !important;
             }
-            .button-container .button-wrapper {
-                display: block !important;
-                margin: 8px auto !important;
+            .button-container table {
+                width: 100% !important;
+                max-width: 270px !important;
             }
+            .button-container td {
+                width: 33.33% !important;
+                max-width: 90px !important;
+                padding: 2px !important;
+            }
+            /* Outlook mobile specific button adjustments - smaller buttons */
             .button-container a {
+                font-size: 11px !important;
+                padding: 8px 2px !important;
                 display: block !important;
-                width: 200px !important;
-                margin: 0 auto !important;
-                padding: 15px 20px !important;
-                mso-padding-alt: 15px 20px 15px 20px !important;
+                width: 86px !important;
+                max-width: 86px !important;
             }
         }
         
@@ -347,9 +347,9 @@
                 width: 600px !important;
                 max-width: 600px !important;
             }
-            .button-container .button-wrapper {
-                display: inline-block !important;
-                margin: 0 8px !important;
+            .button-container table {
+                width: 300px !important;
+                max-width: 300px !important;
             }
         }
     </style>
@@ -431,21 +431,31 @@
             <p class="button-instruction">以下のボタンから出欠をご回答ください。</p>
             
             <!--[if mso]>
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" align="center" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="300" align="center" style="width: 300px; margin: 0 auto; border-collapse: collapse; table-layout: fixed; mso-table-lspace: 0pt; mso-table-rspace: 0pt; mso-table-wrap: none;">
                 <tr>
-                    <td align="center" style="padding: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                    <td width="100" align="center" valign="middle" style="width: 100px; padding: 3px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="92" align="center" style="width: 92px; margin: 0 auto; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                             <tr>
-                                <td bgcolor="#000000" align="center" valign="middle" style="background-color: #000000; padding: 12px 20px; mso-padding-alt: 12px 20px 12px 20px; border: 1px solid #000000; mso-border-alt: solid 1px #000000;">
-                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; display: block; mso-hide: none;">出席</a>
+                                <td align="center" valign="middle" bgcolor="#000000" style="background-color: #000000; padding: 8px 4px; mso-padding-alt: 8px 4px 8px 4px; border: 1px solid #000000;">
+                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; text-decoration: none; display: block; mso-hide: none;">出席</a>
                                 </td>
-                                <td style="width: 16px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">&nbsp;</td>
-                                <td bgcolor="#000000" align="center" valign="middle" style="background-color: #000000; padding: 12px 20px; mso-padding-alt: 12px 20px 12px 20px; border: 1px solid #000000; mso-border-alt: solid 1px #000000;">
-                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; display: block; mso-hide: none;">欠席</a>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="100" align="center" valign="middle" style="width: 100px; padding: 3px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="92" align="center" style="width: 92px; margin: 0 auto; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                            <tr>
+                                <td align="center" valign="middle" bgcolor="#000000" style="background-color: #000000; padding: 8px 4px; mso-padding-alt: 8px 4px 8px 4px; border: 1px solid #000000;">
+                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; text-decoration: none; display: block; mso-hide: none;">欠席</a>
                                 </td>
-                                <td style="width: 16px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">&nbsp;</td>
-                                <td bgcolor="#666666" align="center" valign="middle" style="background-color: #666666; padding: 12px 20px; mso-padding-alt: 12px 20px 12px 20px; border: 1px solid #666666; mso-border-alt: solid 1px #666666;">
-                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; display: block; mso-hide: none;">保留</a>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="100" align="center" valign="middle" style="width: 100px; padding: 3px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="92" align="center" style="width: 92px; margin: 0 auto; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                            <tr>
+                                <td align="center" valign="middle" bgcolor="#666666" style="background-color: #666666; padding: 8px 4px; mso-padding-alt: 8px 4px 8px 4px; border: 1px solid #666666;">
+                                    <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" style="color: #ffffff; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; text-decoration: none; display: block; mso-hide: none;">保留</a>
                                 </td>
                             </tr>
                         </table>
@@ -454,15 +464,22 @@
             </table>
             <![endif]-->
             <!--[if !mso]><!-- -->
-            <div class="button-wrapper">
-                <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend">出席</a>
-            </div>
-            <div class="button-wrapper">
-                <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent">欠席</a>
-            </div>
-            <div class="button-wrapper">
-                <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" class="pending">保留</a>
-            </div>
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto; max-width: 300px; width: 100%; border-collapse: collapse; table-layout: fixed;">
+                <tr>
+                    <td style="width: 100px; max-width: 100px; padding: 3px; text-align: center;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=attend" 
+                           style="background-color: #000000; color: white; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; text-decoration: none; padding: 8px 4px; display: block; text-align: center; border: 1px solid #000000; width: 92px; max-width: 92px; box-sizing: border-box; margin: 0 auto;">出席</a>
+                    </td>
+                    <td style="width: 100px; max-width: 100px; padding: 3px; text-align: center;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=absent" 
+                           style="background-color: #000000; color: white; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; text-decoration: none; padding: 8px 4px; display: block; text-align: center; border: 1px solid #000000; width: 92px; max-width: 92px; box-sizing: border-box; margin: 0 auto;">欠席</a>
+                    </td>
+                    <td style="width: 100px; max-width: 100px; padding: 3px; text-align: center;">
+                        <a href="https://seminar-attendance.onrender.com/respond?seminar_id={{ seminar.id }}&recipient_id={{ recipient.id }}&status=pending" 
+                           style="background-color: #666666; color: white; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; text-decoration: none; padding: 8px 4px; display: block; text-align: center; border: 1px solid #666666; width: 92px; max-width: 92px; box-sizing: border-box; margin: 0 auto;">保留</a>
+                    </td>
+                </tr>
+            </table>
             <!--<![endif]-->
         </div>
         
