@@ -14,19 +14,17 @@
         }
         
         .admin-section {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: var(--card-background);
             padding: 25px;
-            border-radius: 12px;
+            border: 1px solid var(--border-color);
             margin: 30px 0;
-            border-left: 5px solid var(--accent-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         
         .admin-section h2 {
             margin-top: 0;
             margin-bottom: 20px;
             background: none;
-            -webkit-text-fill-color: var(--primary-color);
+            color: var(--primary-color);
             text-align: left;
             font-size: 1.3em;
             padding: 0;
@@ -372,7 +370,7 @@
             
             <div>
                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">会場:</label>
-                <input type="text" name="venue" placeholder="例: 東京国際フォーラム ホールA" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <textarea name="venue" rows="3" placeholder="例: 東京国際フォーラム ホールA" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
                 <small style="color: #666; font-style: italic;">※ 詳細な住所や交通アクセスも記載可能です。</small>
             </div>
             
