@@ -559,4 +559,67 @@ def export_attendance_csv():
     except Exception as e:
         flash(f'出欠CSVエクスポート中にエラーが発生しました: {str(e)}', 'error')
         return redirect(url_for('admin_dashboard'))
-        return redirect(url_for('admin_dashboard'))
+
+@app.route('/get_attendance_data')
+def get_attendance_data():
+    """Get attendance data for a specific seminar (AJAX endpoint)"""
+    seminar_id = request.args.get('seminar_id')
+    
+    if not seminar_id:
+        return []
+    
+    # Get attendance records with recipient information
+    attendances = db.session.query(Attendance, Recipient)\
+        .join(Recipient, Attendance.recipient_id == Recipient.id)\
+        .filter(Attendance.seminar_id == seminar_id)\
+        .all()
+    
+    attendance_data = []
+    for attendance, recipient in attendances:
+        attendance_data.append({
+            'id': attendance.id,
+            'recipient_name': recipient.name,
+            'recipient_email': recipient.email,
+            'status': attendance.status,
+            'comment': attendance.comment or ''
+        })
+    
+    return attendance_data
+
+@app.route('/update_attendance_status', methods=['POST'])
+def update_attendance_status():
+    """Update attendance status to 'confirmed' for selected attendances"""
+    try:
+        attendance_ids = request.form.getlist('attendance_ids')
+        seminar_id = request.form.get('seminar_id')
+        
+        if not attendance_ids:
+            flash('更新する登録者を選択してください。', 'warning')
+            return redirect(url_for('admin_dashboard'))
+            
+        if not seminar_id:
+            flash('対象セミナーを選択してください。', 'warning')
+            return redirect(url_for('admin_dashboard'))
+        
+        updated_count = 0
+        
+        for attendance_id in attendance_ids:
+            attendance = Attendance.query.get(attendance_id)
+            if attendance and attendance.seminar_id == int(seminar_id):
+                # Only update if not already confirmed
+                if attendance.status != 'confirmed':
+                    attendance.status = 'confirmed'
+                    updated_count += 1
+        
+        db.session.commit()
+        
+        if updated_count > 0:
+            flash(f'{updated_count}件の登録者のステータスを「confirmed」に更新しました。', 'success')
+        else:
+            flash('更新対象がありませんでした（既に確認済みまたは無効なデータ）。', 'info')
+            
+    except Exception as e:
+        db.session.rollback()
+        flash(f'ステータス更新中にエラーが発生しました: {str(e)}', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
