@@ -259,6 +259,8 @@ def lunch_order_status():
     
     # Calculate order summary
     order_summary = []
+    item_aggregation = {}  # Track item aggregation: {item_name: {'quantity': count, 'price': price}}
+    
     for orderer in orderers:
         if any([orderer.item_1, orderer.item_2, orderer.item_3, orderer.item_4, orderer.item_5]):
             # Get menu details and calculate total
@@ -274,6 +276,14 @@ def lunch_order_status():
                             'price': float(menu_item.price_excl_tax)
                         })
                         total_price += float(menu_item.price_excl_tax)
+                        
+                        # Update item aggregation
+                        if item_name not in item_aggregation:
+                            item_aggregation[item_name] = {
+                                'quantity': 0,
+                                'price': float(menu_item.price_excl_tax)
+                            }
+                        item_aggregation[item_name]['quantity'] += 1
             
             if ordered_items:
                 order_summary.append({
@@ -287,11 +297,26 @@ def lunch_order_status():
     tax_amount = total_before_tax * 0.10  # 10% tax
     total_with_tax = total_before_tax + tax_amount
     
+    # Format item aggregation for template
+    item_summary = []
+    for item_name, data in item_aggregation.items():
+        subtotal = data['quantity'] * data['price']
+        item_summary.append({
+            'name': item_name,
+            'quantity': data['quantity'],
+            'price': data['price'],
+            'subtotal': subtotal
+        })
+    
+    # Sort by item name for consistent display
+    item_summary.sort(key=lambda x: x['name'])
+    
     return render_template('lunch_order_status.html',
                          orders=order_summary,
                          total_before_tax=total_before_tax,
                          tax_amount=tax_amount,
-                         total_with_tax=total_with_tax)
+                         total_with_tax=total_with_tax,
+                         item_summary=item_summary)
 
 @app.route('/add_orderer', methods=['POST'])
 def add_orderer():
@@ -438,25 +463,19 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
         logger.info(f"Session: {session_title}, Deadline: {deadline_dt}")
         logger.info(f"Number of menus: {len(menus)}")
         
-        # Create HTML content with Outlook-compatible menu links
+        # Create HTML content with menu display (no individual order links)
         menu_html = ""
-        menu_links_html = ""
         
-        # Generate individual menu selection links for Outlook compatibility
+        # Generate menu display without individual order buttons (as requested - 廃止)
         for menu in menus:
-            order_link = f"http://127.0.0.1:5000/lunch_order_response?session_title={session_title}&orderer_id={orderer.id}&deadline={deadline_dt.isoformat()}&items={menu.id}"
             menu_html += f"""
             <div class="menu-item">
                 <div class="menu-content">
                     <span class="menu-name">{menu.name}</span>
                     <span class="menu-price">¥{menu.price_excl_tax}</span>
                 </div>
-                <div class="menu-action">
-                    <a href="{order_link}" class="menu-order-btn">この商品を注文</a>
-                </div>
             </div>
             """
-            menu_links_html += f'<li><a href="{order_link}" style="color: #6c5ce7; text-decoration: underline;">{menu.name} (¥{menu.price_excl_tax})</a></li>\n'
         
         # Create order form URL with proper parameters for fallback
         order_url = f"http://127.0.0.1:5000/lunch_order_form?session={session_title}&orderer_id={orderer.id}&deadline={deadline_dt.isoformat()}"
@@ -471,7 +490,7 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
                 body {{
                     font-family: 'Arial', sans-serif;
                     line-height: 1.6;
-                    color: #333;
+                    color: #2c3e50;
                     margin: 0;
                     padding: 20px;
                     background: #f8f9fa;
@@ -482,11 +501,11 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
                     background: white;
                     border-radius: 15px;
                     overflow: hidden;
-                    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.15);
-                    border: 1px solid #e9ecef;
+                    box-shadow: 0 10px 30px rgba(52, 152, 219, 0.15);
+                    border: 1px solid #e3f2fd;
                 }}
                 .header {{
-                    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+                    background: linear-gradient(135deg, #3498db, #2980b9);
                     color: white;
                     text-align: center;
                     padding: 30px 20px;
@@ -495,70 +514,70 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
                     padding: 30px;
                 }}
                 .menu-item {{
-                    background: #f8f9fa;
+                    background: linear-gradient(135deg, #ffffff, #f8f9fa);
                     margin: 15px 0;
                     padding: 20px;
                     border-radius: 12px;
-                    border: 2px solid #e9ecef;
+                    border: 2px solid #e3f2fd;
                     transition: all 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
                 }}
                 .menu-item:hover {{
-                    border-color: #6c5ce7;
-                    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.15);
+                    border-color: #3498db;
+                    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.2);
                 }}
                 .menu-content {{
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    margin-bottom: 15px;
                 }}
                 .menu-name {{
                     font-weight: bold;
-                    color: #2d3436;
+                    color: #2c3e50;
                     font-size: 16px;
                 }}
                 .menu-price {{
-                    color: #6c5ce7;
+                    color: #e74c3c;
                     font-weight: bold;
                     font-size: 18px;
-                }}
-                .menu-action {{
-                    text-align: center;
-                }}
-                .menu-order-btn {{
-                    background: linear-gradient(135deg, #6c5ce7, #74b9ff);
-                    color: white !important;
-                    padding: 12px 25px;
-                    border: none;
+                    background: linear-gradient(135deg, #ffe5e5, #fff1f1);
+                    padding: 8px 15px;
                     border-radius: 20px;
-                    font-size: 14px;
-                    font-weight: bold;
-                    text-decoration: none !important;
-                    display: inline-block;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.25);
-                    /* Outlook-specific styles */
-                    mso-hide: none;
-                }}
-                .menu-order-btn:hover {{
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.35);
+                    border: 1px solid #fadbd8;
                 }}
                 .deadline-notice {{
-                    background: linear-gradient(135deg, #fdcb6e, #e17055);
+                    background: linear-gradient(135deg, #f39c12, #e67e22);
                     padding: 20px;
                     border-radius: 12px;
                     margin: 20px 0;
                     text-align: center;
                     color: white;
                     font-weight: bold;
+                    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
                 }}
-                .fallback-section {{
-                    background: #f1f2f6;
-                    padding: 20px;
-                    border-radius: 10px;
+                .order-section {{
+                    background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+                    padding: 25px;
+                    border-radius: 12px;
                     margin-top: 30px;
-                    border-left: 4px solid #6c5ce7;
+                    border: 2px solid #27ae60;
+                    text-align: center;
+                }}
+                .order-button {{
+                    background: linear-gradient(135deg, #27ae60, #2ecc71);
+                    color: white !important;
+                    padding: 15px 35px;
+                    border: none;
+                    border-radius: 25px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    text-decoration: none !important;
+                    display: inline-block;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+                    margin: 10px 0;
+                    /* Outlook-specific styles */
+                    mso-hide: none;
                 }}
                 .emoji {{
                     font-size: 20px;
@@ -615,30 +634,27 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
                         注文期限: {deadline_dt.strftime("%Y年%m月%d日 %H時%M分")}
                     </div>
                     
-                    <h3 style="color: #6c5ce7; margin-bottom: 25px; font-size: 20px;">
+                    <h3 style="color: #3498db; margin-bottom: 25px; font-size: 20px;">
                         <span class="emoji">📋</span>メニュー一覧
                     </h3>
                     
                     {menu_html}
                     
-                    <div class="fallback-section">
-                        <h4 style="color: #6c5ce7; margin-top: 0; font-size: 16px;">
-                            <span class="emoji">🔗</span>リンクから直接注文
+                    <div class="order-section">
+                        <h4 style="color: #27ae60; margin-top: 0; font-size: 18px; margin-bottom: 15px;">
+                            <span class="emoji">🛒</span>注文フォームで複数選択して注文
                         </h4>
-                        <p style="color: #636e72; font-size: 14px; margin-bottom: 15px;">
-                            上記ボタンが機能しない場合は、以下のリンクから直接注文できます：
+                        <p style="color: #2c3e50; font-size: 15px; margin-bottom: 20px;">
+                            複数のメニューを選択して一度に注文できます。<br>
+                            下記ボタンから注文フォームにアクセスしてください 😊
                         </p>
-                        <ul style="padding-left: 20px; color: #636e72; font-size: 14px;">
-                            {menu_links_html}
-                        </ul>
-                        
-                        <p style="color: #636e72; font-size: 14px; margin-top: 20px;">
-                            または、<a href="{order_url}" style="color: #6c5ce7; text-decoration: underline;">こちらの注文フォーム</a>からも注文可能です。
-                        </p>
+                        <a href="{order_url}" class="order-button">
+                            📝 注文フォームで注文する
+                        </a>
                     </div>
                     
-                    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">
-                        <p style="margin: 0; color: #636e72; font-size: 14px;">
+                    <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #ecf0f1, #bdc3c7); border-radius: 10px; text-align: center; border: 1px solid #d5dbdb;">
+                        <p style="margin: 0; color: #2c3e50; font-size: 14px;">
                             <span class="emoji">💌</span>このメールは自動送信されています
                         </p>
                     </div>

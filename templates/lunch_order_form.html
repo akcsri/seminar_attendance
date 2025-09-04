@@ -13,29 +13,32 @@
             background: white;
             border-radius: 15px;
             margin-top: 30px;
-            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.15);
-            border: 1px solid #e9ecef;
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.15);
+            border: 1px solid #e3f2fd;
         }
         
         h1 {
-            color: #6c5ce7;
+            color: #3498db;
             text-align: center;
             margin-bottom: 30px;
             font-size: 2em;
+            text-shadow: 0 2px 4px rgba(52, 152, 219, 0.1);
         }
         
         .menu-item {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
             padding: 20px;
             margin: 15px 0;
             border-radius: 12px;
-            border: 2px solid #e9ecef;
+            border: 2px solid #e3f2fd;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
         }
         
         .menu-item:hover {
-            border-color: #6c5ce7;
-            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.15);
+            border-color: #3498db;
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
         }
         
         .menu-item label {
@@ -49,13 +52,17 @@
         .menu-item input[type="checkbox"] {
             width: 20px;
             height: 20px;
-            accent-color: #6c5ce7;
+            accent-color: #3498db;
         }
         
         .menu-price {
-            color: #6c5ce7;
+            color: #e74c3c;
             font-weight: bold;
             margin-left: auto;
+            background: linear-gradient(135deg, #ffe5e5, #fff1f1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #fadbd8;
         }
         
         .submit-section {
@@ -64,7 +71,7 @@
         }
         
         .btn {
-            background: linear-gradient(135deg, #6c5ce7, #74b9ff);
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
             color: white;
             padding: 15px 35px;
             border: none;
@@ -73,57 +80,38 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.25);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
         }
         
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.35);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
         }
         
         .session-info {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
             padding: 25px;
             border-radius: 12px;
             margin-bottom: 30px;
-            border-left: 5px solid #6c5ce7;
+            border-left: 5px solid #27ae60;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.1);
         }
         
         .session-info h3 {
-            color: #2d3436;
+            color: #2c3e50;
             margin-top: 0;
             font-size: 1.4em;
         }
         
         .session-info p {
-            color: #636e72;
+            color: #34495e;
             margin: 8px 0;
         }
         
         .session-info strong {
-            color: #2d3436;
+            color: #2c3e50;
         }
     </style>
-    <script>
-        function submitOrder() {
-            const checkboxes = document.querySelectorAll('input[name="items"]:checked');
-            const selectedItems = Array.from(checkboxes).map(cb => cb.value);
-            
-            if (selectedItems.length === 0) {
-                alert('メニューを選択してください！ 🍽️');
-                return false;
-            }
-            
-            const params = new URLSearchParams();
-            params.append('session_title', '{{ session_title }}');
-            params.append('orderer_id', '{{ orderer.id }}');
-            params.append('deadline', '{{ deadline }}');
-            selectedItems.forEach(item => params.append('items', item));
-            
-            window.location.href = '/lunch_order_response?' + params.toString();
-            return false;
-        }
-    </script>
 </head>
 <body>
     <div class="container">
@@ -137,7 +125,7 @@
             <p><strong>注文者:</strong> {{ orderer.name }} 様</p>
         </div>
         
-        <form onsubmit="return submitOrder()">
+        <form method="GET" action="/lunch_order_response">
             <input type="hidden" name="session_title" value="{{ session_title }}">
             <input type="hidden" name="orderer_id" value="{{ orderer.id }}">
             <input type="hidden" name="deadline" value="{{ deadline }}">

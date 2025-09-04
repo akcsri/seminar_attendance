@@ -64,11 +64,22 @@
         
         .summary-table {
             margin-top: 30px;
-            border: 2px solid var(--primary-color);
+            border: 2px solid #3498db;
         }
         
         .summary-table th {
-            background-color: var(--primary-color);
+            background-color: #3498db;
+            color: white;
+        }
+        
+        /* Item aggregation table - blue theme */
+        .item-aggregation-table {
+            margin-top: 40px;
+            border: 2px solid #27ae60;
+        }
+        
+        .item-aggregation-table th {
+            background-color: #27ae60;
             color: white;
         }
         
@@ -136,6 +147,35 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- 品名ごと集計一覧 -->
+            {% if item_summary %}
+            <div class="table-container">
+                <table class="item-aggregation-table">
+                    <thead>
+                        <tr>
+                            <th colspan="4">📊 品名ごと集計一覧</th>
+                        </tr>
+                        <tr style="background-color: #e8f5e8;">
+                            <th>品名</th>
+                            <th>個数</th>
+                            <th>税抜き価格</th>
+                            <th>小計</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in item_summary %}
+                        <tr>
+                            <td style="font-weight: 600;">{{ item.name }}</td>
+                            <td style="text-align: center; font-weight: bold; color: #27ae60;">{{ item.quantity }}個</td>
+                            <td style="text-align: right;">¥{{ "%.0f"|format(item.price) }}</td>
+                            <td style="text-align: right; font-weight: bold; color: #27ae60;">¥{{ "%.0f"|format(item.subtotal) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
             
             <!-- 合計金額サマリー -->
             <div class="table-container">
