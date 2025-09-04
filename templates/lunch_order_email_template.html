@@ -197,8 +197,8 @@
                                                     <table cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                                                         <tr>
                                                             <td style="padding: 5px;">
-                                                                <a href="#" onclick="submitSelectedOrder(); return false;" class="order-button" style="background: linear-gradient(135deg, #059669, #047857); text-decoration: none; color: white; display: inline-block; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; border: 2px solid #059669;">
-                                                                    ✅ 選択した商品を注文
+                                                                <a href="#" onclick="submitSelectedItems(); return false;" class="order-button" style="background: linear-gradient(135deg, #059669, #047857); text-decoration: none; color: white; display: inline-block; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; border: 2px solid #059669;">
+                                                                    選択商品注文
                                                                 </a>
                                                             </td>
                                                         </tr>
@@ -209,7 +209,7 @@
                                                         <tr>
                                                             <td style="padding: 5px;">
                                                                 <a href="{{ order_form_url }}" class="order-button" style="text-decoration: none; color: white; display: inline-block;">
-                                                                    📝 注文フォームで注文
+                                                                    注文フォーム
                                                                 </a>
                                                             </td>
                                                         </tr>
@@ -317,5 +317,31 @@
             updateTotal();
         });
     </script>
+
+<script>
+function submitSelectedItems() {
+    const checkboxes = document.querySelectorAll('input[name="menu_item"]:checked');
+    const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+    if (selectedIds.length === 0) {
+        alert("メニューを選択してください。");
+        return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const session = urlParams.get("session");
+    const orderer_id = urlParams.get("orderer_id");
+    const deadline = urlParams.get("deadline");
+
+    const query = new URLSearchParams();
+    query.append("session_title", session);
+    query.append("orderer_id", orderer_id);
+    query.append("deadline", deadline);
+    selectedIds.forEach(id => query.append("items", id));
+
+    const targetUrl = `${window.location.origin}/lunch_order_response?${query.toString()}`;
+    window.location.href = targetUrl;
+}
+</script>
+
 </body>
 </html>
