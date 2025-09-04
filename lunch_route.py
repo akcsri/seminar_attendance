@@ -1,7 +1,6 @@
 from flask import request, render_template, redirect, url_for, flash
 from app import app, db
-from models import Recipient, Seminar, Attendance
-from lunch_models import Orderer, MenuItem
+from lunch_models import Orderer, Menu
 import csv
 import io
 import json
@@ -14,29 +13,20 @@ from datetime import datetime
 @app.route('/lunch_admin')
 def lunch_admin():
     """ランチ等注文管理画面"""
-    # 注文者データ (Recipientテーブルを流用)
-    orderers = Recipient.query.all()
+    # 注文者データ (Ordererテーブルを使用)
+    orderers = Orderer.query.all()
     
-    # メニューデータ (Seminarテーブルを流用、topicが"MENU_ITEM"のもの)
-    menus = Seminar.query.filter_by(topic='MENU_ITEM').all()
-    
-    # 注文データ (Attendanceテーブルを流用、seminar_idがメニューセッションのもの)
-    lunch_sessions = Seminar.query.filter_by(topic='LUNCH_SESSION').all()
-    orders = []
-    for session in lunch_sessions:
-        session_orders = Attendance.query.filter_by(seminar_id=session.id).all()
-        orders.extend(session_orders)
+    # メニューデータ (Menuテーブルを使用)
+    menus = Menu.query.all()
     
     return render_template('lunch_admin.html', 
                          orderers=orderers, 
-                         menus=menus, 
-                         orders=orders,
-                         lunch_sessions=lunch_sessions)
+                         menus=menus)
 
 @app.route('/delete_menu_item/<int:id>', methods=['POST'])
 def delete_menu_item(id):
     """メニュー項目削除"""
-    menu_item = Seminar.query.filter_by(id=id, topic='MENU_ITEM').first()
+    menu_item = Menu.query.get(id)
     if menu_item:
         db.session.delete(menu_item)
         db.session.commit()
@@ -46,10 +36,10 @@ def delete_menu_item(id):
 @app.route('/edit_menu_item/<int:id>', methods=['POST'])
 def edit_menu_item(id):
     """メニュー項目編集"""
-    menu_item = Seminar.query.filter_by(id=id, topic='MENU_ITEM').first()
+    menu_item = Menu.query.get(id)
     if menu_item:
-        menu_item.title = request.form['menu_name']
-        menu_item.contact = str(request.form['price'])  # 税抜き価格をcontactフィールドに保存
+        menu_item.name = request.form['menu_name']
+        menu_item.price_excl_tax = float(request.form['price'])
         db.session.commit()
         flash('メニュー項目を更新しました。', 'success')
     else:
@@ -109,15 +99,11 @@ def import_menu_csv():
             
             try:
                 # Validate price is a number
-                float(price)
+                price_value = float(price)
                 
-                menu_item = Seminar(
-                    title=name,
-                    contact=str(price),  # 税抜き価格をcontactフィールドに保存
-                    topic='MENU_ITEM',   # メニュー項目の識別子
-                    venue='メニュー項目',
-                    speaker='システム',
-                    date=None
+                menu_item = Menu(
+                    name=name,
+                    price_excl_tax=price_value
                 )
                 db.session.add(menu_item)
                 added_count += 1
@@ -148,11 +134,16 @@ def import_menu_csv():
 @app.route('/edit_orderer/<int:id>', methods=['POST'])
 def edit_orderer(id):
     """注文者編集"""
-    orderer = Recipient.query.get(id)
+    orderer = Orderer.query.get(id)
     if orderer:
         orderer.name = request.form['name']
         orderer.email = request.form['email']
-        orderer.affiliation = request.form.get('affiliation', '注文者')
+        # Update order items if provided
+        orderer.item_1 = request.form.get('item_1', '')
+        orderer.item_2 = request.form.get('item_2', '')
+        orderer.item_3 = request.form.get('item_3', '')
+        orderer.item_4 = request.form.get('item_4', '')
+        orderer.item_5 = request.form.get('item_5', '')
         db.session.commit()
         flash('注文者情報を更新しました。', 'success')
     else:
@@ -162,7 +153,7 @@ def edit_orderer(id):
 @app.route('/delete_orderer/<int:id>', methods=['POST'])
 def delete_orderer(id):
     """注文者削除"""
-    orderer = Recipient.query.get(id)
+    orderer = Orderer.query.get(id)
     if orderer:
         db.session.delete(orderer)
         db.session.commit()
@@ -221,18 +212,21 @@ def import_orderer_csv():
                 continue
             
             # Check if email already exists
-            existing_orderer = Recipient.query.filter_by(email=email).first()
+            existing_orderer = Orderer.query.filter_by(email=email).first()
             if existing_orderer:
                 errors.append(f'行{row_num}: メールアドレス {email} は既に登録されています')
                 error_count += 1
                 continue
             
             try:
-                orderer = Recipient(
+                orderer = Orderer(
                     name=name,
                     email=email,
-                    affiliation='注文者',
-                    phone=''
+                    item_1='',
+                    item_2='',
+                    item_3='',
+                    item_4='',
+                    item_5=''
                 )
                 db.session.add(orderer)
                 added_count += 1
@@ -260,222 +254,108 @@ def import_orderer_csv():
 @app.route('/lunch_order_status')
 def lunch_order_status():
     """ランチ注文状況表示"""
-    # Get all lunch sessions
-    lunch_sessions = Seminar.query.filter_by(topic='LUNCH_SESSION').all()
+    # Get all orderers with their orders
+    orderers = Orderer.query.all()
     
-    # Get all orders for these sessions
-    all_orders = []
-    for session in lunch_sessions:
-        orders = Attendance.query.filter_by(seminar_id=session.id, status='ordered').all()
-        
-        for order in orders:
-            try:
-                # Parse order data from comment field
-                order_data = json.loads(order.comment) if order.comment else {}
-                selected_items = order_data.get('items', [])
-                
-                # Get recipient info
-                recipient = Recipient.query.get(order.recipient_id)
-                
-                # Get menu details and calculate total
-                item_details = []
-                total_price = 0
-                for item_id in selected_items:
-                    menu_item = Seminar.query.filter_by(id=item_id, topic='MENU_ITEM').first()
+    # Calculate order summary
+    order_summary = []
+    for orderer in orderers:
+        if any([orderer.item_1, orderer.item_2, orderer.item_3, orderer.item_4, orderer.item_5]):
+            # Get menu details and calculate total
+            ordered_items = []
+            total_price = 0
+            
+            for item_name in [orderer.item_1, orderer.item_2, orderer.item_3, orderer.item_4, orderer.item_5]:
+                if item_name:
+                    menu_item = Menu.query.filter_by(name=item_name).first()
                     if menu_item:
-                        price = float(menu_item.contact) if menu_item.contact else 0
-                        item_details.append({
-                            'name': menu_item.title,
-                            'price': price
+                        ordered_items.append({
+                            'name': menu_item.name,
+                            'price': float(menu_item.price_excl_tax)
                         })
-                        total_price += price
-                
-                all_orders.append({
-                    'orderer_name': recipient.name,
-                    'ordered_items': item_details,
-                    'total_price': total_price,
-                    'session': session.title
+                        total_price += float(menu_item.price_excl_tax)
+            
+            if ordered_items:
+                order_summary.append({
+                    'orderer_name': orderer.name,
+                    'ordered_items': ordered_items,
+                    'total_price': total_price
                 })
-            except json.JSONDecodeError:
-                continue
     
     # Calculate totals
-    total_before_tax = sum(order['total_price'] for order in all_orders)
+    total_before_tax = sum(order['total_price'] for order in order_summary)
     tax_amount = total_before_tax * 0.10  # 10% tax
     total_with_tax = total_before_tax + tax_amount
     
     return render_template('lunch_order_status.html',
-                         orders=all_orders,
+                         orders=order_summary,
                          total_before_tax=total_before_tax,
                          tax_amount=tax_amount,
                          total_with_tax=total_with_tax)
 
-@app.route('/send_lunch_order_email', methods=['POST'])
-def send_lunch_order_email():
-    """ランチ等注文メール送信"""
+@app.route('/add_orderer', methods=['POST'])
+def add_orderer():
+    """注文者追加"""
     try:
-        session_title = request.form['session_title']
-        deadline = request.form['deadline']
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
         
-        # Create lunch session entry
-        deadline_dt = datetime.fromisoformat(deadline)
+        if not name or not email:
+            flash('氏名とメールアドレスは必須です。', 'error')
+            return redirect(url_for('lunch_admin'))
         
-        lunch_session = Seminar(
-            title=session_title,
-            date=deadline_dt,
-            topic='LUNCH_SESSION',
-            venue='ランチセッション',
-            speaker='システム',
-            contact=f'注文期限: {deadline_dt.strftime("%Y年%m月%d日 %H時%M分")}'
+        # Check if email already exists
+        existing_orderer = Orderer.query.filter_by(email=email).first()
+        if existing_orderer:
+            flash(f'メールアドレス {email} は既に登録されています。', 'error')
+            return redirect(url_for('lunch_admin'))
+        
+        orderer = Orderer(
+            name=name,
+            email=email,
+            item_1='',
+            item_2='',
+            item_3='',
+            item_4='',
+            item_5=''
         )
-        
-        db.session.add(lunch_session)
+        db.session.add(orderer)
         db.session.commit()
+        flash('注文者を追加しました。', 'success')
         
-        # Get all menu items
-        menus = Seminar.query.filter_by(topic='MENU_ITEM').all()
-        
-        # Get all orderers (recipients)
-        orderers = Recipient.query.all()
-        
-        sent_count = 0
-        error_count = 0
-        
-        for orderer in orderers:
-            try:
-                # Send lunch order email with menu checkboxes
-                send_lunch_order_email_to_recipient(orderer, lunch_session, menus)
-                sent_count += 1
-            except Exception as e:
-                error_count += 1
-                print(f"Error sending lunch order email to {orderer.email}: {e}")
-        
-        if sent_count > 0:
-            flash(f'{sent_count}件の注文メールを送信しました。', 'success')
-        if error_count > 0:
-            flash(f'{error_count}件のメール送信でエラーが発生しました。', 'warning')
-    
     except Exception as e:
         db.session.rollback()
-        flash(f'メール送信中にエラーが発生しました: {str(e)}', 'error')
+        flash(f'注文者の追加中にエラーが発生しました: {str(e)}', 'error')
     
     return redirect(url_for('lunch_admin'))
 
-@app.route('/lunch_order_response')
-def lunch_order_response():
-    """ランチ注文レスポンス処理"""
-    session_id = request.args.get('session_id')
-    recipient_id = request.args.get('recipient_id')
-    selected_items = request.args.getlist('items')  # Get list of selected menu item IDs
-    
-    if not session_id or not recipient_id:
-        return "無効なリクエストです。", 400
-    
-    # Create or update order record
-    existing_order = Attendance.query.filter_by(
-        seminar_id=session_id, 
-        recipient_id=recipient_id
-    ).first()
-    
-    # Store selected items as JSON in comment field
-    order_data = {
-        'items': selected_items,
-        'timestamp': datetime.now().isoformat()
-    }
-    
-    if existing_order:
-        existing_order.comment = json.dumps(order_data)
-        existing_order.status = 'ordered'
-    else:
-        order = Attendance(
-            seminar_id=session_id,
-            recipient_id=recipient_id,
-            status='ordered',
-            comment=json.dumps(order_data)
-        )
-        db.session.add(order)
-    
-    db.session.commit()
-    
-    # Get session and recipient info for confirmation
-    session = Seminar.query.get(session_id)
-    recipient = Recipient.query.get(recipient_id)
-    
-    return render_template('lunch_order_confirmation.html',
-                         session=session,
-                         recipient=recipient,
-                         selected_items=selected_items)
-
-def send_lunch_order_email_to_recipient(recipient, lunch_session, menus):
-    """Send lunch order email to a specific recipient"""
-    # This would use the existing email infrastructure
-    # For now, we'll create a placeholder that uses the existing mail_utils
+@app.route('/add_menu', methods=['POST'])
+def add_menu():
+    """メニュー追加"""
     try:
-        from mail_utils import send_email
+        name = request.form.get('name', '').strip()
+        price = request.form.get('price', '').strip()
         
-        # Create HTML content with menu checkboxes
-        menu_html = ""
-        for menu in menus:
-            menu_html += f"""
-            <div style="margin: 10px 0;">
-                <label style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" name="items" value="{menu.id}" style="width: 20px; height: 20px;">
-                    <span>{menu.title} - ¥{menu.contact}</span>
-                </label>
-            </div>
-            """
+        if not name or not price:
+            flash('メニュー名と価格は必須です。', 'error')
+            return redirect(url_for('lunch_admin'))
         
-        # Create order form URL
-        order_url = f"http://127.0.0.1:5001/lunch_order_form?session_id={lunch_session.id}&recipient_id={recipient.id}"
+        try:
+            price_value = float(price)
+        except ValueError:
+            flash('価格は数値である必要があります。', 'error')
+            return redirect(url_for('lunch_admin'))
         
-        html_content = f"""
-        <html>
-        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>ランチ等注文のご案内</h2>
-            <p>こんにちは、{recipient.name} 様</p>
-            
-            <p><strong>セッション:</strong> {lunch_session.title}</p>
-            <p><strong>注文期限:</strong> {lunch_session.contact}</p>
-            
-            <h3>メニュー選択</h3>
-            <p>以下のリンクをクリックして注文ページにアクセスしてください：</p>
-            
-            <a href="{order_url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                注文ページを開く
-            </a>
-            
-            <p>注文期限までにご選択ください。</p>
-        </body>
-        </html>
-        """
-        
-        send_email(
-            to_email=recipient.email,
-            subject=f"【ランチ注文】{lunch_session.title}",
-            html_content=html_content
+        menu = Menu(
+            name=name,
+            price_excl_tax=price_value
         )
+        db.session.add(menu)
+        db.session.commit()
+        flash('メニューを追加しました。', 'success')
         
     except Exception as e:
-        print(f"Error sending lunch order email: {e}")
-        raise
-
-@app.route('/lunch_order_form')
-def lunch_order_form():
-    """ランチ注文フォーム表示"""
-    session_id = request.args.get('session_id')
-    recipient_id = request.args.get('recipient_id')
+        db.session.rollback()
+        flash(f'メニューの追加中にエラーが発生しました: {str(e)}', 'error')
     
-    if not session_id or not recipient_id:
-        return "無効なリクエストです。", 400
-    
-    session = Seminar.query.get(session_id)
-    recipient = Recipient.query.get(recipient_id)
-    menus = Seminar.query.filter_by(topic='MENU_ITEM').all()
-    
-    if not session or not recipient:
-        return "セッションまたは注文者が見つかりません。", 404
-    
-    return render_template('lunch_order_form.html',
-                         session=session,
-                         recipient=recipient,
-                         menus=menus)
+    return redirect(url_for('lunch_admin'))
