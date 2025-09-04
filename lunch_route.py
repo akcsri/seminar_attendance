@@ -78,6 +78,15 @@ def import_menu_csv():
             stream.seek(0)
             csv_reader = csv.reader(stream)
         
+        # Delete all existing menu items (total replacement)
+        try:
+            Menu.query.delete()
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash(f'既存メニューの削除中にエラーが発生しました: {str(e)}', 'error')
+            return redirect(url_for('lunch_admin'))
+        
         added_count = 0
         error_count = 0
         errors = []

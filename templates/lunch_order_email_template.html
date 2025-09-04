@@ -124,111 +124,63 @@
                                 </tr>
                             </table>
                             
-                            <!-- JavaScript Enhanced Menu Selection Form -->
-                            <form id="lunchOrderForm" style="margin: 0;">
-                                <!-- Menu Section -->
-                                <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                    <tr>
-                                        <td style="padding: 20px 0 12px 0; font-size: 19px; font-weight: 600; color: #1f2937; text-align: center;">
-                                            📋 メニュー選択（複数選択可）
-                                        </td>
-                                    </tr>
-                                </table>
-                                
-                                <!-- Menu Items with Checkboxes -->
-                                <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                    {% for menu in menus %}
-                                    <tr>
-                                        <td style="padding: 8px 0;">
-                                            <table cellspacing="0" cellpadding="0" border="0" width="100%" class="menu-item-row" style="border-collapse: collapse;">
-                                                <tr>
-                                                    <td style="padding: 15px 20px;">
-                                                        <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse;">
-                                                            <tr>
-                                                                <td style="width: 30px; vertical-align: middle;">
-                                                                    <input type="checkbox" name="selected_items" value="{{ menu.id }}" class="menu-checkbox" onchange="updateTotal()" style="width: 18px; height: 18px; accent-color: #2563eb;">
-                                                                </td>
-                                                                <td style="font-size: 16px; font-weight: 600; color: #1f2937; padding-right: 15px; vertical-align: middle;">
-                                                                    {{ menu.name }}
-                                                                </td>
-                                                                <td align="right" style="font-size: 16px; font-weight: 700; background: linear-gradient(135deg, #4a90e2, #357abd); color: white; padding: 8px 12px; border-radius: 8px; text-align: center; white-space: nowrap; min-width: 80px;">
-                                                                    ¥{{ menu.price_formatted }}
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </table>
-                                
-                                <!-- Total Display -->
-                                <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0;">
-                                    <tr>
-                                        <td>
-                                            <div id="totalDisplay" class="total-display" style="display: none;">
-                                                合計金額: ¥<span id="totalAmount">0</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </form>
-                            
-                            <!-- Order Buttons Section -->
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 25px;">
+                            <!-- Menu List (Read-only Display) -->
+                            <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                 <tr>
-                                    <td style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 25px; border-radius: 12px; border: 2px solid #0ea5e9; text-align: center;">
+                                    <td style="padding: 20px 0 12px 0; font-size: 19px; font-weight: 600; color: #1f2937; text-align: center;">
+                                        📋 本日のメニュー
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Menu Items Display -->
+                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="background: #f8fafc; border-radius: 12px; padding: 20px; margin: 15px 0;">
+                                {% for menu in menus %}
+                                <tr>
+                                    <td style="padding: 8px 0; border-bottom: {{ '1px solid #e2e8f0' if not loop.last else 'none' }};">
                                         <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                             <tr>
-                                                <td style="font-size: 17px; font-weight: 600; color: #0c4a6e; margin-bottom: 12px; text-align: center;">
-                                                    🛒 ご注文方法
+                                                <td style="font-size: 16px; font-weight: 600; color: #1f2937; padding-right: 15px;">
+                                                    {{ menu.name }}
                                                 </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding: 8px 0; font-size: 14px; color: #374151; line-height: 1.5; text-align: center;">
-                                                    上記でメニューを選択後、下記ボタンから注文してください
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding: 18px 0; text-align: center;">
-                                                    <!-- JavaScript Order Button -->
-                                                    <table cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
-                                                        <tr>
-                                                            <td style="padding: 5px;">
-                                                                <a href="#" onclick="submitSelectedItems(); return false;" class="order-button" style="background: linear-gradient(135deg, #059669, #047857); text-decoration: none; color: white; display: inline-block; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; border: 2px solid #059669;">
-                                                                    選択商品注文
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                    
-                                                    <!-- Fallback Order Form Button -->
-                                                    <table cellspacing="0" cellpadding="0" border="0" style="margin: 8px auto 0 auto;">
-                                                        <tr>
-                                                            <td style="padding: 5px;">
-                                                                <a href="{{ order_form_url }}" class="order-button" style="text-decoration: none; color: white; display: inline-block;">
-                                                                    注文フォーム
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
+                                                <td align="right" style="font-size: 16px; font-weight: 700; color: #059669;">
+                                                    ¥{{ menu.price_excl_tax | comma_format }}
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
+                                {% endfor %}
                             </table>
                             
-                            <!-- Fallback Links for Email Clients that don't support JavaScript -->
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 20px;">
+                            <!-- Order Button Section -->
+                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 25px;">
                                 <tr>
-                                    <td style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                    <td style="background: linear-gradient(135deg, #1e293b, #334155); padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
                                         <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                             <tr>
-                                                <td style="font-size: 13px; color: #6b7280; text-align: center; margin-bottom: 8px;">
-                                                    💡 ボタンが動作しない場合は、注文フォームボタンをご利用ください
+                                                <td style="font-size: 20px; font-weight: 700; color: white; margin-bottom: 15px; text-align: center;">
+                                                    🛒 ご注文はこちら
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 15px 0; font-size: 15px; color: #e2e8f0; line-height: 1.5; text-align: center;">
+                                                    下記ボタンから注文フォームにアクセスして、<br>お好みのメニューをご注文ください
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 20px 0; text-align: center;">
+                                                    <!-- Main Order Form Button -->
+                                                    <table cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
+                                                        <tr>
+                                                            <td style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 18px 40px; border-radius: 12px; box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4); border: 3px solid #60a5fa;">
+                                                                <a href="https://lunch-order-system.onrender.com/lunch_order_form?session={{ session_title|urlencode }}&orderer_id={{ orderer.id }}&deadline={{ deadline_iso|urlencode }}" 
+                                                                   style="text-decoration: none; color: white; display: inline-block; font-weight: 700; font-size: 18px;">
+                                                                    📱 注文フォームを開く
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
                                                 </td>
                                             </tr>
                                         </table>
@@ -256,92 +208,6 @@
             </td>
         </tr>
     </table>
-
-    <!-- JavaScript for Enhanced Functionality -->
-    <script>
-        // Menu prices for calculation
-        const menuPrices = {
-            {% for menu in menus %}
-            {{ menu.id }}: {{ menu.price_excl_tax }},
-            {% endfor %}
-        };
-        
-        // Base URLs
-        const baseUrl = "{{ base_url }}";
-        const sessionTitle = "{{ session_title }}";
-        const ordererID = "{{ orderer.id }}";
-        const deadline = "{{ deadline_iso }}";
-        
-        function updateTotal() {
-            const checkboxes = document.querySelectorAll('input[name="selected_items"]:checked');
-            let total = 0;
-            
-            checkboxes.forEach(checkbox => {
-                const menuId = parseInt(checkbox.value);
-                total += menuPrices[menuId] || 0;
-            });
-            
-            const totalDisplay = document.getElementById('totalDisplay');
-            const totalAmount = document.getElementById('totalAmount');
-            
-            if (total > 0) {
-                totalAmount.textContent = total.toLocaleString();
-                totalDisplay.style.display = 'block';
-            } else {
-                totalDisplay.style.display = 'none';
-            }
-        }
-        
-        function submitSelectedOrder() {
-            const checkboxes = document.querySelectorAll('input[name="selected_items"]:checked');
-            const selectedItems = Array.from(checkboxes).map(cb => cb.value);
-            
-            if (selectedItems.length === 0) {
-                alert('商品を選択してください。');
-                return;
-            }
-            
-            // Create URL with selected items - handle multiple items properly
-            let orderUrl = `${baseUrl}/lunch_order_response?session_title=${encodeURIComponent(sessionTitle)}&orderer_id=${ordererID}&deadline=${encodeURIComponent(deadline)}`;
-            
-            // Add each selected item as a separate parameter
-            selectedItems.forEach(itemId => {
-                orderUrl += `&items=${itemId}`;
-            });
-            
-            window.open(orderUrl, '_blank');
-        }
-        
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTotal();
-        });
-    </script>
-
-<script>
-function submitSelectedItems() {
-    const checkboxes = document.querySelectorAll('input[name="menu_item"]:checked');
-    const selectedIds = Array.from(checkboxes).map(cb => cb.value);
-    if (selectedIds.length === 0) {
-        alert("メニューを選択してください。");
-        return;
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const session = urlParams.get("session");
-    const orderer_id = urlParams.get("orderer_id");
-    const deadline = urlParams.get("deadline");
-
-    const query = new URLSearchParams();
-    query.append("session_title", session);
-    query.append("orderer_id", orderer_id);
-    query.append("deadline", deadline);
-    selectedIds.forEach(id => query.append("items", id));
-
-    const targetUrl = `${window.location.origin}/lunch_order_response?${query.toString()}`;
-    window.location.href = targetUrl;
-}
-</script>
 
 </body>
 </html>

@@ -5,17 +5,17 @@
 
 /* === COLOR SCHEME === */
 :root {
-    --primary-color: #ff6b9d;        /* Cute pink */
-    --accent-color: #4ecdc4;         /* Mint green */
-    --text-color: #2d3436;           /* Dark gray for readability */
-    --light-gray: #a8a8a8;           /* Light gray */
-    --border-color: #ffecd1;         /* Light peachy border */
-    --background-color: #fff5f5;     /* Very light pink background */
+    --primary-color: #3b82f6;        /* Professional blue */
+    --accent-color: #059669;         /* Emerald green */
+    --text-color: #1f2937;           /* Dark gray for readability */
+    --light-gray: #9ca3af;           /* Light gray */
+    --border-color: #d1d5db;         /* Light gray border */
+    --background-color: #f9fafb;     /* Very light gray background */
     --card-background: #ffffff;      /* White cards */
-    --success-color: #55a3ff;        /* Blue */
-    --warning-color: #feca57;        /* Yellow */
-    --danger-color: #ff6b9d;         /* Pink */
-    --secondary-background: #f8f9fa; /* Light gray background */
+    --success-color: #059669;        /* Emerald green */
+    --warning-color: #f59e0b;        /* Amber */
+    --danger-color: #dc2626;         /* Red */
+    --secondary-background: #f3f4f6; /* Light gray background */
 }
 
 /* === BASE STYLES === */
