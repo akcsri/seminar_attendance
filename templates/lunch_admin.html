@@ -6,8 +6,7 @@
 <title>ランチ等注文管理</title>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
-
-        
+    <style>
         table {
             width: 100%;
             border-collapse: collapse;
@@ -108,8 +107,8 @@
         .nav-links a:hover {
             background-color: var(--border-color);
         }
-    
-</link></head>
+    </style>
+</head>
 <body>
 <div class="admin-container">
 <h1>ランチ等注文管理</h1>
@@ -186,13 +185,12 @@
 <button class="btn" type="submit">インポート</button>
 </form>
 <small>CSVフォーマット: 氏名, メールアドレス</small>
-<!-- 注文者一覧 -->
-<h3>注文者一覧</h3>
+<!-- 注文者一覧と編集 -->
+<h3>注文者編集・削除</h3>
 <div class="table-container">
 <table>
 <thead>
 <tr>
-<th>選択</th>
 <th>ID</th>
 <th>氏名</th>
 <th>メールアドレス</th>
@@ -202,10 +200,9 @@
 <tbody>
                         {% for orderer in orderers %}
                         <tr>
-<td><input type="checkbox" class="orderer-checkbox" name="selected_orderers" value="{{ orderer.id }}"></td>
 <td>{{ orderer.id }}</td>
-<td>{{ orderer.name }}</td>
-<td>{{ orderer.email }}</td>
+<td><input type="text" id="name_{{ orderer.id }}" value="{{ orderer.name }}"></td>
+<td><input type="text" id="email_{{ orderer.id }}" value="{{ orderer.email }}"></td>
 <td>
 <form action="/edit_orderer/{{ orderer.id }}" method="post" style="display:inline;">
 <input name="name" type="hidden" value="{{ orderer.name }}"/>
@@ -228,16 +225,42 @@
 <!-- 注文メール送信セクション -->
 <div class="admin-section">
 <h2>📧 注文メール送信</h2>
-<form action="/send_lunch_order_email_selected" class="form-inline" id="lunchEmailForm" method="post">
-<label>
-<input id="selectAllOrderers" type="checkbox"/> 全選択/全解除
-</label>
-<br/><br/>
+<form action="/send_lunch_order_email_selected" id="lunchEmailForm" method="post">
+<div class="form-inline">
+<label for="session_title">セッション名:</label>
 <input id="session_title" name="session_title" placeholder="例: 12月25日ランチ注文" required="" type="text">
 <label for="deadline">注文期限:</label>
 <input id="deadline" name="deadline" required="" type="datetime-local"/>
+</div>
+<br/>
+<label>
+<input id="selectAllOrderers" type="checkbox"/> 全選択/全解除
+</label>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>選択</th>
+<th>ID</th>
+<th>氏名</th>
+<th>メールアドレス</th>
+</tr>
+</thead>
+<tbody>
+                        {% for orderer in orderers %}
+                        <tr>
+<td><input type="checkbox" class="orderer-checkbox" name="selected_orderers" value="{{ orderer.id }}"></td>
+<td>{{ orderer.id }}</td>
+<td>{{ orderer.name }}</td>
+<td>{{ orderer.email }}</td>
+</tr>
+                        {% endfor %}
+                    </tbody>
+</table>
+</div>
+<br/>
 <button class="btn" type="submit">選択した注文者にメール送信</button>
-</input></form>
+</form>
 </div>
 <!-- 注文状況セクション -->
 <div class="admin-section">

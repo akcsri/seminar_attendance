@@ -401,7 +401,7 @@ def send_lunch_order_email_selected():
     try:
         session_title = request.form.get('session_title', '').strip()
         deadline = request.form.get('deadline', '').strip()
-        selected_orderer_ids = request.form.getlist('orderer_ids')
+        selected_orderer_ids = request.form.getlist('selected_orderers')
         
         if not session_title or not deadline:
             flash('セッション名と注文期限は必須です。', 'error')
