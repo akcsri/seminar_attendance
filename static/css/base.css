@@ -5,17 +5,18 @@
 
 /* === COLOR SCHEME === */
 :root {
-    --primary-color: #ff6b9d;        /* Cute pink */
-    --accent-color: #4ecdc4;         /* Mint green */
-    --text-color: #2d3436;           /* Dark gray for readability */
+    --primary-color: #059669;        /* Elegant emerald green */
+    --accent-color: #0891b2;         /* Professional cyan */
+    --text-color: #1f2937;           /* Dark gray for readability */
     --light-gray: #a8a8a8;           /* Light gray */
-    --border-color: #ffecd1;         /* Light peachy border */
-    --background-color: #fff5f5;     /* Very light pink background */
+    --border-color: #e5e7eb;         /* Light gray border */
+    --background-color: #f8fafc;     /* Very light gray background */
     --card-background: #ffffff;      /* White cards */
-    --success-color: #55a3ff;        /* Blue */
-    --warning-color: #feca57;        /* Yellow */
-    --danger-color: #ff6b9d;         /* Pink */
-    --secondary-background: #f8f9fa; /* Light gray background */
+    --success-color: #059669;        /* Emerald green */
+    --warning-color: #d97706;        /* Amber */
+    --danger-color: #dc2626;         /* Red */
+    --secondary-background: #f1f5f9; /* Light gray background */
+    --primary-hover: #047857;        /* Darker emerald for hover */
 }
 
 /* === BASE STYLES === */
@@ -136,36 +137,36 @@ textarea {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), #ff8fab);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
     color: white;
     border: 2px solid var(--primary-color);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #ff8fab, var(--primary-color));
-    border: 2px solid #ff8fab;
+    background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+    border: 2px solid var(--primary-hover);
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+    background: linear-gradient(135deg, var(--danger-color), #b91c1c);
     color: white;
-    border: 2px solid #ff6b9d;
+    border: 2px solid var(--danger-color);
 }
 
 .btn-danger:hover {
-    background: linear-gradient(135deg, #ff8fab, #ff6b9d);
-    border: 2px solid #ff8fab;
+    background: linear-gradient(135deg, #b91c1c, var(--danger-color));
+    border: 2px solid #b91c1c;
 }
 
 .btn-warning {
-    background: linear-gradient(135deg, var(--warning-color), #fed330);
-    color: var(--text-color);
+    background: linear-gradient(135deg, var(--warning-color), #b45309);
+    color: white;
     border: 2px solid var(--warning-color);
 }
 
 .btn-warning:hover {
-    background: linear-gradient(135deg, #fed330, var(--warning-color));
-    border: 1px solid var(--primary-color);
+    background: linear-gradient(135deg, #b45309, var(--warning-color));
+    border: 2px solid #b45309;
 }
 
 .btn:active {
