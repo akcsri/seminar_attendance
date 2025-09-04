@@ -14,4 +14,4 @@ class Config:
     SCHEDULER_API_ENABLED = True
     
     # Base URL for lunch order emails (Render URL)
-    BASE_URL = os.environ.get('BASE_URL', 'http://127.0.0.1:5000')
+    BASE_URL = os.environ.get('BASE_URL', 'https://seminar-attendance.onrender.com')
