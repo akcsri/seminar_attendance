@@ -2,7 +2,6 @@
 
 <html lang="ja">
 <head>
-<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <title>ランチ等注文管理</title>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
@@ -155,8 +154,8 @@
                         {% for menu in menus %}
                         <tr>
 <td>{{ menu.id }}</td>
-<td>{{ value }}</td>
-<td>{{ value }}</td>
+<td>{{ menu.name }}</td>
+<td>¥{{ menu.price_excl_tax | round(0) | int }}</td>
 <td>
 <form action="/edit_menu_item/{{ menu.id }}" method="post" style="display:inline;">
 <input name="menu_name" type="hidden" value="{{ menu.name }}"/>
@@ -203,10 +202,10 @@
 <tbody>
                         {% for orderer in orderers %}
                         <tr>
-<td>{{ value }}</td>
+<td><input type="checkbox" class="orderer-checkbox" name="selected_orderers" value="{{ orderer.id }}"></td>
 <td>{{ orderer.id }}</td>
-<td>{{ value }}</td>
-<td>{{ value }}</td>
+<td>{{ orderer.name }}</td>
+<td>{{ orderer.email }}</td>
 <td>
 <form action="/edit_orderer/{{ orderer.id }}" method="post" style="display:inline;">
 <input name="name" type="hidden" value="{{ orderer.name }}"/>
