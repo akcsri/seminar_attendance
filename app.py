@@ -59,6 +59,21 @@ def japanese_time_filter(date):
         return ''
     return date.strftime('%H:%M')
 
+@app.template_filter('comma_format')
+def comma_format_filter(value):
+    """Format numbers with comma separators"""
+    if value is None:
+        return '0'
+    try:
+        # Convert to float first, then to int if it's a whole number
+        num = float(value)
+        if num == int(num):
+            return f"{int(num):,}"
+        else:
+            return f"{num:,.2f}"
+    except (ValueError, TypeError):
+        return str(value)
+
 # Start scheduler after everything is set up
 if __name__ == '__main__':
     with app.app_context():
