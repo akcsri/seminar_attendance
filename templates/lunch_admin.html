@@ -214,6 +214,7 @@
 <table>
 <thead>
 <tr>
+<th>選択</th>
 <th>ID</th>
 <th>氏名</th>
 <th>メールアドレス</th>
@@ -223,6 +224,9 @@
 <tbody>
                         {% for orderer in orderers %}
                         <tr>
+<td>
+<input type="checkbox" name="orderer_ids" value="{{ orderer.id }}" class="orderer-checkbox" form="lunchEmailForm">
+</td>
 <td>{{ orderer.id }}</td>
 <td>
 <input id="name_{{ orderer.id }}" style="width: 120px;" type="text" value="{{ orderer.name }}"/>
@@ -252,12 +256,16 @@
 <!-- 注文メール送信セクション -->
 <div class="admin-section">
 <h2>📧 注文メール送信</h2>
-<form action="/send_lunch_order_email" class="form-inline" method="post">
+<form action="/send_lunch_order_email_selected" class="form-inline" method="post" id="lunchEmailForm">
+<label>
+<input type="checkbox" id="selectAllOrderers"> 全選択/全解除
+</label>
+<br><br>
 <label for="session_title">セッション名:</label>
 <input id="session_title" name="session_title" placeholder="例: 12月25日ランチ注文" required="" type="text"/>
 <label for="deadline">注文期限:</label>
 <input id="deadline" name="deadline" required="" type="datetime-local"/>
-<button class="btn" type="submit">メール送信</button>
+<button class="btn" type="submit">選択した注文者にメール送信</button>
 </form>
 </div>
 <!-- 注文状況セクション -->
@@ -270,5 +278,41 @@
 <p>注文データ数: {{ orders|length }} 件</p>
 </div>
 </div>
+
+<script>
+// JavaScript for orderer selection functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all/none functionality for orderers
+    const selectAllOrderers = document.getElementById('selectAllOrderers');
+    if (selectAllOrderers) {
+        selectAllOrderers.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.orderer-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    }
+
+    // Update select all checkbox based on individual checkboxes
+    document.querySelectorAll('.orderer-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const allCheckboxes = document.querySelectorAll('.orderer-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('.orderer-checkbox:checked');
+            const selectAllCheckbox = document.getElementById('selectAllOrderers');
+            
+            if (checkedCheckboxes.length === 0) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = false;
+            } else if (checkedCheckboxes.length === allCheckboxes.length) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = true;
+            } else {
+                selectAllCheckbox.indeterminate = true;
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>
