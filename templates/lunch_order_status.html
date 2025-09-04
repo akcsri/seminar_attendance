@@ -10,30 +10,82 @@
         <h1>注文状況一覧</h1>
 
         {% if orders %}
-            <table class="lunch-admin-table">
-                <thead>
-                    <tr>
-                        <th scope="col">注文者氏名</th>
-                        <th scope="col">品名</th>
-                        <th scope="col">合計金額</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in orders %}
+            <!-- 品名ごとの集計リスト -->
+            <div class="admin-section">
+                <h2>品名ごとの集計</h2>
+                {% if item_summary %}
+                    <table class="lunch-admin-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">品名</th>
+                                <th scope="col">個数</th>
+                                <th scope="col">価格</th>
+                                <th scope="col">小計</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in item_summary %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.quantity }}個</td>
+                                    <td>¥{{ item.price | comma_format }}</td>
+                                    <td>¥{{ item.subtotal | comma_format }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+
+            <!-- 合計金額の表示 -->
+            <div class="admin-section">
+                <h2>合計金額</h2>
+                <table class="lunch-admin-table">
+                    <tbody>
                         <tr>
-                            <td>{{ order.orderer_name }}</td>
-                            <td>
-                                <ul>
-                                    {% for item in order.ordered_items %}
-                                        <li>{{ item.name }} ¥{{ item.price | comma_format }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </td>
-                            <td>¥{{ order.total_price | comma_format }}</td>
+                            <td><strong>合計金額</strong></td>
+                            <td><strong>¥{{ total_before_tax | comma_format }}</strong></td>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        <tr>
+                            <td>消費税額（10%）</td>
+                            <td>¥{{ tax_amount | comma_format }}</td>
+                        </tr>
+                        <tr style="border-top: 2px solid #333; font-weight: bold;">
+                            <td><strong>総計</strong></td>
+                            <td><strong>¥{{ total_with_tax | comma_format }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 注文者別詳細 -->
+            <div class="admin-section">
+                <h2>注文者別詳細</h2>
+                <table class="lunch-admin-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">注文者氏名</th>
+                            <th scope="col">品名</th>
+                            <th scope="col">合計金額</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.orderer_name }}</td>
+                                <td>
+                                    <ul>
+                                        {% for item in order.ordered_items %}
+                                            <li>{{ item.name }} ¥{{ item.price | comma_format }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>¥{{ order.total_price | comma_format }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
             <div class="notice-box">
                 まだ注文がありません。
