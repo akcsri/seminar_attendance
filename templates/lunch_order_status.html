@@ -4,10 +4,32 @@
     <meta charset="UTF-8">
     <title>注文状況</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <style>
+        .nav-links {
+            margin-bottom: 20px;
+        }
+        
+        .nav-links a {
+            margin-right: 15px;
+            padding: 8px 16px;
+            background-color: var(--secondary-background);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        .nav-links a:hover {
+            background-color: var(--border-color);
+        }
+    </style>
 </head>
 <body>
     <div class="container-wide">
         <h1>注文状況一覧</h1>
+        
+        <div class="nav-links">
+            <a href="{{ url_for('lunch_admin') }}">注文管理に戻る</a>
+        </div>
 
         {% if orders %}
             <!-- 品名ごとの集計リスト -->
