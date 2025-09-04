@@ -74,14 +74,17 @@
         <h1>ランチ注文フォーム</h1>
         
         <div class="session-info">
-            <h3>{{ session.title }}</h3>
-            <p><strong>注文期限:</strong> {{ session.contact }}</p>
-            <p><strong>注文者:</strong> {{ recipient.name }} 様</p>
+            <h3>{{ session_title }}</h3>
+            {% if deadline %}
+            <p><strong>注文期限:</strong> {{ deadline }}</p>
+            {% endif %}
+            <p><strong>注文者:</strong> {{ orderer.name }} 様</p>
         </div>
         
         <form action="/lunch_order_response" method="GET">
-            <input type="hidden" name="session_id" value="{{ session.id }}">
-            <input type="hidden" name="recipient_id" value="{{ recipient.id }}">
+            <input type="hidden" name="session_title" value="{{ session_title }}">
+            <input type="hidden" name="orderer_id" value="{{ orderer.id }}">
+            <input type="hidden" name="deadline" value="{{ deadline }}">
             
             <h3>メニュー選択（複数選択可）</h3>
             
@@ -89,8 +92,8 @@
             <div class="menu-item">
                 <label>
                     <input type="checkbox" name="items" value="{{ menu.id }}">
-                    <span>{{ menu.title }}</span>
-                    <span class="menu-price">¥{{ menu.contact }}</span>
+                    <span>{{ menu.name }}</span>
+                    <span class="menu-price">¥{{ menu.price_excl_tax }}</span>
                 </label>
             </div>
             {% endfor %}

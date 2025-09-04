@@ -423,10 +423,20 @@ def send_lunch_order_email_selected():
 
 def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus):
     """個別の注文者にランチ注文メールを送信"""
+    import logging
+    
+    # Set up logging for better error tracking
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    
     try:
         from flask_mail import Message
         from app import mail
         from flask import current_app
+        
+        logger.info(f"Preparing to send lunch order email to {orderer.email}")
+        logger.info(f"Session: {session_title}, Deadline: {deadline_dt}")
+        logger.info(f"Number of menus: {len(menus)}")
         
         # Create HTML content with menu checkboxes
         menu_html = ""
@@ -441,8 +451,9 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
             </div>
             """
         
-        # Create order form URL (using a placeholder for now)
-        order_url = f"http://127.0.0.1:5000/lunch_order_form?session={session_title}&orderer_id={orderer.id}"
+        # Create order form URL with proper parameters
+        order_url = f"http://127.0.0.1:5000/lunch_order_form?session={session_title}&orderer_id={orderer.id}&deadline={deadline_dt.isoformat()}"
+        logger.info(f"Order form URL: {order_url}")
         
         html_content = f"""
         <html>
@@ -489,6 +500,8 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
                 
                 <div style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
                     <p>このメールは自動送信されています。</p>
+                    <p>※ ボタンが機能しない場合は、以下のリンクにアクセスしてください：</p>
+                    <p><a href="{order_url}" style="color: #3498db;">{order_url}</a></p>
                 </div>
             </div>
         </body>
@@ -503,10 +516,95 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
         )
         msg.html = html_content
         
+        logger.info("Attempting to send email...")
+        
         # In development, we expect this to fail due to mail configuration
         # but the structure is correct for when SMTP is properly configured
         mail.send(msg)
         
+        logger.info(f"✅ Email sent successfully to {orderer.email}")
+        
     except Exception as e:
+        # Enhanced error logging
+        error_msg = f"メール送信エラー: {str(e)}"
+        logger.error(f"❌ Failed to send email to {orderer.email}: {error_msg}")
+        logger.error(f"Error type: {type(e).__name__}")
+        
         # Re-raise the exception to be caught by the calling function
-        raise Exception(f"メール送信エラー: {str(e)}")
+        raise Exception(error_msg)
+
+@app.route('/lunch_order_form')
+def lunch_order_form():
+    """ランチ注文フォーム表示"""
+    session_title = request.args.get('session', '')
+    orderer_id = request.args.get('orderer_id', '')
+    deadline = request.args.get('deadline', '')
+    
+    if not session_title or not orderer_id:
+        return "無効なリクエストです。セッション名と注文者IDが必要です。", 400
+    
+    # Get orderer information
+    orderer = Orderer.query.get(orderer_id)
+    if not orderer:
+        return "注文者が見つかりません。", 404
+    
+    # Get all menus
+    menus = Menu.query.all()
+    if not menus:
+        return "メニューが登録されていません。", 404
+    
+    return render_template('lunch_order_form.html',
+                         session_title=session_title,
+                         orderer=orderer,
+                         menus=menus,
+                         deadline=deadline)
+
+@app.route('/lunch_order_response')
+def lunch_order_response():
+    """ランチ注文レスポンス処理"""
+    try:
+        session_title = request.args.get('session_title', '')
+        orderer_id = request.args.get('orderer_id', '')
+        deadline = request.args.get('deadline', '')
+        selected_items = request.args.getlist('items')  # Get list of selected menu item IDs
+        
+        if not session_title or not orderer_id:
+            return "無効なリクエストです。", 400
+        
+        # Get orderer information
+        orderer = Orderer.query.get(orderer_id)
+        if not orderer:
+            return "注文者が見つかりません。", 404
+        
+        # Clear existing orders
+        orderer.item_1 = ''
+        orderer.item_2 = ''
+        orderer.item_3 = ''
+        orderer.item_4 = ''
+        orderer.item_5 = ''
+        
+        # Store selected items (up to 5)
+        item_fields = ['item_1', 'item_2', 'item_3', 'item_4', 'item_5']
+        ordered_menus = []
+        
+        for i, item_id in enumerate(selected_items[:5]):  # Limit to 5 items
+            menu = Menu.query.get(item_id)
+            if menu:
+                setattr(orderer, item_fields[i], menu.name)
+                ordered_menus.append(menu)
+        
+        db.session.commit()
+        
+        # Calculate total price
+        total_price = sum(float(menu.price_excl_tax) for menu in ordered_menus)
+        
+        return render_template('lunch_order_confirmation.html',
+                             session_title=session_title,
+                             orderer=orderer,
+                             ordered_menus=ordered_menus,
+                             total_price=total_price,
+                             deadline=deadline)
+    
+    except Exception as e:
+        flash(f'注文処理中にエラーが発生しました: {str(e)}', 'error')
+        return redirect(url_for('lunch_admin'))

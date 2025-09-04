@@ -37,9 +37,21 @@
         <h1>注文を受け付けました</h1>
         
         <div class="confirmation-info">
-            <p><strong>注文者:</strong> {{ recipient.name }} 様</p>
-            <p><strong>セッション:</strong> {{ session.title }}</p>
-            <p><strong>選択した品目数:</strong> {{ selected_items|length }} 点</p>
+            <p><strong>注文者:</strong> {{ orderer.name }} 様</p>
+            <p><strong>セッション:</strong> {{ session_title }}</p>
+            <p><strong>選択した品目数:</strong> {{ ordered_menus|length }} 点</p>
+            {% if ordered_menus %}
+            <p><strong>注文内容:</strong></p>
+            <ul style="text-align: left; display: inline-block;">
+                {% for menu in ordered_menus %}
+                <li>{{ menu.name }} - ¥{{ menu.price_excl_tax }}</li>
+                {% endfor %}
+            </ul>
+            <p><strong>合計金額:</strong> ¥{{ total_price }}</p>
+            {% endif %}
+            {% if deadline %}
+            <p><strong>注文期限:</strong> {{ deadline }}</p>
+            {% endif %}
         </div>
         
         <p>ご注文ありがとうございました。</p>
