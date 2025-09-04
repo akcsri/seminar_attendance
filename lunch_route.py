@@ -463,208 +463,180 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
         logger.info(f"Session: {session_title}, Deadline: {deadline_dt}")
         logger.info(f"Number of menus: {len(menus)}")
         
+        # Get BASE_URL from config
+        base_url = current_app.config.get('BASE_URL', 'http://127.0.0.1:5000')
+        
         # Create HTML content with menu display (no individual order links)
         menu_html = ""
         
         # Generate menu display without individual order buttons (as requested - 廃止)
         for menu in menus:
+            # Format price with comma separator
+            formatted_price = f"{float(menu.price_excl_tax):,.0f}" if menu.price_excl_tax == int(float(menu.price_excl_tax)) else f"{float(menu.price_excl_tax):,.2f}"
+            
             menu_html += f"""
-            <div class="menu-item">
-                <div class="menu-content">
-                    <span class="menu-name">{menu.name}</span>
-                    <span class="menu-price">¥{menu.price_excl_tax}</span>
-                </div>
-            </div>
+            <tr>
+                <td style="padding: 15px 0;">
+                    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse;">
+                        <tr>
+                            <td style="background: linear-gradient(135deg, #ffffff, #f8fafc); padding: 20px; border-radius: 15px; border: 2px solid #e2e8f0; margin: 10px 0; display: block;">
+                                <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse;">
+                                    <tr>
+                                        <td style="font-size: 16px; font-weight: 600; color: #2d3748; padding-right: 20px;">
+                                            {menu.name}
+                                        </td>
+                                        <td align="right" style="font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 10px 16px; border-radius: 12px; text-align: center; white-space: nowrap;">
+                                            ¥{formatted_price}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
             """
         
-        # Create order form URL with proper parameters for fallback
-        order_url = f"http://127.0.0.1:5000/lunch_order_form?session={session_title}&orderer_id={orderer.id}&deadline={deadline_dt.isoformat()}"
+        # Create order form URL with proper parameters using BASE_URL
+        order_url = f"{base_url}/lunch_order_form?session={session_title}&orderer_id={orderer.id}&deadline={deadline_dt.isoformat()}"
         logger.info(f"Order form URL: {order_url}")
         
         html_content = f"""
-        <html>
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml">
         <head>
-            <meta charset="UTF-8">
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
             <title>ランチ注文のご案内</title>
-            <style>
-                body {{
-                    font-family: 'Arial', sans-serif;
-                    line-height: 1.6;
-                    color: #2c3e50;
-                    margin: 0;
-                    padding: 20px;
-                    background: #f8f9fa;
-                }}
-                .container {{
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background: white;
-                    border-radius: 15px;
-                    overflow: hidden;
-                    box-shadow: 0 10px 30px rgba(52, 152, 219, 0.15);
-                    border: 1px solid #e3f2fd;
-                }}
-                .header {{
-                    background: linear-gradient(135deg, #3498db, #2980b9);
-                    color: white;
-                    text-align: center;
-                    padding: 30px 20px;
-                }}
-                .content {{
-                    padding: 30px;
-                }}
-                .menu-item {{
-                    background: linear-gradient(135deg, #ffffff, #f8f9fa);
-                    margin: 15px 0;
-                    padding: 20px;
-                    border-radius: 12px;
-                    border: 2px solid #e3f2fd;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
-                }}
-                .menu-item:hover {{
-                    border-color: #3498db;
-                    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.2);
-                }}
-                .menu-content {{
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }}
-                .menu-name {{
-                    font-weight: bold;
-                    color: #2c3e50;
-                    font-size: 16px;
-                }}
-                .menu-price {{
-                    color: #e74c3c;
-                    font-weight: bold;
-                    font-size: 18px;
-                    background: linear-gradient(135deg, #ffe5e5, #fff1f1);
-                    padding: 8px 15px;
-                    border-radius: 20px;
-                    border: 1px solid #fadbd8;
-                }}
-                .deadline-notice {{
-                    background: linear-gradient(135deg, #f39c12, #e67e22);
-                    padding: 20px;
-                    border-radius: 12px;
-                    margin: 20px 0;
-                    text-align: center;
-                    color: white;
-                    font-weight: bold;
-                    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
-                }}
-                .order-section {{
-                    background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
-                    padding: 25px;
-                    border-radius: 12px;
-                    margin-top: 30px;
-                    border: 2px solid #27ae60;
-                    text-align: center;
-                }}
-                .order-button {{
-                    background: linear-gradient(135deg, #27ae60, #2ecc71);
-                    color: white !important;
-                    padding: 15px 35px;
-                    border: none;
-                    border-radius: 25px;
-                    font-size: 16px;
-                    font-weight: bold;
-                    text-decoration: none !important;
-                    display: inline-block;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
-                    margin: 10px 0;
-                    /* Outlook-specific styles */
-                    mso-hide: none;
-                }}
-                .emoji {{
-                    font-size: 20px;
-                    margin-right: 8px;
-                }}
-                /* Outlook-specific table structure for better compatibility */
-                table {{
-                    border-collapse: collapse;
-                    mso-table-lspace: 0pt;
-                    mso-table-rspace: 0pt;
-                }}
-                td {{
-                    padding: 0;
-                    border-collapse: collapse;
-                }}
-            </style>
             <!--[if mso]>
             <style type="text/css">
-                .menu-order-btn {{
-                    display: block !important;
-                    width: 200px;
-                }}
-                .menu-item {{
-                    width: 100%;
+                table {{ border-collapse: collapse; }}
+                td {{ padding: 0; }}
+                .menu-item-table {{ width: 100% !important; }}
+                .price-cell {{ 
+                    background-color: #667eea !important;
+                    color: white !important;
+                    padding: 8px 12px !important;
+                    text-align: center !important;
                 }}
             </style>
             <![endif]-->
         </head>
-        <body>
-            <!--[if mso]>
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+        <body style="margin: 0; padding: 0; background-color: #f7fafc; font-family: 'Helvetica Neue', Arial, sans-serif;">
+            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f7fafc; min-height: 100vh;">
                 <tr>
-                    <td>
-            <![endif]-->
-            <div class="container">
-                <div class="header">
-                    <h2 style="margin: 0; font-size: 26px;">
-                        <span class="emoji">🍽️</span>{session_title}
-                    </h2>
-                </div>
-                
-                <div class="content">
-                    <p style="font-size: 18px; margin-bottom: 10px; color: #2d3436;">
-                        <strong>{orderer.name}</strong> 様
-                    </p>
-                    
-                    <p style="font-size: 16px; color: #636e72; margin-bottom: 25px;">
-                        いつもお疲れ様です！ランチ注文の受付を開始いたします。<br>
-                        下記メニューより、お好みの商品をお選びください 😊
-                    </p>
-                    
-                    <div class="deadline-notice">
-                        <span class="emoji">⏰</span>
-                        注文期限: {deadline_dt.strftime("%Y年%m月%d日 %H時%M分")}
-                    </div>
-                    
-                    <h3 style="color: #3498db; margin-bottom: 25px; font-size: 20px;">
-                        <span class="emoji">📋</span>メニュー一覧
-                    </h3>
-                    
-                    {menu_html}
-                    
-                    <div class="order-section">
-                        <h4 style="color: #27ae60; margin-top: 0; font-size: 18px; margin-bottom: 15px;">
-                            <span class="emoji">🛒</span>注文フォームで複数選択して注文
-                        </h4>
-                        <p style="color: #2c3e50; font-size: 15px; margin-bottom: 20px;">
-                            複数のメニューを選択して一度に注文できます。<br>
-                            下記ボタンから注文フォームにアクセスしてください 😊
-                        </p>
-                        <a href="{order_url}" class="order-button">
-                            📝 注文フォームで注文する
-                        </a>
-                    </div>
-                    
-                    <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #ecf0f1, #bdc3c7); border-radius: 10px; text-align: center; border: 1px solid #d5dbdb;">
-                        <p style="margin: 0; color: #2c3e50; font-size: 14px;">
-                            <span class="emoji">💌</span>このメールは自動送信されています
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!--[if mso]>
+                    <td align="center" style="padding: 40px 20px;">
+                        <!-- Main Container -->
+                        <table cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                            <!-- Header -->
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px 30px; text-align: center;">
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="color: white; font-size: 28px; font-weight: 700; text-align: center;">
+                                                🍽️ {session_title}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                            <!-- Content -->
+                            <tr>
+                                <td style="padding: 40px 30px;">
+                                    <!-- Greeting -->
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="font-size: 18px; color: #2d3748; margin-bottom: 10px; font-weight: 600;">
+                                                {orderer.name} 様
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 15px 0; font-size: 16px; color: #4a5568; line-height: 1.6;">
+                                                いつもお疲れ様です！ランチ注文の受付を開始いたします。<br>
+                                                下記メニューより、お好みの商品をお選びください 😊
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <!-- Deadline Notice -->
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 25px 0;">
+                                        <tr>
+                                            <td style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700; font-size: 16px;">
+                                                ⏰ 注文期限: {deadline_dt.strftime("%Y年%m月%d日 %H時%M分")}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <!-- Menu Section -->
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="padding: 25px 0 15px 0; font-size: 20px; font-weight: 600; color: #2d3748; text-align: center;">
+                                                📋 メニュー一覧
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <!-- Menu Items -->
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        {menu_html}
+                                    </table>
+                                    
+                                    <!-- Order Section -->
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 30px;">
+                                        <tr>
+                                            <td style="background: linear-gradient(135deg, #e8f5e8, #f0f8f0); padding: 30px; border-radius: 15px; border: 2px solid #4ade80; text-align: center;">
+                                                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                                    <tr>
+                                                        <td style="font-size: 18px; font-weight: 600; color: #166534; margin-bottom: 15px; text-align: center;">
+                                                            🛒 注文フォームで複数選択して注文
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 10px 0; font-size: 15px; color: #374151; line-height: 1.6; text-align: center;">
+                                                            複数のメニューを選択して一度に注文できます。<br>
+                                                            下記ボタンから注文フォームにアクセスしてください 😊
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 20px 0; text-align: center;">
+                                                            <!-- Order Button - Outlook Compatible -->
+                                                            <table cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
+                                                                <tr>
+                                                                    <td style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 25px; padding: 0;">
+                                                                        <a href="{order_url}" style="display: inline-block; padding: 15px 30px; color: white; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 25px; text-align: center; min-width: 200px;">
+                                                                            📝 注文フォームで注文する
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <!-- Footer -->
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 30px;">
+                                        <tr>
+                                            <td style="background: linear-gradient(135deg, #f1f5f9, #e2e8f0); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #cbd5e1;">
+                                                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                                    <tr>
+                                                        <td style="font-size: 14px; color: #64748b; text-align: center;">
+                                                            💌 このメールは自動送信されています
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>
-            <![endif]-->
         </body>
         </html>
         """
