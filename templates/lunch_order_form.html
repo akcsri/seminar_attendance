@@ -68,6 +68,26 @@
             border-left: 5px solid var(--primary-color);
         }
     </style>
+    <script>
+        function submitOrder() {
+            const checkboxes = document.querySelectorAll('input[name="items"]:checked');
+            const selectedItems = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (selectedItems.length === 0) {
+                alert('メニューを選択してください！ 🍽️');
+                return false;
+            }
+            
+            const params = new URLSearchParams();
+            params.append('session_title', '{{ session_title }}');
+            params.append('orderer_id', '{{ orderer.id }}');
+            params.append('deadline', '{{ deadline }}');
+            selectedItems.forEach(item => params.append('items', item));
+            
+            window.location.href = '/lunch_order_response?' + params.toString();
+            return false;
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -81,7 +101,7 @@
             <p><strong>注文者:</strong> {{ orderer.name }} 様</p>
         </div>
         
-        <form action="/lunch_order_response" method="GET">
+        <form onsubmit="return submitOrder()">
             <input type="hidden" name="session_title" value="{{ session_title }}">
             <input type="hidden" name="orderer_id" value="{{ orderer.id }}">
             <input type="hidden" name="deadline" value="{{ deadline }}">
