@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>ランチ等注文管理</title>
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <style>
+<meta charset="utf-8"/>
+<title>ランチ等注文管理</title>
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet"/>
+<style>
         .admin-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -132,17 +133,15 @@
             background-color: var(--border-color);
         }
     </style>
-</head>
+</meta></head>
 <body>
-    <div class="admin-container">
-        <h1>ランチ等注文管理</h1>
-        
-        <div class="nav-links">
-            <a href="{{ url_for('admin_dashboard') }}">セミナー管理に戻る</a>
-            <a href="{{ url_for('lunch_order_status') }}">注文状況表示</a>
-        </div>
-
-        <!-- Flash Messages -->
+<div class="admin-container">
+<h1>ランチ等注文管理</h1>
+<div class="nav-links">
+<a href="{{ url_for('admin_dashboard') }}">セミナー管理に戻る</a>
+<a href="{{ url_for('lunch_order_status') }}">注文状況表示</a>
+</div>
+<!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="flash-messages">
@@ -154,153 +153,122 @@
         {% endwith %}
 
         <!-- メニュー管理セクション -->
-        <div class="admin-section">
-            <h2>📋 メニュー管理</h2>
-            
-            <!-- メニューCSVインポート -->
-            <h3>メニューCSVインポート</h3>
-            <form action="/import_menu_csv" method="post" enctype="multipart/form-data" class="form-inline">
-                <label for="menu_csv_file">CSVファイル:</label>
-                <input type="file" id="menu_csv_file" name="menu_csv_file" accept=".csv" required>
-                <button type="submit" class="btn">インポート</button>
-            </form>
-            <small>CSVフォーマット: メニュー名, 税抜き価格</small>
-            
-            <!-- メニュー一覧 -->
-            <h3>メニュー一覧</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>メニュー名</th>
-                            <th>税抜き価格</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+<div class="admin-section">
+<h2>📋 メニュー管理</h2>
+<!-- メニューCSVインポート -->
+<h3>メニューCSVインポート</h3>
+<form action="/import_menu_csv" class="form-inline" enctype="multipart/form-data" method="post">
+<label for="menu_csv_file">CSVファイル:</label>
+<input accept=".csv" id="menu_csv_file" name="menu_csv_file" required="" type="file"/>
+<button class="btn" type="submit">インポート</button>
+</form>
+<small>CSVフォーマット: メニュー名, 税抜き価格</small>
+<!-- メニュー一覧 -->
+<h3>メニュー一覧</h3>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>メニュー名</th>
+<th>税抜き価格</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
                         {% for menu in menus %}
                         <tr>
-                            <td>{{ menu.id }}</td>
-                            <td>
-                                <form action="/edit_menu_item/{{ menu.id }}" method="post" style="display:inline;">
-                                    <input type="text" name="menu_name" value="{{ menu.title }}" style="width: 150px;">
-                                </form>
-                            </td>
-                            <td>
-                                <form action="/edit_menu_item/{{ menu.id }}" method="post" style="display:inline;">
-                                    <input type="number" step="0.01" name="price" value="{{ menu.contact }}" style="width: 80px;">
-                                </form>
-                            </td>
-                            <td>
-                                <form action="/edit_menu_item/{{ menu.id }}" method="post" style="display:inline;">
-                                    <input type="hidden" name="menu_name" value="{{ menu.title }}">
-                                    <input type="hidden" name="price" value="{{ menu.contact }}">
-                                    <button type="submit" class="btn btn-primary" onclick="
-                                        this.form.menu_name.value = this.form.parentElement.parentElement.children[1].children[0].children[0].value;
-                                        this.form.price.value = this.form.parentElement.parentElement.children[2].children[0].children[0].value;
-                                    ">編集</button>
-                                </form>
-                                <form action="/delete_menu_item/{{ menu.id }}" method="post" style="display:inline;" 
-                                      onsubmit="return confirm('このメニュー項目を削除しますか？')">
-                                    <button type="submit" class="btn btn-danger">削除</button>
-                                </form>
-                            </td>
-                        </tr>
+<td>{{ menu.id }}</td>
+<td>{{ menu.name }}</td>
+<td>{{ menu.price_excl_tax }}</td>
+<td>
+<form action="{{ url_for('edit_menu_item', id=menu.id) }}" method="post">
+<input name="menu_name" type="text" value="{{ menu.name }}"/>
+<input name="price" type="text" value="{{ menu.price_excl_tax }}"/>
+<button type="submit">編集</button>
+</form>
+<form action="{{ url_for('delete_menu_item', id=menu.id) }}" method="post">
+<button type="submit">削除</button>
+</form>
+</td>
+</tr>
                         {% endfor %}
                     </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 注文者管理セクション -->
-        <div class="admin-section">
-            <h2>👥 注文者管理</h2>
-            
-            <!-- 注文者CSVインポート -->
-            <h3>注文者CSVインポート</h3>
-            <form action="/import_orderer_csv" method="post" enctype="multipart/form-data" class="form-inline">
-                <label for="orderer_csv_file">CSVファイル:</label>
-                <input type="file" id="orderer_csv_file" name="orderer_csv_file" accept=".csv" required>
-                <button type="submit" class="btn">インポート</button>
-            </form>
-            <small>CSVフォーマット: 氏名, メールアドレス</small>
-            
-            <!-- 注文者一覧 -->
-            <h3>注文者一覧</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>氏名</th>
-                            <th>メールアドレス</th>
-                            <th>所属</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+</table>
+</div>
+</div>
+<!-- 注文者管理セクション -->
+<div class="admin-section">
+<h2>👥 注文者管理</h2>
+<!-- 注文者CSVインポート -->
+<h3>注文者CSVインポート</h3>
+<form action="/import_orderer_csv" class="form-inline" enctype="multipart/form-data" method="post">
+<label for="orderer_csv_file">CSVファイル:</label>
+<input accept=".csv" id="orderer_csv_file" name="orderer_csv_file" required="" type="file"/>
+<button class="btn" type="submit">インポート</button>
+</form>
+<small>CSVフォーマット: 氏名, メールアドレス</small>
+<!-- 注文者一覧 -->
+<h3>注文者一覧</h3>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>氏名</th>
+<th>メールアドレス</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
                         {% for orderer in orderers %}
                         <tr>
-                            <td>{{ orderer.id }}</td>
-                            <td>
-                                <input type="text" id="name_{{ orderer.id }}" value="{{ orderer.name }}" style="width: 120px;">
-                            </td>
-                            <td>
-                                <input type="email" id="email_{{ orderer.id }}" value="{{ orderer.email }}" style="width: 180px;">
-                            </td>
-                            <td>
-                                <input type="text" id="affiliation_{{ orderer.id }}" value="{{ orderer.affiliation }}" style="width: 100px;">
-                            </td>
-                            <td>
-                                <form action="/edit_orderer/{{ orderer.id }}" method="post" style="display:inline;">
-                                    <input type="hidden" name="name" value="{{ orderer.name }}">
-                                    <input type="hidden" name="email" value="{{ orderer.email }}">
-                                    <input type="hidden" name="affiliation" value="{{ orderer.affiliation }}">
-                                    <button type="submit" class="btn btn-primary" onclick="
+<td>{{ orderer.id }}</td>
+<td>
+<input id="name_{{ orderer.id }}" style="width: 120px;" type="text" value="{{ orderer.name }}"/>
+</td>
+<td>
+<input id="email_{{ orderer.id }}" style="width: 180px;" type="email" value="{{ orderer.email }}"/>
+</td>
+<td>
+<form action="/edit_orderer/{{ orderer.id }}" method="post" style="display:inline;">
+<input name="name" type="hidden" value="{{ orderer.name }}"/>
+<input name="email" type="hidden" value="{{ orderer.email }}"/>
+<button class="btn btn-primary" onclick="
                                         this.form.name.value = document.getElementById('name_{{ orderer.id }}').value;
                                         this.form.email.value = document.getElementById('email_{{ orderer.id }}').value;
-                                        this.form.affiliation.value = document.getElementById('affiliation_{{ orderer.id }}').value;
-                                    ">編集</button>
-                                </form>
-                                <form action="/delete_orderer/{{ orderer.id }}" method="post" style="display:inline;" 
-                                      onsubmit="return confirm('この注文者を削除しますか？')">
-                                    <button type="submit" class="btn btn-danger">削除</button>
-                                </form>
-                            </td>
-                        </tr>
+                                    " type="submit">編集</button>
+</form>
+<form action="/delete_orderer/{{ orderer.id }}" method="post" onsubmit="return confirm('この注文者を削除しますか？')" style="display:inline;">
+<button class="btn btn-danger" type="submit">削除</button>
+</form>
+</td>
+</tr>
                         {% endfor %}
                     </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 注文メール送信セクション -->
-        <div class="admin-section">
-            <h2>📧 注文メール送信</h2>
-            
-            <form action="/send_lunch_order_email" method="post" class="form-inline">
-                <label for="session_title">セッション名:</label>
-                <input type="text" id="session_title" name="session_title" placeholder="例: 12月25日ランチ注文" required>
-                
-                <label for="deadline">注文期限:</label>
-                <input type="datetime-local" id="deadline" name="deadline" required>
-                
-                <button type="submit" class="btn">メール送信</button>
-            </form>
-        </div>
-
-        <!-- 注文状況セクション -->
-        <div class="admin-section">
-            <h2>📊 注文状況</h2>
-            
-            <a href="{{ url_for('lunch_order_status') }}" class="btn">詳細な注文状況を表示</a>
-            
-            <h3>概要</h3>
-            <p>登録メニュー数: {{ menus|length }} 件</p>
-            <p>登録注文者数: {{ orderers|length }} 件</p>
-            <p>注文データ数: {{ orders|length }} 件</p>
-        </div>
-    </div>
+</table>
+</div>
+</div>
+<!-- 注文メール送信セクション -->
+<div class="admin-section">
+<h2>📧 注文メール送信</h2>
+<form action="/send_lunch_order_email" class="form-inline" method="post">
+<label for="session_title">セッション名:</label>
+<input id="session_title" name="session_title" placeholder="例: 12月25日ランチ注文" required="" type="text"/>
+<label for="deadline">注文期限:</label>
+<input id="deadline" name="deadline" required="" type="datetime-local"/>
+<button class="btn" type="submit">メール送信</button>
+</form>
+</div>
+<!-- 注文状況セクション -->
+<div class="admin-section">
+<h2>📊 注文状況</h2>
+<a class="btn" href="{{ url_for('lunch_order_status') }}">詳細な注文状況を表示</a>
+<h3>概要</h3>
+<p>登録メニュー数: {{ menus|length }} 件</p>
+<p>登録注文者数: {{ orderers|length }} 件</p>
+<p>注文データ数: {{ orders|length }} 件</p>
+</div>
+</div>
 </body>
 </html>
