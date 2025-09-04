@@ -1,214 +1,50 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ランチ等注文状況</title>
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <style>
-        .admin-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .admin-section {
-            background: var(--card-background);
-            padding: 25px;
-            border: 1px solid var(--border-color);
-            margin: 30px 0;
-            border-radius: 8px;
-        }
-        
-        .table-container {
-            overflow-x: auto;
-            margin: 20px 0;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        th {
-            background-color: var(--secondary-background);
-            font-weight: 600;
-        }
-        
-        .item-list {
-            max-width: 300px;
-            word-wrap: break-word;
-        }
-        
-        .item {
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        .item-price {
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        .total-price {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .summary-table {
-            margin-top: 30px;
-            border: 2px solid #3498db;
-        }
-        
-        .summary-table th {
-            background-color: #3498db;
-            color: white;
-        }
-        
-        /* Item aggregation table - blue theme */
-        .item-aggregation-table {
-            margin-top: 40px;
-            border: 2px solid #27ae60;
-        }
-        
-        .item-aggregation-table th {
-            background-color: #27ae60;
-            color: white;
-        }
-        
-        .nav-links {
-            margin-bottom: 20px;
-        }
-        
-        .nav-links a {
-            margin-right: 15px;
-            padding: 8px 16px;
-            background-color: var(--secondary-background);
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        
-        .nav-links a:hover {
-            background-color: var(--border-color);
-        }
-        
-        .no-orders {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 40px;
-        }
-    </style>
+    <title>注文状況</title>
+    <link rel="stylesheet" href="base.css">
 </head>
 <body>
-    <div class="admin-container">
-        <h1>ランチ等注文状況</h1>
-        
-        <div class="nav-links">
-            <a href="{{ url_for('lunch_admin') }}">注文管理に戻る</a>
-        </div>
+    <div class="container-wide">
+        <h1>注文状況</h1>
 
-        <div class="admin-section">
-            <h2>📊 注文状況一覧</h2>
-            
-            {% if orders %}
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>注文者氏名</th>
-                            <th>品名①〜⑤</th>
-                            <th>合計税抜き価格</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in orders %}
-                        <tr>
-                            <td>{{ order.orderer_name }}</td>
-                            <td class="item-list">
-                                {% for item in order.ordered_items %}
-                                <span class="item">
-                                    {{ item.name }}
-                                    <span class="item-price">(¥{{ "%.0f"|format(item.price) }})</span>
-                                </span>
-                                {% endfor %}
-                            </td>
-                            <td class="total-price">¥{{ "%.0f"|format(order.total_price) }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- 品名ごと集計一覧 -->
-            {% if item_summary %}
-            <div class="table-container">
-                <table class="item-aggregation-table">
-                    <thead>
-                        <tr>
-                            <th colspan="4">📊 品名ごと集計一覧</th>
-                        </tr>
-                        <tr style="background-color: #e8f5e8;">
-                            <th>品名</th>
-                            <th>個数</th>
-                            <th>税抜き価格</th>
-                            <th>小計</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in item_summary %}
-                        <tr>
-                            <td style="font-weight: 600;">{{ item.name }}</td>
-                            <td style="text-align: center; font-weight: bold; color: #27ae60;">{{ item.quantity }}個</td>
-                            <td style="text-align: right;">¥{{ "%.0f"|format(item.price) }}</td>
-                            <td style="text-align: right; font-weight: bold; color: #27ae60;">¥{{ "%.0f"|format(item.subtotal) }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-            
-            <!-- 合計金額サマリー -->
-            <div class="table-container">
-                <table class="summary-table">
-                    <thead>
-                        <tr>
-                            <th colspan="2">金額サマリー</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>税抜き価格総計</strong></td>
-                            <td class="total-price">¥{{ "%.0f"|format(total_before_tax) }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>消費税額 (10%)</strong></td>
-                            <td class="total-price">¥{{ "%.0f"|format(tax_amount) }}</td>
-                        </tr>
-                        <tr style="border-top: 2px solid var(--primary-color);">
-                            <td><strong>税込み価格総計</strong></td>
-                            <td class="total-price" style="font-size: 1.2em;">¥{{ "%.0f"|format(total_with_tax) }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            {% else %}
-            <div class="no-orders">
-                <p>まだ注文がありません。</p>
-                <p>注文メール送信機能を使って注文を受け付けてください。</p>
-            </div>
-            {% endif %}
+        {% if orders|length == 0 %}
+        <div class="notice-box">
+            <p>まだ注文がありません。</p>
+            <p>注文メール送信機能を使って注文を受け付けてください。</p>
         </div>
+        {% else %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">注文者</th>
+                        <th scope="col">メールアドレス</th>
+                        <th scope="col">注文内容</th>
+                        <th scope="col">合計金額</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.name }}</td>
+                        <td>{{ order.email }}</td>
+                        <td>
+                            <ul>
+                                {% for item in order.items %}
+                                <li>{{ item.name }} - {{ item.price_excl_tax }}円</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>{{ order.total_price | comma_format }}円</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>

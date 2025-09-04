@@ -2,250 +2,12 @@
 
 <html lang="ja">
 <head>
+<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <title>ランチ等注文管理</title>
-<meta content="width=device-width, initial-scale=1" name="viewport">
-<link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet"/>
-<style>
-        .admin-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .admin-section {
-            background: var(--card-background);
-            padding: 25px;
-            border: 1px solid var(--border-color);
-            margin: 30px 0;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        
-        .admin-section:hover {
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .admin-section h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            font-size: 1.4em;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .form-inline {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            margin: 15px 0;
-        }
-        
-        .form-inline input,
-        .form-inline select,
-        .form-inline button {
-            padding: 12px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: all 0.3s ease;
-        }
-        
-        .form-inline input:focus,
-        .form-inline select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 8px rgba(79, 70, 229, 0.3);
-        }
-        
-        .form-inline button {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: white;
-            border: 2px solid var(--primary-color);
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
-        .form-inline button:hover {
-            background: var(--light-gray);
-            color: var(--text-color);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .table-container {
-            overflow-x: auto;
-            margin: 20px 0;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card-background);
-        }
-        
-        th {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: white;
-            padding: 15px 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 14px;
-        }
-        
-        tr:hover {
-            background-color: var(--secondary-background);
-        }
-        
-        .email-section {
-            background: linear-gradient(135deg, #f8fafc, #ffffff);
-            border: 2px solid var(--accent-color);
-            border-radius: 12px;
-            padding: 25px;
-            margin: 20px 0;
-        }
-        
-        .status-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .status-card {
-            background: var(--card-background);
-            padding: 20px;
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .status-card:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        
-        .status-number {
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-        
-        .status-label {
-            color: var(--medium-gray);
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        /* Enhanced Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .admin-container {
-                padding: 15px;
-            }
-            
-            .admin-section {
-                padding: 20px;
-                margin: 20px 0;
-            }
-            
-            .admin-section h2 {
-                font-size: 1.2em;
-                flex-direction: column;
-                gap: 5px;
-                text-align: center;
-            }
-            
-            .form-inline {
-                flex-direction: column;
-                gap: 10px;
-                align-items: stretch;
-            }
-            
-            .form-inline input,
-            .form-inline select,
-            .form-inline button {
-                width: 100%;
-                padding: 14px;
-                font-size: 16px;
-                margin: 5px 0;
-            }
-            
-            .table-container {
-                border-radius: 8px;
-            }
-            
-            table {
-                font-size: 12px;
-            }
-            
-            th, td {
-                padding: 8px 6px;
-            }
-            
-            .status-overview {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .status-card {
-                padding: 15px;
-            }
-            
-            .status-number {
-                font-size: 1.5em;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .admin-container {
-                padding: 10px;
-            }
-            
-            .admin-section {
-                padding: 15px;
-                margin: 15px 0;
-            }
-            
-            .admin-section h2 {
-                font-size: 1.1em;
-            }
-            
-            .form-inline input,
-            .form-inline select,
-            .form-inline button {
-                padding: 12px;
-                font-size: 15px;
-            }
-            
-            table {
-                min-width: 100%;
-                font-size: 11px;
-            }
-            
-            th, td {
-                padding: 6px 4px;
-            }
-        }
-    </style>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
+
         
         table {
             width: 100%;
@@ -347,8 +109,8 @@
         .nav-links a:hover {
             background-color: var(--border-color);
         }
-    </style>
-</meta></head>
+    
+</link></head>
 <body>
 <div class="admin-container">
 <h1>ランチ等注文管理</h1>
@@ -393,12 +155,8 @@
                         {% for menu in menus %}
                         <tr>
 <td>{{ menu.id }}</td>
-<td>
-<input id="menu_name_{{ menu.id }}" style="width: 200px;" type="text" value="{{ menu.name }}"/>
-</td>
-<td>
-<input id="price_{{ menu.id }}" style="width: 100px;" type="number" step="0.01" value="{{ menu.price_excl_tax }}"/>
-</td>
+<td>{{ value }}</td>
+<td>{{ value }}</td>
 <td>
 <form action="/edit_menu_item/{{ menu.id }}" method="post" style="display:inline;">
 <input name="menu_name" type="hidden" value="{{ menu.name }}"/>
@@ -445,16 +203,10 @@
 <tbody>
                         {% for orderer in orderers %}
                         <tr>
-<td>
-<input type="checkbox" name="orderer_ids" value="{{ orderer.id }}" class="orderer-checkbox" form="lunchEmailForm">
-</td>
+<td>{{ value }}</td>
 <td>{{ orderer.id }}</td>
-<td>
-<input id="name_{{ orderer.id }}" style="width: 120px;" type="text" value="{{ orderer.name }}"/>
-</td>
-<td>
-<input id="email_{{ orderer.id }}" style="width: 180px;" type="email" value="{{ orderer.email }}"/>
-</td>
+<td>{{ value }}</td>
+<td>{{ value }}</td>
 <td>
 <form action="/edit_orderer/{{ orderer.id }}" method="post" style="display:inline;">
 <input name="name" type="hidden" value="{{ orderer.name }}"/>
@@ -477,16 +229,16 @@
 <!-- 注文メール送信セクション -->
 <div class="admin-section">
 <h2>📧 注文メール送信</h2>
-<form action="/send_lunch_order_email_selected" class="form-inline" method="post" id="lunchEmailForm">
+<form action="/send_lunch_order_email_selected" class="form-inline" id="lunchEmailForm" method="post">
 <label>
-<input type="checkbox" id="selectAllOrderers"> 全選択/全解除
+<input id="selectAllOrderers" type="checkbox"/> 全選択/全解除
 </label>
-<br><br>
-<input id="session_title" name="session_title" placeholder="例: 12月25日ランチ注文" required="" type="text"/>
+<br/><br/>
+<input id="session_title" name="session_title" placeholder="例: 12月25日ランチ注文" required="" type="text">
 <label for="deadline">注文期限:</label>
 <input id="deadline" name="deadline" required="" type="datetime-local"/>
 <button class="btn" type="submit">選択した注文者にメール送信</button>
-</form>
+</input></form>
 </div>
 <!-- 注文状況セクション -->
 <div class="admin-section">
@@ -494,22 +246,21 @@
 <a class="btn" href="{{ url_for('lunch_order_status') }}">詳細な注文状況を表示</a>
 <h3>概要</h3>
 <div class="status-overview">
-    <div class="status-card">
-        <div class="status-number">{{ menus|length }}</div>
-        <div class="status-label">登録メニュー数</div>
-    </div>
-    <div class="status-card">
-        <div class="status-number">{{ orderers|length }}</div>
-        <div class="status-label">登録注文者数</div>
-    </div>
-    <div class="status-card">
-        <div class="status-number">{{ orders|length }}</div>
-        <div class="status-label">注文データ数</div>
-    </div>
+<div class="status-card">
+<div class="status-number">{{ menus|length }}</div>
+<div class="status-label">登録メニュー数</div>
+</div>
+<div class="status-card">
+<div class="status-number">{{ orderers|length }}</div>
+<div class="status-label">登録注文者数</div>
+</div>
+<div class="status-card">
+<div class="status-number">{{ orders|length }}</div>
+<div class="status-label">注文データ数</div>
 </div>
 </div>
 </div>
-
+</div>
 <script>
 // JavaScript for orderer selection functionality
 document.addEventListener('DOMContentLoaded', function() {
@@ -544,6 +295,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
 </body>
 </html>

@@ -1,201 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ランチ注文のご案内</title>
     <!--[if mso]>
-    <style type="text/css">
-        table { border-collapse: collapse; }
-        td { padding: 0; }
-        .menu-item-table { width: 100% !important; }
-        .price-cell { 
-            background-color: #4a90e2 !important;
-            color: white !important;
-            padding: 8px 12px !important;
-            text-align: center !important;
-        }
-        .order-button {
-            background-color: #2563eb !important;
-            border-radius: 8px !important;
-        }
-    </style>
+    
     <![endif]-->
-    <style>
-        /* Enhanced email CSS for better mobile compatibility and modern design */
-        * {
-            box-sizing: border-box;
-        }
-        
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f3f4f6;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-        }
-        
-        .email-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border: 1px solid #e5e7eb;
-        }
-        
-        .header-section {
-            background: linear-gradient(135deg, #4f46e5, #06d6a0);
-            padding: 30px 25px;
-            text-align: center;
-            color: white;
-        }
-        
-        .header-title {
-            font-size: 26px;
-            font-weight: 700;
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .header-subtitle {
-            font-size: 14px;
-            margin: 8px 0 0 0;
-            opacity: 0.9;
-        }
-        
-        .content-section {
-            padding: 35px 25px;
-        }
-        
-        .deadline-notice {
-            background: linear-gradient(135deg, #ef4444, #f87171);
-            color: white;
-            padding: 18px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 15px;
-            margin: 20px 0;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-        
-        .order-section {
-            background: linear-gradient(135deg, #1e293b, #334155);
-            padding: 30px;
-            border-radius: 16px;
-            text-align: center;
-            margin: 25px 0;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .order-instruction {
-            color: #e2e8f0;
-            font-size: 15px;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-        
-        .order-button {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white !important;
-            padding: 18px 40px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 18px;
-            display: inline-block;
-            margin: 10px;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-            border: 3px solid #60a5fa;
-            transition: all 0.3s ease;
-        }
-        
-        .order-button:hover {
-            background: #e5e7eb !important;
-            color: #1f2937 !important;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.5);
-        }
-        
-        /* Enhanced Mobile Responsiveness */
-        @media only screen and (max-width: 600px) {
-            .email-container {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0 !important;
-                border-radius: 0 !important;
-            }
-            
-            .header-section {
-                padding: 25px 20px !important;
-            }
-            
-            .header-title {
-                font-size: 22px !important;
-            }
-            
-            .header-subtitle {
-                font-size: 13px !important;
-            }
-            
-            .content-section {
-                padding: 25px 20px !important;
-            }
-            
-            .deadline-notice {
-                padding: 15px !important;
-                font-size: 14px !important;
-                margin: 15px 0 !important;
-            }
-            
-            .order-section {
-                padding: 25px 20px !important;
-                margin: 20px 0 !important;
-            }
-            
-            .order-instruction {
-                font-size: 14px !important;
-                margin-bottom: 15px !important;
-            }
-            
-            .order-button {
-                padding: 16px 30px !important;
-                font-size: 16px !important;
-                width: 100% !important;
-                max-width: 280px !important;
-                box-sizing: border-box !important;
-            }
-        }
-        
-        /* iPhone specific optimizations */
-        @media only screen and (max-width: 480px) {
-            .header-title {
-                font-size: 20px !important;
-            }
-            
-            .order-button {
-                padding: 14px 25px !important;
-                font-size: 15px !important;
-            }
-        }
-        
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            .email-container {
-                background-color: #1f2937 !important;
-            }
-            
-            .content-section {
-                background-color: #1f2937 !important;
-                color: #e5e7eb !important;
-            }
-        }
-    </style>
+    
 </head>
 <body>
     <div style="background-color: #f3f4f6; padding: 20px 10px; min-height: 100vh;">
@@ -218,7 +31,7 @@
                     <p class="order-instruction">
                         下記ボタンから注文フォームにアクセスして、<br>お好みのメニューをご注文ください
                     </p>
-                    <a href="https://seminar-attendance.onrender.com/lunch_order_form?session={{ session_title|urlencode }}&orderer_id={{ orderer.id }}&deadline={{ deadline_iso|urlencode }}" 
+                    <a href="https://seminar-attendance.onrender.com/lunch_order_form?session={{ session_title_encoded }}&orderer_id={{ orderer.id }}&deadline={{ deadline_iso|urlencode }}" 
                        class="order-button">
                         📱 注文フォームを開く
                     </a>
