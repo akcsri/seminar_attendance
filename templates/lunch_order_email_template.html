@@ -100,21 +100,7 @@
                     <!-- Content -->
                     <tr>
                         <td style="padding: 35px 25px;">
-                            <!-- Greeting -->
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                <tr>
-                                    <td style="font-size: 18px; color: #1f2937; margin-bottom: 8px; font-weight: 600;">
-                                        {{ orderer.name }} 様
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 12px 0; font-size: 15px; color: #4b5563; line-height: 1.6;">
-                                        いつもお疲れ様です！ランチ注文の受付を開始いたします。<br>
-                                        下記メニューより、お好みの商品をお選びください 😊
-                                    </td>
-                                </tr>
-                            </table>
-                            
+
                             <!-- Deadline Notice -->
                             <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0;">
                                 <tr>
@@ -124,45 +110,11 @@
                                 </tr>
                             </table>
                             
-                            <!-- Menu List (Read-only Display) -->
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                <tr>
-                                    <td style="padding: 20px 0 12px 0; font-size: 19px; font-weight: 600; color: #1f2937; text-align: center;">
-                                        📋 本日のメニュー
-                                    </td>
-                                </tr>
-                            </table>
-                            
-                            <!-- Menu Items Display -->
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="background: #f8fafc; border-radius: 12px; padding: 20px; margin: 15px 0;">
-                                {% for menu in menus %}
-                                <tr>
-                                    <td style="padding: 8px 0; border-bottom: {{ '1px solid #e2e8f0' if not loop.last else 'none' }};">
-                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <tr>
-                                                <td style="font-size: 16px; font-weight: 600; color: #1f2937; padding-right: 15px;">
-                                                    {{ menu.name }}
-                                                </td>
-                                                <td align="right" style="font-size: 16px; font-weight: 700; color: #059669;">
-                                                    ¥{{ menu.price_excl_tax | comma_format }}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </table>
-                            
                             <!-- Order Button Section -->
                             <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 25px;">
                                 <tr>
                                     <td style="background: linear-gradient(135deg, #1e293b, #334155); padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
                                         <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <tr>
-                                                <td style="font-size: 20px; font-weight: 700; color: white; margin-bottom: 15px; text-align: center;">
-                                                    🛒 ご注文はこちら
-                                                </td>
-                                            </tr>
                                             <tr>
                                                 <td style="padding: 15px 0; font-size: 15px; color: #e2e8f0; line-height: 1.5; text-align: center;">
                                                     下記ボタンから注文フォームにアクセスして、<br>お好みのメニューをご注文ください
@@ -174,7 +126,7 @@
                                                     <table cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                                                         <tr>
                                                             <td style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 18px 40px; border-radius: 12px; box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4); border: 3px solid #60a5fa;">
-                                                                <a href="https://lunch-order-system.onrender.com/lunch_order_form?session={{ session_title|urlencode }}&orderer_id={{ orderer.id }}&deadline={{ deadline_iso|urlencode }}" 
+                                                                <a href="https://seminar-attendance.onrender.com/lunch_order_form?session={{ session_title|urlencode }}&orderer_id={{ orderer.id }}&deadline={{ deadline_iso|urlencode }}" 
                                                                    style="text-decoration: none; color: white; display: inline-block; font-weight: 700; font-size: 18px;">
                                                                     📱 注文フォームを開く
                                                                 </a>
@@ -188,26 +140,5 @@
                                 </tr>
                             </table>
                             
-                            <!-- Footer -->
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 25px;">
-                                <tr>
-                                    <td style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); padding: 18px; border-radius: 8px; text-align: center; border: 1px solid #d1d5db;">
-                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <tr>
-                                                <td style="font-size: 13px; color: #6b7280; text-align: center;">
-                                                    💌 このメールは自動送信されています
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-
 </body>
 </html>
