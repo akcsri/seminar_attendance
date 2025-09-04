@@ -137,6 +137,35 @@
                 </table>
             </div>
             
+            <!-- 品名ごと集計一覧 -->
+            {% if item_summary %}
+            <div class="table-container">
+                <table class="summary-table" style="margin-top: 40px;">
+                    <thead>
+                        <tr>
+                            <th colspan="4">📊 品名ごと集計一覧</th>
+                        </tr>
+                        <tr style="background-color: #e3f2fd;">
+                            <th>品名</th>
+                            <th>個数</th>
+                            <th>税抜き価格</th>
+                            <th>小計</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in item_summary %}
+                        <tr>
+                            <td style="font-weight: 600;">{{ item.name }}</td>
+                            <td style="text-align: center; font-weight: bold; color: #3498db;">{{ item.quantity }}個</td>
+                            <td style="text-align: right;">¥{{ "%.0f"|format(item.price) }}</td>
+                            <td style="text-align: right; font-weight: bold; color: var(--primary-color);">¥{{ "%.0f"|format(item.subtotal) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            
             <!-- 合計金額サマリー -->
             <div class="table-container">
                 <table class="summary-table">
