@@ -359,3 +359,154 @@ def add_menu():
         flash(f'メニューの追加中にエラーが発生しました: {str(e)}', 'error')
     
     return redirect(url_for('lunch_admin'))
+
+@app.route('/send_lunch_order_email_selected', methods=['POST'])
+def send_lunch_order_email_selected():
+    """選択された注文者のみにランチ注文メール送信"""
+    from datetime import datetime
+    
+    try:
+        session_title = request.form.get('session_title', '').strip()
+        deadline = request.form.get('deadline', '').strip()
+        selected_orderer_ids = request.form.getlist('orderer_ids')
+        
+        if not session_title or not deadline:
+            flash('セッション名と注文期限は必須です。', 'error')
+            return redirect(url_for('lunch_admin'))
+        
+        if not selected_orderer_ids:
+            flash('少なくとも1人の注文者を選択してください。', 'error')
+            return redirect(url_for('lunch_admin'))
+        
+        # Parse deadline
+        try:
+            deadline_dt = datetime.fromisoformat(deadline)
+        except ValueError:
+            flash('注文期限の形式が正しくありません。', 'error')
+            return redirect(url_for('lunch_admin'))
+        
+        # Get selected orderers
+        selected_orderers = Orderer.query.filter(Orderer.id.in_(selected_orderer_ids)).all()
+        
+        if not selected_orderers:
+            flash('選択された注文者が見つかりません。', 'error')
+            return redirect(url_for('lunch_admin'))
+        
+        # Get all menu items
+        menus = Menu.query.all()
+        
+        if not menus:
+            flash('メニューが登録されていません。先にメニューを登録してください。', 'warning')
+            return redirect(url_for('lunch_admin'))
+        
+        sent_count = 0
+        error_count = 0
+        
+        for orderer in selected_orderers:
+            try:
+                # Send lunch order email to individual orderer
+                send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus)
+                sent_count += 1
+            except Exception as e:
+                error_count += 1
+                print(f"Error sending lunch order email to {orderer.email}: {e}")
+        
+        if sent_count > 0:
+            flash(f'{sent_count}件の注文メールを送信しました。', 'success')
+        if error_count > 0:
+            flash(f'{error_count}件のメール送信でエラーが発生しました。', 'warning')
+    
+    except Exception as e:
+        flash(f'メール送信中にエラーが発生しました: {str(e)}', 'error')
+    
+    return redirect(url_for('lunch_admin'))
+
+def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus):
+    """個別の注文者にランチ注文メールを送信"""
+    try:
+        from flask_mail import Message
+        from app import mail
+        from flask import current_app
+        
+        # Create HTML content with menu checkboxes
+        menu_html = ""
+        for menu in menus:
+            menu_html += f"""
+            <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" name="items" value="{menu.id}" style="width: 20px; height: 20px;">
+                    <span style="font-size: 16px; font-weight: bold;">{menu.name}</span>
+                    <span style="color: #28a745; font-weight: bold;">¥{menu.price_excl_tax}</span>
+                </label>
+            </div>
+            """
+        
+        # Create order form URL (using a placeholder for now)
+        order_url = f"http://127.0.0.1:5000/lunch_order_form?session={session_title}&orderer_id={orderer.id}"
+        
+        html_content = f"""
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>ランチ注文のご案内</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; border-radius: 10px;">
+                <h2 style="color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px;">
+                    🍽️ {session_title}
+                </h2>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p style="font-size: 16px;">
+                        <strong>{orderer.name}</strong> 様
+                    </p>
+                    
+                    <p style="font-size: 16px;">
+                        ランチ注文の受付を開始いたします。<br>
+                        下記メニューから ご希望の商品をお選びください。
+                    </p>
+                    
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; border-left: 5px solid #ffc107; margin: 20px 0;">
+                        <strong>注文期限: {deadline_dt.strftime("%Y年%m月%d日 %H時%M分")}</strong>
+                    </div>
+                </div>
+                
+                <form action="/lunch_order_response" method="GET" style="background: white; padding: 20px; border-radius: 8px;">
+                    <input type="hidden" name="session_title" value="{session_title}">
+                    <input type="hidden" name="orderer_id" value="{orderer.id}">
+                    <input type="hidden" name="deadline" value="{deadline_dt.isoformat()}">
+                    
+                    <h3 style="color: #2c3e50; margin-bottom: 20px;">📋 メニュー一覧</h3>
+                    
+                    {menu_html}
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="submit" style="background-color: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; text-decoration: none;">
+                            注文を確定する
+                        </button>
+                    </div>
+                </form>
+                
+                <div style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
+                    <p>このメールは自動送信されています。</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        # Send email
+        msg = Message(
+            subject=f"{session_title} - ランチ注文のご案内",
+            sender=current_app.config.get('MAIL_USERNAME', 'noreply@example.com'),
+            recipients=[orderer.email]
+        )
+        msg.html = html_content
+        
+        # In development, we expect this to fail due to mail configuration
+        # but the structure is correct for when SMTP is properly configured
+        mail.send(msg)
+        
+    except Exception as e:
+        # Re-raise the exception to be caught by the calling function
+        raise Exception(f"メール送信エラー: {str(e)}")
