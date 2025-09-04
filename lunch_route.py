@@ -589,12 +589,11 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
                                                 <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                                     <tr>
                                                         <td style="font-size: 18px; font-weight: 600; color: #166534; margin-bottom: 15px; text-align: center;">
-                                                            🛒 注文フォームで複数選択して注文
+                                                            🛒 注文フォームで注文
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="padding: 10px 0; font-size: 15px; color: #374151; line-height: 1.6; text-align: center;">
-                                                            複数のメニューを選択して一度に注文できます。<br>
+                                                        <td style="padding: 10px 0; font-size: 15px; color: #374151; line-height: 1.6; text-align: center;"
                                                             下記ボタンから注文フォームにアクセスしてください 😊
                                                         </td>
                                                     </tr>
@@ -605,7 +604,7 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
                                                                 <tr>
                                                                     <td style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 25px; padding: 0;">
                                                                         <a href="{order_url}" style="display: inline-block; padding: 15px 30px; color: white; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 25px; text-align: center; min-width: 200px;">
-                                                                            📝 注文フォームで注文する
+                                                                            📝 注文フォームで注文
                                                                         </a>
                                                                     </td>
                                                                 </tr>
