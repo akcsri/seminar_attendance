@@ -442,11 +442,11 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
         menu_html = ""
         for menu in menus:
             menu_html += f"""
-            <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                    <input type="checkbox" name="items" value="{menu.id}" style="width: 20px; height: 20px;">
-                    <span style="font-size: 16px; font-weight: bold;">{menu.name}</span>
-                    <span style="color: #28a745; font-weight: bold;">¥{menu.price_excl_tax}</span>
+            <div class="menu-item">
+                <label>
+                    <input type="checkbox" name="items" value="{menu.id}" class="menu-checkbox">
+                    <span class="menu-name">{menu.name}</span>
+                    <span class="menu-price">¥{menu.price_excl_tax}</span>
                 </label>
             </div>
             """
@@ -460,48 +460,174 @@ def send_lunch_order_email_to_orderer(orderer, session_title, deadline_dt, menus
         <head>
             <meta charset="UTF-8">
             <title>ランチ注文のご案内</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <div style="max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; border-radius: 10px;">
-                <h2 style="color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px;">
-                    🍽️ {session_title}
-                </h2>
+            <style>
+                body {{
+                    font-family: 'Arial', sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    margin: 0;
+                    padding: 20px;
+                    background: linear-gradient(135deg, #fff5f5, #f0f8ff);
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background: white;
+                    border-radius: 20px;
+                    overflow: hidden;
+                    box-shadow: 0 10px 30px rgba(255, 107, 157, 0.2);
+                }}
+                .header {{
+                    background: linear-gradient(135deg, #ff6b9d, #4ecdc4);
+                    color: white;
+                    text-align: center;
+                    padding: 30px 20px;
+                }}
+                .content {{
+                    padding: 30px;
+                }}
+                .menu-item {{
+                    background: #fff5f5;
+                    margin: 15px 0;
+                    padding: 20px;
+                    border-radius: 15px;
+                    border: 2px solid #ffecd1;
+                    transition: all 0.3s ease;
+                }}
+                .menu-item:hover {{
+                    border-color: #ff6b9d;
+                    box-shadow: 0 5px 15px rgba(255, 107, 157, 0.2);
+                }}
+                .menu-item label {{
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }}
+                .menu-checkbox {{
+                    width: 24px;
+                    height: 24px;
+                    accent-color: #ff6b9d;
+                }}
+                .menu-name {{
+                    font-weight: bold;
+                    color: #2d3436;
+                    flex: 1;
+                }}
+                .menu-price {{
+                    color: #ff6b9d;
+                    font-weight: bold;
+                    font-size: 18px;
+                }}
+                .order-btn {{
+                    background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+                    color: white;
+                    padding: 18px 40px;
+                    border: none;
+                    border-radius: 25px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    text-decoration: none;
+                    display: inline-block;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+                }}
+                .order-btn:hover {{
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+                }}
+                .deadline-notice {{
+                    background: linear-gradient(135deg, #feca57, #fed330);
+                    padding: 20px;
+                    border-radius: 15px;
+                    margin: 20px 0;
+                    text-align: center;
+                    color: #333;
+                    font-weight: bold;
+                }}
+                .emoji {{
+                    font-size: 24px;
+                    margin-right: 10px;
+                }}
+            </style>
+            <script>
+                function submitOrder() {{
+                    const checkboxes = document.querySelectorAll('input[name="items"]:checked');
+                    const selectedItems = Array.from(checkboxes).map(cb => cb.value);
+                    
+                    if (selectedItems.length === 0) {{
+                        alert('メニューを選択してください！ 🍽️');
+                        return false;
+                    }}
+                    
+                    const params = new URLSearchParams();
+                    params.append('session_title', '{session_title}');
+                    params.append('orderer_id', '{orderer.id}');
+                    params.append('deadline', '{deadline_dt.isoformat()}');
+                    selectedItems.forEach(item => params.append('items', item));
+                    
+                    window.location.href = '/lunch_order_response?' + params.toString();
+                    return false;
+                }}
                 
-                <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p style="font-size: 16px;">
+                function openOrderForm() {{
+                    window.location.href = '{order_url}';
+                }}
+            </script>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h2 style="margin: 0; font-size: 28px;">
+                        <span class="emoji">🍽️</span>{session_title}
+                    </h2>
+                </div>
+                
+                <div class="content">
+                    <p style="font-size: 18px; margin-bottom: 10px;">
                         <strong>{orderer.name}</strong> 様
                     </p>
                     
-                    <p style="font-size: 16px;">
-                        ランチ注文の受付を開始いたします。<br>
-                        下記メニューから ご希望の商品をお選びください。
+                    <p style="font-size: 16px; color: #666; margin-bottom: 30px;">
+                        いつもお疲れ様です！ランチ注文の受付を開始いたします。<br>
+                        お好みのメニューをチェックして、注文ボタンを押してください 😊
                     </p>
                     
-                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; border-left: 5px solid #ffc107; margin: 20px 0;">
-                        <strong>注文期限: {deadline_dt.strftime("%Y年%m月%d日 %H時%M分")}</strong>
+                    <div class="deadline-notice">
+                        <span class="emoji">⏰</span>
+                        注文期限: {deadline_dt.strftime("%Y年%m月%d日 %H時%M分")}
                     </div>
-                </div>
-                
-                <form action="/lunch_order_response" method="GET" style="background: white; padding: 20px; border-radius: 8px;">
-                    <input type="hidden" name="session_title" value="{session_title}">
-                    <input type="hidden" name="orderer_id" value="{orderer.id}">
-                    <input type="hidden" name="deadline" value="{deadline_dt.isoformat()}">
                     
-                    <h3 style="color: #2c3e50; margin-bottom: 20px;">📋 メニュー一覧</h3>
+                    <h3 style="color: #ff6b9d; margin-bottom: 20px; font-size: 20px;">
+                        <span class="emoji">📋</span>メニュー一覧
+                    </h3>
                     
-                    {menu_html}
+                    <form onsubmit="return submitOrder()">
+                        {menu_html}
+                        
+                        <div style="text-align: center; margin-top: 40px;">
+                            <button type="submit" class="order-btn">
+                                <span class="emoji">✨</span>選択したメニューを注文する
+                            </button>
+                        </div>
+                    </form>
                     
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button type="submit" style="background-color: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; text-decoration: none;">
-                            注文を確定する
-                        </button>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                            ボタンが機能しない場合は、こちらのリンクからも注文できます：
+                        </p>
+                        <a href="{order_url}" style="color: #ff6b9d; text-decoration: underline;">
+                            注文フォームを開く
+                        </a>
                     </div>
-                </form>
-                
-                <div style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
-                    <p>このメールは自動送信されています。</p>
-                    <p>※ ボタンが機能しない場合は、以下のリンクにアクセスしてください：</p>
-                    <p><a href="{order_url}" style="color: #3498db;">{order_url}</a></p>
+                    
+                    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">
+                        <p style="margin: 0; color: #666; font-size: 14px;">
+                            <span class="emoji">💕</span>このメールは自動送信されています
+                        </p>
+                    </div>
                 </div>
             </div>
         </body>

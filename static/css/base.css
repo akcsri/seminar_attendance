@@ -1,30 +1,34 @@
 /* 
-  Base CSS for monochrome design
-  Simple black and white styling
+  Base CSS for cute and colorful design
+  Friendly and approachable styling 🌈
 */
 
 /* === COLOR SCHEME === */
 :root {
-    --primary-color: #000000;
-    --accent-color: #666666;
-    --text-color: #000000;
-    --light-gray: #666666;
-    --border-color: #cccccc;
-    --background-color: #ffffff;
-    --card-background: #ffffff;
-    --success-color: #000000;
-    --warning-color: #666666;
-    --danger-color: #000000;
+    --primary-color: #ff6b9d;        /* Cute pink */
+    --accent-color: #4ecdc4;         /* Mint green */
+    --text-color: #2d3436;           /* Dark gray for readability */
+    --light-gray: #a8a8a8;           /* Light gray */
+    --border-color: #ffecd1;         /* Light peachy border */
+    --background-color: #fff5f5;     /* Very light pink background */
+    --card-background: #ffffff;      /* White cards */
+    --success-color: #55a3ff;        /* Blue */
+    --warning-color: #feca57;        /* Yellow */
+    --danger-color: #ff6b9d;         /* Pink */
+    --secondary-background: #f8f9fa; /* Light gray background */
 }
 
 /* === BASE STYLES === */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', 'Helvetica', sans-serif;
     line-height: 1.7;
     margin: 0;
     padding: 20px;
     background: var(--background-color);
     color: var(--text-color);
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(255, 107, 157, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(78, 205, 196, 0.1) 0%, transparent 50%);
 }
 
 /* === CONTAINER STYLES === */
@@ -33,8 +37,9 @@ body {
     margin: 0 auto;
     background-color: var(--card-background);
     padding: 40px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(255, 107, 157, 0.1);
 }
 
 .container-wide {
@@ -114,45 +119,52 @@ textarea {
     padding: 15px 28px;
     margin: 10px 8px 10px 0;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 20px;
     font-weight: 600;
     text-align: center;
     font-size: 16px;
-    border: 1px solid var(--border-color);
+    border: 2px solid transparent;
     cursor: pointer;
     font-family: inherit;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
 .btn-primary {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), #ff8fab);
     color: white;
-    border: 1px solid var(--primary-color);
+    border: 2px solid var(--primary-color);
 }
 
 .btn-primary:hover {
-    background: var(--light-gray);
-    border: 1px solid var(--light-gray);
+    background: linear-gradient(135deg, #ff8fab, var(--primary-color));
+    border: 2px solid #ff8fab;
 }
 
 .btn-danger {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #ff6b9d, #ff8fab);
     color: white;
-    border: 1px solid var(--primary-color);
+    border: 2px solid #ff6b9d;
 }
 
 .btn-danger:hover {
-    background: var(--light-gray);
-    border: 1px solid var(--light-gray);
+    background: linear-gradient(135deg, #ff8fab, #ff6b9d);
+    border: 2px solid #ff8fab;
 }
 
 .btn-warning {
-    background: var(--accent-color);
-    color: white;
-    border: 1px solid var(--accent-color);
+    background: linear-gradient(135deg, var(--warning-color), #fed330);
+    color: var(--text-color);
+    border: 2px solid var(--warning-color);
 }
 
 .btn-warning:hover {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #fed330, var(--warning-color));
     border: 1px solid var(--primary-color);
 }
 
