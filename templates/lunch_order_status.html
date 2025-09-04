@@ -117,7 +117,6 @@
                             <th>注文者氏名</th>
                             <th>品名①〜⑤</th>
                             <th>合計税抜き価格</th>
-                            <th>セッション</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -133,7 +132,6 @@
                                 {% endfor %}
                             </td>
                             <td class="total-price">¥{{ "%.0f"|format(order.total_price) }}</td>
-                            <td>{{ order.session }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
