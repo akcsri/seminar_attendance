@@ -819,4 +819,29 @@ tbody tr:hover {
                 color: #e5e7eb !important;
             }
         }
+
+/* === LUNCH ORDER SPECIFIC STYLES === */
+/* Reduce row height by half for lunch admin tables */
+.lunch-admin-table th,
+.lunch-admin-table td {
+    padding: 6px !important; /* Half of standard 12px */
+}
+
+.lunch-admin-table {
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .lunch-admin-table th,
+    .lunch-admin-table td {
+        padding: 4px !important; /* Half of responsive 8px */
+    }
+}
+
+@media (max-width: 480px) {
+    .lunch-admin-table th,
+    .lunch-admin-table td {
+        padding: 3px !important; /* Half of responsive 6px */
+    }
+}
     
