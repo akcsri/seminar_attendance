@@ -22,123 +22,209 @@
     </style>
     <![endif]-->
     <style>
-        /* Enhanced email CSS for better compatibility */
-        .menu-checkbox {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            vertical-align: middle;
+        /* Enhanced email CSS for better mobile compatibility and modern design */
+        * {
+            box-sizing: border-box;
         }
-        .menu-item-row {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            margin: 8px 0;
-            padding: 15px;
-            transition: all 0.3s ease;
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
         }
-        .menu-item-row:hover {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
-            transform: translateY(-2px);
+        
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
         }
-        .order-button {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        
+        .header-section {
+            background: linear-gradient(135deg, #4f46e5, #06d6a0);
+            padding: 30px 25px;
+            text-align: center;
             color: white;
-            padding: 16px 32px;
+        }
+        
+        .header-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header-subtitle {
+            font-size: 14px;
+            margin: 8px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .content-section {
+            padding: 35px 25px;
+        }
+        
+        .deadline-notice {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: white;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .order-section {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .order-instruction {
+            color: #e2e8f0;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .order-button {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white !important;
+            padding: 18px 40px;
             border-radius: 12px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 18px;
             display: inline-block;
             margin: 10px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-            border: 2px solid #2563eb;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            border: 3px solid #60a5fa;
+            transition: all 0.3s ease;
         }
+        
         .order-button:hover {
-            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            background: #e5e7eb !important;
+            color: #1f2937 !important;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.5);
         }
-        .total-display {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1f2937;
-            background: #f0f9ff;
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #0ea5e9;
-            text-align: center;
-            margin: 15px 0;
+        
+        /* Enhanced Mobile Responsiveness */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+            
+            .header-section {
+                padding: 25px 20px !important;
+            }
+            
+            .header-title {
+                font-size: 22px !important;
+            }
+            
+            .header-subtitle {
+                font-size: 13px !important;
+            }
+            
+            .content-section {
+                padding: 25px 20px !important;
+            }
+            
+            .deadline-notice {
+                padding: 15px !important;
+                font-size: 14px !important;
+                margin: 15px 0 !important;
+            }
+            
+            .order-section {
+                padding: 25px 20px !important;
+                margin: 20px 0 !important;
+            }
+            
+            .order-instruction {
+                font-size: 14px !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .order-button {
+                padding: 16px 30px !important;
+                font-size: 16px !important;
+                width: 100% !important;
+                max-width: 280px !important;
+                box-sizing: border-box !important;
+            }
+        }
+        
+        /* iPhone specific optimizations */
+        @media only screen and (max-width: 480px) {
+            .header-title {
+                font-size: 20px !important;
+            }
+            
+            .order-button {
+                padding: 14px 25px !important;
+                font-size: 15px !important;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .email-container {
+                background-color: #1f2937 !important;
+            }
+            
+            .content-section {
+                background-color: #1f2937 !important;
+                color: #e5e7eb !important;
+            }
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: 'Helvetica Neue', Arial, sans-serif;">
-    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6; min-height: 100vh;">
-        <tr>
-            <td align="center" style="padding: 30px 15px;">
-                <!-- Main Container -->
-                <table cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
-                    <!-- Header -->
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 35px 25px; text-align: center;">
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                <tr>
-                                    <td style="color: white; font-size: 26px; font-weight: 700; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                        🍽️ {{ session_title }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="color: rgba(255,255,255,0.9); font-size: 14px; text-align: center; padding-top: 8px;">
-                                        ランチ注文のご案内
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    
-                    <!-- Content -->
-                    <tr>
-                        <td style="padding: 35px 25px;">
-
-                            <!-- Deadline Notice -->
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0;">
-                                <tr>
-                                    <td style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 18px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 15px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
-                                        ⏰ 注文期限: {{ deadline_formatted }}
-                                    </td>
-                                </tr>
-                            </table>
-                            
-                            <!-- Order Button Section -->
-                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 25px;">
-                                <tr>
-                                    <td style="background: linear-gradient(135deg, #1e293b, #334155); padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
-                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
-                                            <tr>
-                                                <td style="padding: 15px 0; font-size: 15px; color: #e2e8f0; line-height: 1.5; text-align: center;">
-                                                    下記ボタンから注文フォームにアクセスして、<br>お好みのメニューをご注文ください
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding: 20px 0; text-align: center;">
-                                                    <!-- Main Order Form Button -->
-                                                    <table cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
-                                                        <tr>
-                                                            <td style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 18px 40px; border-radius: 12px; box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4); border: 3px solid #60a5fa;">
-                                                                <a href="https://seminar-attendance.onrender.com/lunch_order_form?session={{ session_title|urlencode }}&orderer_id={{ orderer.id }}&deadline={{ deadline_iso|urlencode }}" 
-                                                                   style="text-decoration: none; color: white; display: inline-block; font-weight: 700; font-size: 18px;">
-                                                                    📱 注文フォームを開く
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                            
+<body>
+    <div style="background-color: #f3f4f6; padding: 20px 10px; min-height: 100vh;">
+        <div class="email-container">
+            <!-- Header -->
+            <div class="header-section">
+                <h1 class="header-title">🍽️ {{ session_title }}</h1>
+                <p class="header-subtitle">ランチ注文のご案内</p>
+            </div>
+            
+            <!-- Content -->
+            <div class="content-section">
+                <!-- Deadline Notice -->
+                <div class="deadline-notice">
+                    ⏰ 注文期限: {{ deadline_formatted }}
+                </div>
+                
+                <!-- Order Button Section -->
+                <div class="order-section">
+                    <p class="order-instruction">
+                        下記ボタンから注文フォームにアクセスして、<br>お好みのメニューをご注文ください
+                    </p>
+                    <a href="https://seminar-attendance.onrender.com/lunch_order_form?session={{ session_title|urlencode }}&orderer_id={{ orderer.id }}&deadline={{ deadline_iso|urlencode }}" 
+                       class="order-button">
+                        📱 注文フォームを開く
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

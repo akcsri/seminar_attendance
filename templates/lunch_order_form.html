@@ -227,41 +227,138 @@
             transform: translateY(-1px) scale(1.02);
         }
         
-        /* Responsive design */
+        /* Enhanced Mobile Responsiveness */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
             .container {
-                margin: 10px;
-                padding: 25px;
-                border-radius: 20px;
+                margin: 5px;
+                padding: 20px;
+                border-radius: 15px;
             }
             
             h1 {
-                font-size: 2em;
+                font-size: 1.8em;
+                margin-bottom: 25px;
             }
             
             h1::after {
-                right: -30px;
-                font-size: 0.7em;
+                right: -25px;
+                font-size: 0.6em;
             }
             
             .menu-item {
                 padding: 20px;
-                margin: 15px 0;
+                margin: 12px 0;
+                border-radius: 15px;
             }
             
             .menu-item label {
                 font-size: 1.1em;
                 gap: 15px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .menu-name {
+                font-size: 1.1em;
+                line-height: 1.4;
+            }
+            
+            .menu-price {
+                font-size: 1.2em;
+                margin-top: 5px;
             }
             
             .session-info {
                 padding: 20px;
+                border-radius: 15px;
+            }
+            
+            .session-info h3 {
+                font-size: 1.4em;
             }
             
             .btn {
-                padding: 15px 30px;
+                padding: 16px 30px;
                 font-size: 1.1em;
-                min-width: 160px;
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+                margin-right: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+                font-size: 15px;
+            }
+            
+            .container {
+                margin: 0;
+                padding: 15px;
+                border-radius: 12px;
+            }
+            
+            h1 {
+                font-size: 1.6em;
+                margin-bottom: 20px;
+            }
+            
+            h1::after {
+                right: -20px;
+                font-size: 0.5em;
+            }
+            
+            h3 {
+                font-size: 1.2em;
+                margin-bottom: 15px;
+            }
+            
+            .menu-item {
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 12px;
+            }
+            
+            .menu-item label {
+                gap: 12px;
+            }
+            
+            .menu-name {
+                font-size: 1.0em;
+            }
+            
+            .menu-price {
+                font-size: 1.1em;
+            }
+            
+            .session-info {
+                padding: 15px;
+                margin-bottom: 20px;
+                border-radius: 12px;
+            }
+            
+            .session-info h3 {
+                font-size: 1.2em;
+            }
+            
+            .btn {
+                padding: 14px 25px;
+                font-size: 1.0em;
+            }
+            
+            input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                margin-right: 10px;
             }
         }
         
