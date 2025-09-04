@@ -11,12 +11,15 @@
         <p>注文期限: {{ deadline }}</p>
         <p>注文者: {{ orderer.name }} 様</p>
 
-        <form method="POST" action="{{ url_for('submit_order') }}">
+        <form method="GET" action="{{ url_for('lunch_order_response') }}">
+            <input type="hidden" name="session_title" value="{{ session_title }}">
+            <input type="hidden" name="orderer_id" value="{{ orderer.id }}">
+            <input type="hidden" name="deadline" value="{{ deadline }}">
             <h2>メニュー一覧</h2>
             {% for menu in menus %}
                 <label>
-                    <input type="checkbox" name="menu_ids" value="{{ menu.id }}">
-                    {{ menu.name }} ¥{{ menu.price_excl_tax | comma_format }}
+                    <input type="checkbox" name="items" value="{{ menu.id }}">
+                    {{ menu.name }} ¥{{ menu.price_excl_tax | round(0) | int }}
                 </label><br>
             {% endfor %}
             <button type="submit" class="btn btn-primary">注文を確定する</button>
