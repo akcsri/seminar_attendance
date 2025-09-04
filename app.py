@@ -25,6 +25,7 @@ scheduler.init_app(app)
 
 # Import routes
 from routes import *
+from lunch_route import *
 
 # Add custom Jinja2 filters for date formatting
 @app.template_filter('japanese_date')
