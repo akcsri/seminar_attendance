@@ -10,7 +10,7 @@
         <h1>注文状況一覧</h1>
 
         {% if orders %}
-            <table>
+            <table class="lunch-admin-table">
                 <thead>
                     <tr>
                         <th scope="col">注文者氏名</th>
@@ -21,11 +21,11 @@
                 <tbody>
                     {% for order in orders %}
                         <tr>
-                            <td>{{ order.orderer.name }}</td>
+                            <td>{{ order.orderer_name }}</td>
                             <td>
                                 <ul>
-                                    {% for item in order.items %}
-                                        <li>{{ item.name }} ¥{{ item.price_excl_tax | comma_format }}</li>
+                                    {% for item in order.ordered_items %}
+                                        <li>{{ item.name }} ¥{{ item.price | comma_format }}</li>
                                     {% endfor %}
                                 </ul>
                             </td>
