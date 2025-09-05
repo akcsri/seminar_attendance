@@ -4,6 +4,90 @@
     <meta charset="UTF-8">
     <title>ランチ注文フォーム</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <style>
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        
+        .menu-info {
+            flex: 1;
+        }
+        
+        .image-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+        }
+        
+        .image-btn:hover {
+            background: #0056b3;
+        }
+        
+        .image-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .popup-content {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            max-width: 400px;
+            max-height: 500px;
+        }
+        
+        .popup-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 5px;
+        }
+        
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        
+        .popup-title {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .no-image-message {
+            color: #666;
+            font-style: italic;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -17,13 +101,92 @@
             <input type="hidden" name="deadline" value="{{ deadline }}">
             <h2>メニュー一覧</h2>
             {% for menu in menus %}
-                <label>
-                    <input type="checkbox" name="items" value="{{ menu.id }}">
-                    {{ menu.name }} ¥{{ menu.price_excl_tax | round(0) | int }}
-                </label><br>
+                <div class="menu-item">
+                    <div class="menu-info">
+                        <label>
+                            <input type="checkbox" name="items" value="{{ menu.id }}">
+                            {{ menu.name }} ¥{{ menu.price_excl_tax | round(0) | int }}
+                        </label>
+                    </div>
+                    <button type="button" class="image-btn" onclick="showImage({{ menu.id }}, '{{ menu.name }}')">
+                        📷
+                    </button>
+                </div>
             {% endfor %}
             <button type="submit" class="btn btn-primary">注文を確定する</button>
         </form>
     </div>
+
+    <!-- Image popup modal -->
+    <div id="imagePopup" class="image-popup">
+        <span class="popup-close" onclick="closeImage()">&times;</span>
+        <div class="popup-content">
+            <div class="popup-title" id="popupTitle"></div>
+            <img id="popupImage" class="popup-image" alt="メニュー画像" style="display: none;">
+            <div id="noImageMessage" class="no-image-message" style="display: none;">
+                このメニューの画像は現在利用できません。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu image URL mapping (frontend-only solution to avoid database changes)
+        // To add images: 
+        // 1. Place image files in /static/images/ directory
+        // 2. Update the URLs below to point to your image files
+        // 3. Or use the CSV import tool in /tmp/menu_image_csv_importer.py
+        const menuImages = {
+            1: '/static/images/katsudon.jpg',        // カツ丼
+            2: '/static/images/oyakodon.jpg',        // 親子丼  
+            3: '/static/images/tendon.jpg',          // 天丼
+            4: '/static/images/yakiniku_set.jpg',    // 焼肉定食
+            5: '/static/images/sashimi_set.jpg',     // 刺身定食
+            6: '/static/images/fried_rice.jpg'       // チャーハン
+        };
+
+        function showImage(menuId, menuName) {
+            const popup = document.getElementById('imagePopup');
+            const image = document.getElementById('popupImage');
+            const title = document.getElementById('popupTitle');
+            const noImageMsg = document.getElementById('noImageMessage');
+
+            title.textContent = menuName;
+
+            if (menuImages[menuId]) {
+                image.src = menuImages[menuId];
+                image.style.display = 'block';
+                noImageMsg.style.display = 'none';
+                
+                // Handle image load error
+                image.onerror = function() {
+                    image.style.display = 'none';
+                    noImageMsg.style.display = 'block';
+                };
+            } else {
+                image.style.display = 'none';
+                noImageMsg.style.display = 'block';
+            }
+
+            popup.style.display = 'flex';
+        }
+
+        function closeImage() {
+            document.getElementById('imagePopup').style.display = 'none';
+        }
+
+        // Close popup when clicking outside the content
+        document.getElementById('imagePopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImage();
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImage();
+            }
+        });
+    </script>
 </body>
 </html>
