@@ -41,6 +41,7 @@ def edit_menu_item(id):
     if menu_item:
         menu_item.name = request.form['menu_name']
         menu_item.price_excl_tax = float(request.form['price'])
+        menu_item.image_url = request.form.get('image_url', '').strip() or None
         db.session.commit()
         flash('メニュー項目を更新しました。', 'success')
     else:
@@ -117,7 +118,8 @@ def import_menu_csv():
                 
                 menu_item = Menu(
                     name=name,
-                    price_excl_tax=price_value
+                    price_excl_tax=price_value,
+                    image_url=image_url if image_url else None
                 )
                 db.session.add(menu_item)
                 db.session.flush()  # Get the ID without committing
@@ -575,14 +577,23 @@ def lunch_order_form():
     if not menus:
         return "メニューが登録されていません。", 404
     
-    # Load image URL mappings from JSON file
+    # Create image URL mappings - prioritize database field, fall back to JSON
     menu_image_mappings = {}
+    
+    # First, use database image_url fields
+    for menu in menus:
+        if menu.image_url:
+            menu_image_mappings[str(menu.id)] = menu.image_url
+    
+    # Then, load from JSON file as fallback (for backward compatibility)
     try:
         if os.path.exists('menu_image_mappings.json'):
             with open('menu_image_mappings.json', 'r', encoding='utf-8') as f:
-                # JSON keys are strings, so convert menu IDs to strings for lookup
                 mappings = json.load(f)
-                menu_image_mappings = {str(k): v for k, v in mappings.items()}
+                # Only add if not already in database
+                for k, v in mappings.items():
+                    if str(k) not in menu_image_mappings:
+                        menu_image_mappings[str(k)] = v
     except Exception as e:
         print(f"Error loading menu image mappings: {e}")
     
