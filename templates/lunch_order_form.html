@@ -130,18 +130,11 @@
     </div>
 
     <script>
-        // Menu image URL mapping (frontend-only solution to avoid database changes)
-        // To add images: 
-        // 1. Place image files in /static/images/ directory
-        // 2. Update the URLs below to point to your image files
-        // 3. Or use the CSV import tool in /tmp/menu_image_csv_importer.py
+        // Menu image URL mapping (dynamically generated from CSV import)
         const menuImages = {
-            1: '/static/images/katsudon.jpg',        // カツ丼
-            2: '/static/images/oyakodon.jpg',        // 親子丼  
-            3: '/static/images/tendon.jpg',          // 天丼
-            4: '/static/images/yakiniku_set.jpg',    // 焼肉定食
-            5: '/static/images/sashimi_set.jpg',     // 刺身定食
-            6: '/static/images/fried_rice.jpg'       // チャーハン
+            {% for menu_id, image_url in menu_image_mappings.items() %}
+            {{ menu_id }}: '{{ image_url }}',
+            {% endfor %}
         };
 
         function showImage(menuId, menuName) {
