@@ -3,6 +3,8 @@ from app import app, db
 from lunch_models import Orderer, Menu
 import csv
 import io
+import json
+import os
 from datetime import datetime
 
 # ===============================
@@ -73,7 +75,7 @@ def import_menu_csv():
             return redirect(url_for('lunch_admin'))
         
         # Check if first row is header
-        if not any(col.lower() in ['name', 'price', 'メニュー', '価格'] for col in first_row):
+        if not any(col.lower() in ['name', 'price', 'メニュー', '価格', 'image', 'url', '画像'] for col in first_row):
             # First row is data, process it
             stream.seek(0)
             csv_reader = csv.reader(stream)
@@ -87,6 +89,9 @@ def import_menu_csv():
             flash(f'既存メニューの削除中にエラーが発生しました: {str(e)}', 'error')
             return redirect(url_for('lunch_admin'))
         
+        # Store image URL mappings for later use
+        image_url_mappings = {}
+        
         added_count = 0
         error_count = 0
         errors = []
@@ -99,6 +104,7 @@ def import_menu_csv():
             
             name = row[0].strip() if len(row) > 0 else ''
             price = row[1].strip() if len(row) > 1 else ''
+            image_url = row[2].strip() if len(row) > 2 else ''
             
             if not name or not price:
                 errors.append(f'行{row_num}: メニュー名と価格は必須です')
@@ -114,6 +120,12 @@ def import_menu_csv():
                     price_excl_tax=price_value
                 )
                 db.session.add(menu_item)
+                db.session.flush()  # Get the ID without committing
+                
+                # Store image URL mapping if provided
+                if image_url:
+                    image_url_mappings[menu_item.id] = image_url
+                    
                 added_count += 1
             except ValueError:
                 errors.append(f'行{row_num}: 価格は数値である必要があります')
@@ -124,7 +136,17 @@ def import_menu_csv():
         
         if added_count > 0:
             db.session.commit()
-            flash(f'{added_count}件のメニュー項目を追加しました。', 'success')
+            
+            # Save image URL mappings to JSON file if any exist
+            if image_url_mappings:
+                try:
+                    with open('menu_image_mappings.json', 'w', encoding='utf-8') as f:
+                        json.dump(image_url_mappings, f, ensure_ascii=False, indent=2)
+                    flash(f'{added_count}件のメニュー項目を追加しました（画像URL:{len(image_url_mappings)}件）。', 'success')
+                except Exception as e:
+                    flash(f'{added_count}件のメニュー項目を追加しましたが、画像URL保存でエラーが発生しました: {str(e)}', 'warning')
+            else:
+                flash(f'{added_count}件のメニュー項目を追加しました。', 'success')
         
         if error_count > 0:
             flash(f'{error_count}件のエラーがありました。', 'warning')
@@ -553,11 +575,23 @@ def lunch_order_form():
     if not menus:
         return "メニューが登録されていません。", 404
     
+    # Load image URL mappings from JSON file
+    menu_image_mappings = {}
+    try:
+        if os.path.exists('menu_image_mappings.json'):
+            with open('menu_image_mappings.json', 'r', encoding='utf-8') as f:
+                # JSON keys are strings, so convert menu IDs to strings for lookup
+                mappings = json.load(f)
+                menu_image_mappings = {str(k): v for k, v in mappings.items()}
+    except Exception as e:
+        print(f"Error loading menu image mappings: {e}")
+    
     return render_template('lunch_order_form.html',
                          session_title=session_title,
                          orderer=orderer,
                          menus=menus,
-                         deadline=deadline)
+                         deadline=deadline,
+                         menu_image_mappings=menu_image_mappings)
 
 @app.route('/lunch_order_response')
 def lunch_order_response():
