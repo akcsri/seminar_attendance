@@ -133,7 +133,7 @@
         // Menu image URL mapping (dynamically generated from CSV import)
         const menuImages = {
             {% for menu_id, image_url in menu_image_mappings.items() %}
-            {{ menu_id }}: '{{ image_url }}',
+            {{ menu_id }}: '{{ image_url | safe }}',
             {% endfor %}
         };
 
@@ -146,7 +146,9 @@
             title.textContent = menuName;
 
             if (menuImages[menuId]) {
-                image.src = menuImages[menuId];
+                const imageUrl = menuImages[menuId];
+                
+                image.src = imageUrl;
                 image.style.display = 'block';
                 noImageMsg.style.display = 'none';
                 
