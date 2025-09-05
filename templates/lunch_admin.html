@@ -146,6 +146,7 @@
 <th>ID</th>
 <th>メニュー名</th>
 <th>税抜き価格</th>
+<th>画像URL</th>
 <th>操作</th>
 </tr>
 </thead>
@@ -156,12 +157,17 @@
 <td>{{ menu.name }}</td>
 <td>¥{{ menu.price_excl_tax | round(0) | int }}</td>
 <td>
+    <input type="text" id="image_url_{{ menu.id }}" value="{{ menu.image_url or '' }}" placeholder="画像URLを入力" style="width: 200px;">
+</td>
+<td>
 <form action="/edit_menu_item/{{ menu.id }}" method="post" style="display:inline;">
 <input name="menu_name" type="hidden" value="{{ menu.name }}"/>
 <input name="price" type="hidden" value="{{ menu.price_excl_tax }}"/>
+<input name="image_url" type="hidden" value="{{ menu.image_url or '' }}"/>
 <button class="btn btn-primary" onclick="
                                         this.form.menu_name.value = document.getElementById('menu_name_{{ menu.id }}').value;
                                         this.form.price.value = document.getElementById('price_{{ menu.id }}').value;
+                                        this.form.image_url.value = document.getElementById('image_url_{{ menu.id }}').value;
                                     " type="submit">編集</button>
 </form>
 <form action="/delete_menu_item/{{ menu.id }}" method="post" onsubmit="return confirm('このメニュー項目を削除しますか？')" style="display:inline;">
