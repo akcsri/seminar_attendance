@@ -291,7 +291,7 @@ def lunch_order_status():
     
     # Calculate order summary
     order_summary = []
-    item_aggregation = {}  # Track item aggregation: {item_name: {'quantity': count, 'price': price}}
+    item_aggregation = {}  # Track item aggregation: {item_name: {'quantity': count, 'price': price, 'orderers': [names]}}
     
     for orderer in orderers:
         if any([orderer.item_1, orderer.item_2, orderer.item_3, orderer.item_4, orderer.item_5]):
@@ -313,9 +313,13 @@ def lunch_order_status():
                         if item_name not in item_aggregation:
                             item_aggregation[item_name] = {
                                 'quantity': 0,
-                                'price': float(menu_item.price_excl_tax)
+                                'price': float(menu_item.price_excl_tax),
+                                'orderers': []
                             }
                         item_aggregation[item_name]['quantity'] += 1
+                        # Add orderer name if not already in the list for this item
+                        if orderer.name not in item_aggregation[item_name]['orderers']:
+                            item_aggregation[item_name]['orderers'].append(orderer.name)
             
             if ordered_items:
                 order_summary.append({
@@ -333,11 +337,13 @@ def lunch_order_status():
     item_summary = []
     for item_name, data in item_aggregation.items():
         subtotal = data['quantity'] * data['price']
+        orderer_names = ' / '.join(data['orderers'])  # Join orderer names with " / "
         item_summary.append({
             'name': item_name,
             'quantity': data['quantity'],
             'price': data['price'],
-            'subtotal': subtotal
+            'subtotal': subtotal,
+            'orderers': orderer_names
         })
     
     # Sort by item name for consistent display
