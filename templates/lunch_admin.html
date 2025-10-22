@@ -272,6 +272,9 @@
 <div class="admin-section">
 <h2>📊 注文状況</h2>
 <a class="btn" href="{{ url_for('lunch_order_status') }}">詳細な注文状況を表示</a>
+<form action="/clear_orders" method="post" style="display:inline; margin-left: 10px;" onsubmit="return confirm('本当に全注文データを削除しますか？')">
+<button class="btn btn-danger" type="submit">注文データクリア</button>
+</form>
 <h3>概要</h3>
 <div class="status-overview">
 <div class="status-card">
