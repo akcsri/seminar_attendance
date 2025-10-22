@@ -659,3 +659,26 @@ def lunch_order_response():
     except Exception as e:
         flash(f'注文処理中にエラーが発生しました: {str(e)}', 'error')
         return redirect(url_for('lunch_admin'))
+
+@app.route('/clear_orders', methods=['POST'])
+def clear_orders():
+    """全注文データをクリア"""
+    try:
+        # Get all orderers and clear their order items
+        orderers = Orderer.query.all()
+        
+        for orderer in orderers:
+            orderer.item_1 = ''
+            orderer.item_2 = ''
+            orderer.item_3 = ''
+            orderer.item_4 = ''
+            orderer.item_5 = ''
+        
+        db.session.commit()
+        flash('注文データをクリアしました。', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'注文データのクリア中にエラーが発生しました: {str(e)}', 'error')
+    
+    return redirect(url_for('lunch_admin'))
