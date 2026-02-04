@@ -8,7 +8,7 @@ class Config:
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'akanekocsri@gmail.com'       # ご自身のGmailアドレスに置き換えてください
-    MAIL_PASSWORD = 'oqdyyhickkkwfgjx'         # アプリパスワードを使用（通常のパスワード不可）
+    MAIL_PASSWORD = 'aukl irqp vazd gbzz'         # アプリパスワードを使用（通常のパスワード不可）
     
     # APScheduler configuration
     SCHEDULER_API_ENABLED = True
