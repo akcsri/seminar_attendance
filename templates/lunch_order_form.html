@@ -95,7 +95,7 @@
         <p>注文期限: {{ deadline }}</p>
         <p>注文者: {{ orderer.name }} 様</p>
 
-        <form method="GET" action="https://seminar-attendance.onrender.com/lunch_order_response">
+        <form method="GET" action="{{ url_for('lunch_order_response') }}">
             <input type="hidden" name="session_title" value="{{ session_title }}">
             <input type="hidden" name="orderer_id" value="{{ orderer.id }}">
             <input type="hidden" name="deadline" value="{{ deadline }}">
