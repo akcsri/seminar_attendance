@@ -1,0 +1,44 @@
+# VCS / IDE
+.git
+.github
+.gitignore
+.idea
+.vscode
+
+# Python build junk
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv
+venv
+env
+
+# Tests & local DB
+test_*.py
+*.sqlite
+*.db
+local_seminar.db
+
+# Local env
+.env
+.env.*
+
+# Render / backup files
+dump_file.dump
+routes_backup.py
+initial consultation.txt
+
+# Docs (デプロイ時に不要)
+*.md
+!README.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 作成物
+.dockerignore
+Dockerfile
+fly.toml

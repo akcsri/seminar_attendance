@@ -1,0 +1,42 @@
+# fly.toml -- seminar-attendance
+# https://fly.io/docs/reference/configuration/
+
+app = "seminar-attendance"      # ← 必要に応じて一意な名前に変更（小文字・ハイフンのみ）
+primary_region = "nrt"          # Tokyo リージョン
+
+[build]
+  # Dockerfile を使用（同ディレクトリにある Dockerfile が自動的に選ばれる）
+
+[env]
+  PORT = "8080"
+  TZ   = "Asia/Tokyo"
+  # BASE_URL は fly secrets ではなく平文でも問題ないので env に置いてよい
+  # 初回デプロイ後の自動割り当てURL（https://<app>.fly.dev）に置き換えること
+  BASE_URL = "https://seminar-attendance.fly.dev"
+
+[http_service]
+  internal_port        = 8080
+  force_https          = true
+  # ---- ここが重要：常時稼働にする ----
+  auto_stop_machines   = "off"   # スリープさせない（APScheduler が止まらないように）
+  auto_start_machines  = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type       = "requests"
+    hard_limit = 50
+    soft_limit = 40
+
+# 簡易ヘルスチェック（必要なら /health エンドポイントを用意してそちらへ向ける）
+[[http_service.checks]]
+  interval = "30s"
+  timeout  = "5s"
+  grace_period = "10s"
+  method   = "GET"
+  path     = "/"
+
+[[vm]]
+  size      = "shared-cpu-1x"
+  memory    = "512mb"     # APScheduler + Flask + psycopg でメモリ節約するため必要十分
+  cpu_kind  = "shared"
+  cpus      = 1
