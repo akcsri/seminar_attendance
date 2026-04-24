@@ -1,7 +1,7 @@
 # fly.toml -- seminar-attendance
 # https://fly.io/docs/reference/configuration/
 
-app = "seminar-attendance"      # ← 必要に応じて一意な名前に変更（小文字・ハイフンのみ）
+app = "app-divine-firefly-5309" # ← 必要に応じて一意な名前に変更（小文字・ハイフンのみ）
 primary_region = "nrt"          # Tokyo リージョン
 
 [build]
@@ -12,7 +12,7 @@ primary_region = "nrt"          # Tokyo リージョン
   TZ   = "Asia/Tokyo"
   # BASE_URL は fly secrets ではなく平文でも問題ないので env に置いてよい
   # 初回デプロイ後の自動割り当てURL（https://<app>.fly.dev）に置き換えること
-  BASE_URL = "https://seminar-attendance.fly.dev"
+  BASE_URL = "https://app-divine-firefly-5309.fly.dev"
 
 [http_service]
   internal_port        = 8080
@@ -33,7 +33,7 @@ primary_region = "nrt"          # Tokyo リージョン
   timeout  = "5s"
   grace_period = "10s"
   method   = "GET"
-  path     = "/"
+  path     = "/admin"
 
 [[vm]]
   size      = "shared-cpu-1x"
