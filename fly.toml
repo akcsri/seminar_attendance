@@ -17,10 +17,12 @@ primary_region = "nrt"          # Tokyo リージョン
 [http_service]
   internal_port        = 8080
   force_https          = true
-  # ---- ここが重要：常時稼働にする ----
-  auto_stop_machines   = "off"   # スリープさせない（APScheduler が止まらないように）
+  # ---- 使用時のみ起動（コスト最小化） ----
+  # ⚠️ APScheduler のジョブはマシンが起きている間しか動きません。
+  #     スケジュール送信メール等が必要なら "off" + min_machines_running=1 に戻すこと。
+  auto_stop_machines   = "stop"
   auto_start_machines  = true
-  min_machines_running = 1
+  min_machines_running = 0
 
   [http_service.concurrency]
     type       = "requests"
@@ -37,6 +39,6 @@ primary_region = "nrt"          # Tokyo リージョン
 
 [[vm]]
   size      = "shared-cpu-1x"
-  memory    = "512mb"     # APScheduler + Flask + psycopg でメモリ節約するため必要十分
+  memory    = "256mb"     # APScheduler + Flask + psycopg(workers=1) で 256MB に収める
   cpu_kind  = "shared"
   cpus      = 1
